@@ -83,3 +83,13 @@ fun ProgressLine(progress: Float, description: String, modifier: Modifier = Modi
         if (shown > 0f) Box(Modifier.fillMaxWidth(shown).height(Size.progressLine).clip(Shapes.pill).background(c.primary))
     }
 }
+
+/** Something is on its way with no knowable end (asking GitHub, 17a): a thin line that keeps moving. No spinners. */
+@Composable
+fun MovingLine(modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    androidx.compose.material3.LinearProgressIndicator(
+        modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill),
+        color = c.primary, trackColor = c.surfaceContainerHighest,
+    )
+}

@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.nearby
 
+import app.keyhole.privacy.ui.components.LocalToasts
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -133,11 +134,19 @@ fun FindItScreen(vm: FindItViewModel, onBack: () -> Unit) {
     LaunchedEffect(s.trend) { if (s.trend == Trend.STRONGER) haptics.buzz(Buzz.FOUND) }
     val context = LocalContext.current
     FindItContent(s, onBack, onNotACamera = { asking = true }, onToggleAdded = { haptics.buzz(if (device.added) Buzz.TOGGLE_OFF else Buzz.CONFIRM); vm.toggleAdded() })
+    val toasts = LocalToasts.current
+    val markedText = stringResource(R.string.marked_toast)
     if (asking) {
         NotACameraSheet(
             device.knownAs,
             onDismiss = { asking = false },
-            onMark = { haptics.buzz(Buzz.CONFIRM); vm.mark(it); asking = false },
+            onMark = { k ->
+                val before = s.device?.knownAs
+                haptics.buzz(Buzz.CONFIRM)
+                vm.mark(k)
+                asking = false
+                if (k != null) toasts.show(markedText, undo = { vm.mark(before) })
+            },
             onReport = { reportWrongResult(context) },
         )
     }
@@ -181,7 +190,7 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
         Spacer(Modifier.height(Space.block))
         Box24 {
             Row(Modifier.fillMaxWidth().padding(horizontal = Space.card), verticalAlignment = Alignment.CenterVertically) {
-                Text(stringResource(s.trend.heading), style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })
+                Text(stringResource(if (s.lost) R.string.last_signal else s.trend.heading), style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })
                 when (s.trend) {
                     Trend.STRONGER -> Tag(stringResource(R.string.trend_stronger), TagKind.GOOD, icon = painterResource(R.drawable.ic_arrow_up))
                     Trend.WEAKER -> Tag(stringResource(R.string.trend_weaker), TagKind.KNOWN, icon = painterResource(R.drawable.ic_arrow_down))
@@ -216,7 +225,7 @@ private val Trend.heading: Int
     get() = when (this) {
         Trend.STRONGER -> R.string.getting_warmer
         Trend.WEAKER -> R.string.getting_colder
-        Trend.STEADY -> R.string.about_the_same
+        Trend.STEADY -> R.string.holding
     }
 
 @Preview

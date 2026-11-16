@@ -35,7 +35,7 @@ fun WifiOthersContent(w: WifiSnapshot, onBack: () -> Unit, onDevice: (String) ->
     val other = w.devices.filter { it.risk == Risk.UNKNOWN }
     DetailScreen(onBack, title = stringResource(R.string.other_devices_title)) {
         if (known.isEmpty() && other.isEmpty()) {
-            EmptyState(painterResource(R.drawable.ic_wifi), stringResource(R.string.other_devices_title), stringResource(R.string.nothing_answered_yet))
+            EmptyState(painterResource(R.drawable.ic_wifi), null, stringResource(R.string.nothing_answered_yet))
         }
         if (other.isNotEmpty()) {
             SectionLabel(stringResource(R.string.risk_not_recognised), meta = other.size.toString())

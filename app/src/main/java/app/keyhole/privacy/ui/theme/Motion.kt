@@ -39,31 +39,40 @@ fun <T> shortSpec(): FiniteAnimationSpec<T> = tween(Duration.SHORT, easing = Eas
 /** A steady loop over [ms] with no easing (WaitingDots steps through it). */
 fun <T> stepSpec(ms: Int): androidx.compose.animation.core.DurationBasedAnimationSpec<T> = tween(ms, easing = androidx.compose.animation.core.LinearEasing)
 
-/** Shared axis X: a 10% shift + fade. */
-private const val AXIS_SHIFT = 10
+/**
+ * Shared axis X, as Burrow and Weft: a 30 dp-ish slide (7.5 % of the width) on the emphasized curves over 450 ms,
+ * the new screen fading in just after the old one starts to leave. Nothing scales, nothing bounces.
+ */
+private const val AXIS_SHIFT = 30
+private const val AXIS_OF = 400
+private const val PUSH_MS = 450
+private const val FADE_IN_DELAY = 60
 
 typealias Enter = AnimatedContentTransitionScope<NavBackStackEntry>.() -> EnterTransition
 typealias Exit = AnimatedContentTransitionScope<NavBackStackEntry>.() -> ExitTransition
 
 object NavMotion {
     val push: Enter = {
-        slideInHorizontally(tween(Duration.STANDARD, easing = Easing.emphasizedDecelerate)) { it * AXIS_SHIFT / 100 } +
-            fadeIn(tween(Duration.STANDARD - FADE_OUT, delayMillis = FADE_OUT))
+        slideInHorizontally(tween(PUSH_MS, easing = Easing.emphasizedDecelerate)) { it * AXIS_SHIFT / AXIS_OF } +
+            fadeIn(tween(Duration.STANDARD, delayMillis = FADE_IN_DELAY))
     }
     val pushExit: Exit = {
-        slideOutHorizontally(tween(Duration.STANDARD, easing = Easing.emphasizedAccelerate)) { -(it * AXIS_SHIFT / 100) } +
-            fadeOut(tween(FADE_OUT))
+        slideOutHorizontally(tween(PUSH_MS, easing = Easing.emphasizedAccelerate)) { -(it * AXIS_SHIFT / AXIS_OF) } +
+            fadeOut(tween(Duration.SHORT))
     }
+    // Back follows the finger (predictive back), so it is seeked rather than played: the screen underneath starts
+    // showing at once and the one leaving fades over the whole swipe. The two always overlap; the middle of a slow
+    // swipe never shows an empty page.
     val pop: Enter = {
-        slideInHorizontally(tween(Duration.STANDARD, easing = Easing.emphasizedDecelerate)) { -(it * AXIS_SHIFT / 100) } +
-            fadeIn(tween(Duration.STANDARD - FADE_OUT, delayMillis = FADE_OUT))
+        slideInHorizontally(tween(PUSH_MS, easing = Easing.emphasizedDecelerate)) { -(it * AXIS_SHIFT / AXIS_OF) } +
+            fadeIn(tween(Duration.STANDARD))
     }
     val popExit: Exit = {
-        slideOutHorizontally(tween(Duration.STANDARD, easing = Easing.emphasizedAccelerate)) { it * AXIS_SHIFT / 100 } +
-            fadeOut(tween(FADE_OUT))
+        slideOutHorizontally(tween(PUSH_MS, easing = Easing.emphasizedAccelerate)) { it * AXIS_SHIFT / AXIS_OF } +
+            fadeOut(tween(PUSH_MS))
     }
 
-    /** Fade through: switching bottom tabs. Old fades out fast, new fades + scales in from 92%. */
+    /** Fade through: from one bottom tab to another, and only then. Old fades out fast, new fades + scales in from 92%. */
     val tabEnter: Enter = { fadeIn(tween(FADE_IN, delayMillis = FADE_OUT)) + scaleIn(tween(FADE_IN, delayMillis = FADE_OUT), initialScale = 0.92f) }
     val tabExit: Exit = { fadeOut(tween(FADE_OUT)) }
 }

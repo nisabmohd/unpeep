@@ -7,7 +7,7 @@ per-screen look options. Two things that look alike are one component.
 |---|---|---|
 | `LensRings` | Lens.kt | the lens drawing: rings + glint, or a progress arc with its dot |
 | `LensStartButton` | Lens.kt | Home's Start (the only filled hero) |
-| `LensProgress` | Lens.kt | the progress lens: an arc and a big value over one line (sweep); with a check's circle above a word or reading (Find it, Magnet) |
+| `LensProgress` | Lens.kt | the progress lens: an arc and a big value over one line (sweep); with a check's circle above a word or reading (Find it, Magnet); two sizes set by content: 220 (core 124) for a count, 248 (core 152) when the core holds an icon, a value and a line |
 | `LensHeader` / `EmptyState` | Lens.kt | first block of every detail screen; every empty list (lens header + line) |
 | `CheckRow` / `CheckIcon` | CheckRow.kt | the seven checks: Home (labels, scrolls), sweep and report (no labels) |
 | `Grouped` + `groupShape` | Rows.kt | a group of rows, 2 dp apart, 24/8 corners |
@@ -26,6 +26,7 @@ per-screen look options. Two things that look alike are one component.
 | `ChecklistRow` / `AnswerMarkCircle` | Rows.kt | a checklist item: hued circle, title, line, its answer mark (✓ · ? · − · empty) |
 | `NumberCircle` | Rows.kt | a numbered step's circle (If you find a camera) |
 | `ProgressLine` | Meter.kt | how far along a list is (checklist) |
+| `MovingLine` | Meter.kt | something on its way with no knowable end (asking GitHub): a thin line that keeps moving; never a spinner |
 | `KeyholeTextField` | Inputs.kt | the one text field: search pill or note box |
 | `PhotoThumb` | Inputs.kt | a proof photo's thumbnail, read off the main thread |
 | `AddPhotoTile` | Inputs.kt | takes a photo: a dashed square with a camera-add icon, its label beside it (checklist Not sure) |
@@ -44,6 +45,7 @@ per-screen look options. Two things that look alike are one component.
 | `CameraPreview` | Viewfinder.kt | the camera picture, centre-cropped, in the viewfinder |
 | `SpotRings` / `SpotMark` | Viewfinder.kt | rings around possible lenses, "Look here" beside the first |
 | `Shutter` | Viewfinder.kt | the viewfinder's shutter (saves a proof photo) |
+| `FinderPanel` | Viewfinder.kt | the lens finder's rounded panel under the picture (beside it on its side) holding every control; 288 dp, 28 dp top corners; on its side 272 dp wide on the trailing edge, leading corners round |
 | `TabTopBar` / `BackTopBar` | Bars.kt | tab title + actions / back + title + actions |
 | `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |

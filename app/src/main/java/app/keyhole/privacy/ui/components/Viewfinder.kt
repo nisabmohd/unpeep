@@ -1,5 +1,11 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
+import app.keyhole.privacy.ui.theme.shortSpec
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.runtime.key
 import app.keyhole.privacy.ui.theme.Alpha
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
@@ -91,7 +97,7 @@ fun CameraPreview(contentWidth: Int, contentHeight: Int, onTexture: (TextureView
 
 /** A possible lens on screen: its centre as a share of the view (0..1). */
 @Immutable
-data class SpotMark(val x: Float, val y: Float)
+data class SpotMark(val x: Float, val y: Float, /** The tracked spot it rings, so a ring glides with it instead of jumping. */ val id: Int = 0)
 
 /**
  * Rings around possible lenses: a ring for each, and [label] ("Look here") beside the first. Marks off the view are
@@ -106,17 +112,22 @@ fun SpotRings(marks: List<SpotMark>, label: String, description: String, modifie
         val w = with(density) { room.width.toDp() }
         val h = with(density) { room.height.toDp() }
         marks.filter { it.x in 0f..1f && it.y in 0f..1f }.forEachIndexed { i, m ->
-            val cx = w * m.x
-            val cy = h * m.y
-            // A soft glow, then the ring (08): the eye finds it at a glance on a dark picture.
-            Box(Modifier.offset(cx - Size.glintGlow / 2, cy - Size.glintGlow / 2).size(Size.glintGlow).clip(Shapes.pill).background(c.primary.copy(alpha = Alpha.glow)))
-            Box(Modifier.offset(cx - Size.glintRing / 2, cy - Size.glintRing / 2).size(Size.glintRing).border(Size.ring, c.primary, Shapes.pill))
-            Box(Modifier.offset(cx - Size.dot / 2, cy - Size.dot / 2).size(Size.dot).clip(Shapes.pill).background(Viewfinder.content))
-            if (i == 0) {
-                Text(
-                    label, style = KeyholeType.label, color = c.onPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis,
-                    modifier = Modifier.offset(cx + Size.glintRing / 2, cy - Size.glintRing).clip(Shapes.pill).background(c.primary).padding(horizontal = Space.block, vertical = Space.small),
-                )
+            key(m.id) {
+                // Each ring glides to its spot's new place (the tracker already smooths; this hides frame steps).
+                val ax by animateFloatAsState(m.x, shortSpec(), label = "ringX")
+                val ay by animateFloatAsState(m.y, shortSpec(), label = "ringY")
+                val cx = w * ax
+                val cy = h * ay
+                // A soft glow, then the ring (08): the eye finds it at a glance on a dark picture.
+                Box(Modifier.offset(cx - Size.glintGlow / 2, cy - Size.glintGlow / 2).size(Size.glintGlow).clip(Shapes.pill).background(c.primary.copy(alpha = Alpha.glow)))
+                Box(Modifier.offset(cx - Size.glintRing / 2, cy - Size.glintRing / 2).size(Size.glintRing).border(Size.ring, c.primary, Shapes.pill))
+                Box(Modifier.offset(cx - Size.dot / 2, cy - Size.dot / 2).size(Size.dot).clip(Shapes.pill).background(Viewfinder.content))
+                if (i == 0) {
+                    Text(
+                        label, style = KeyholeType.label, color = c.onPrimary, maxLines = 1, overflow = TextOverflow.Ellipsis,
+                        modifier = Modifier.offset(cx + Size.glintRing / 2, cy - Size.glintRing).clip(Shapes.pill).background(c.primary).padding(horizontal = Space.block, vertical = Space.small),
+                    )
+                }
             }
         }
     }
@@ -139,3 +150,20 @@ fun Shutter(icon: Painter, label: String, onClick: () -> Unit, modifier: Modifie
         }
     }
 }
+
+/**
+ * The finder's panel (final v2): every control of the lens finder on one rounded panel under the picture (beside it
+ * on its side), 288 dp tall with 28 dp top corners, so no spot is ever under a control.
+ */
+@Composable
+fun FinderPanel(modifier: Modifier = Modifier, sideways: Boolean = false, content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit) {
+    // Upright it sits under the picture (top corners round); on its side it sits on the trailing edge (leading corners round).
+    val place = if (sideways) Modifier.fillMaxHeight().width(Size.finderPanelSide).clip(Shapes.sidePanel) else Modifier.fillMaxWidth().clip(Shapes.sheet)
+    androidx.compose.foundation.layout.Column(
+        modifier.then(place).background(MaterialTheme.colorScheme.background),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = androidx.compose.foundation.layout.Arrangement.spacedBy(Space.block),
+        content = content,
+    )
+}
+

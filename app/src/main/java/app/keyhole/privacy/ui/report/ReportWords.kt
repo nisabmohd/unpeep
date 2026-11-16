@@ -19,6 +19,7 @@ import app.keyhole.privacy.domain.Risk
 import app.keyhole.privacy.domain.Sign
 import app.keyhole.privacy.domain.parseSign
 import app.keyhole.privacy.ui.checklist.look
+import app.keyhole.privacy.ui.icon
 import app.keyhole.privacy.ui.label
 import app.keyhole.privacy.ui.wifi.kindLabel
 import app.keyhole.privacy.ui.wifi.label
@@ -64,7 +65,7 @@ class ReportWords(private val res: Resources, private val is24Hour: Boolean = fa
         else -> f.title
     }
 
-    private fun source(f: Finding): String = s(
+    fun source(f: Finding): String = s(
         when (f.source) {
             FindingSource.WIFI -> R.string.source_wifi
             FindingSource.HOTSPOT -> R.string.source_hotspot
@@ -96,6 +97,23 @@ class ReportWords(private val res: Resources, private val is24Hour: Boolean = fa
         Gap.NoInfrared -> s(R.string.gap_no_infrared)
         Gap.MemoryCard -> s(R.string.gap_memory_card)
         Gap.OtherNetwork -> s(R.string.gap_other_network)
+    }
+
+    /** A gap as a row (10b): a short title, and [gapLine] under it. */
+    fun gapTitle(g: Gap): String = when (g) {
+        is Gap.NotRun -> s(g.check.label)
+        Gap.Isolated -> s(R.string.limit_isolation_title)
+        Gap.NoInfrared -> s(R.string.limit_infrared_title)
+        Gap.MemoryCard -> s(R.string.limit_memory_card_title)
+        Gap.OtherNetwork -> s(R.string.limit_other_network_title)
+    }
+
+    fun gapLine(g: Gap): String = when (g) {
+        is Gap.NotRun -> s(R.string.gap_skipped_line)
+        Gap.Isolated -> s(R.string.limit_isolation)
+        Gap.NoInfrared -> s(R.string.limit_infrared)
+        Gap.MemoryCard -> s(R.string.gap_memory_card_line)
+        Gap.OtherNetwork -> s(R.string.gap_other_network_line)
     }
 
     fun toLookAt(r: SavedReport): String = if (r.toLookAt > 0) res.getQuantityString(R.plurals.to_look_at, r.toLookAt, r.toLookAt) else s(R.string.nothing_found)
@@ -130,6 +148,16 @@ class ReportWords(private val res: Resources, private val is24Hour: Boolean = fa
     }
 
     companion object {
+        /** What no scan can see shows the thing itself (final v2); a skipped check shows its own icon. */
+        @androidx.annotation.DrawableRes
+        fun gapIcon(g: Gap): Int = when (g) {
+            is Gap.NotRun -> g.check.icon
+            Gap.Isolated -> R.drawable.ic_shield
+            Gap.NoInfrared -> R.drawable.ic_infrared
+            Gap.MemoryCard -> R.drawable.ic_memory_card
+            Gap.OtherNetwork -> R.drawable.ic_antenna
+        }
+
         /** One reason of a Wi-Fi device, as a sentence. */
         fun sign(res: Resources, sign: Sign): String = when (sign) {
             Sign.Onvif -> res.getString(R.string.sign_onvif)

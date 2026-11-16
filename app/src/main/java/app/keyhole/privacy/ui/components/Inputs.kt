@@ -147,6 +147,6 @@ fun AddPhotoTile(label: String, onClick: () -> Unit, modifier: Modifier = Modifi
             contentAlignment = Alignment.Center,
         ) { Icon(painterResource(R.drawable.ic_camera_add), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.icon)) }
         Spacer(Modifier.width(Space.card))
-        Text(label, style = KeyholeType.body, color = c.onSurfaceVariant)
+        Text(label, style = KeyholeType.supporting, color = c.onSurfaceVariant)
     }
 }

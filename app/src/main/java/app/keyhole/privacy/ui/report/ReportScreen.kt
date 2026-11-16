@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.report
 
+import app.keyhole.privacy.ui.icon
 import app.keyhole.privacy.ui.components.LocalToasts
 import androidx.compose.runtime.remember
 import android.content.Context
@@ -161,25 +162,31 @@ fun ReportScreen(vm: ReportViewModel, onBack: () -> Unit, onFinding: (Long) -> U
     val scope = rememberCoroutineScope()
     var renaming by rememberSaveable { mutableStateOf(false) }
     var undoing by rememberSaveable { mutableStateOf<Long?>(null) }
-    var exportResult by rememberSaveable { mutableStateOf<Boolean?>(null) }
     var exporting by remember { mutableStateOf(false) }
-    var saved by rememberSaveable { mutableStateOf<Uri?>(null) }
+    val savedText = stringResource(R.string.export_done)
+    val openText = stringResource(R.string.open)
+    val failedText = stringResource(R.string.export_failed)
+    val retryText = stringResource(R.string.try_again)
+    val pdfName = words.name(report).replace(Regex("[\\\\/:*?\"<>|]"), " ") + ".pdf"
+    // Try again opens the same "save as" (the launcher can't name itself while it is being made).
+    val retry = remember { arrayOf<() -> Unit>({}) }
     val export = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF)) { uri ->
         if (uri != null) scope.launch {
             exporting = true
             val ok = try { vm.export(context, uri) } finally { exporting = false }
             haptics.buzz(if (ok) Buzz.CONFIRM else Buzz.REJECT)
-            exportResult = ok
-            saved = uri.takeIf { ok }
+            // Either way a toast says what just happened (one look for events): saved, with Open (10h); not saved,
+            // with Try again (10i).
+            if (ok) toasts.show(savedText, action = openText, onAction = { openPdf(context, uri) })
+            else toasts.show(failedText, action = retryText, onAction = { retry[0]() }, icon = R.drawable.ic_info)
         }
     }
-    val pdfName = words.name(report).replace(Regex("[\\\\/:*?\"<>|]"), " ") + ".pdf"
+    retry[0] = { export.launch(pdfName) }
     ReportContent(
         report, words, onBack, onShare = { share(context, words.text(report)) }, onRename = { renaming = true },
         onFinding = { f -> if (f.finding.toLookAt) onFinding(f.id) else undoing = f.id }, onPhoto = onPhoto,
         onFoundSomething = onFoundSomething, onExport = { export.launch(pdfName) },
-        exportResult = exportResult, exporting = exporting,
-        onOpenPdf = saved?.let { uri -> { openPdf(context, uri) } },
+        exporting = exporting,
     )
     if (renaming) RenameSheet(report.name.ifBlank { "" }, onDismiss = { renaming = false }, onSave = { haptics.buzz(Buzz.CONFIRM); vm.rename(it); renaming = false })
     undoing?.let { id ->
@@ -191,7 +198,7 @@ fun ReportScreen(vm: ReportViewModel, onBack: () -> Unit, onFinding: (Long) -> U
 @Composable
 fun ReportContent(
     report: SavedReport, words: ReportWords, onBack: () -> Unit, onShare: () -> Unit, onRename: () -> Unit, onFinding: (SavedFinding) -> Unit,
-    onPhoto: (String) -> Unit, onFoundSomething: () -> Unit, onExport: () -> Unit, exportResult: Boolean? = null,
+    onPhoto: (String) -> Unit, onFoundSomething: () -> Unit, onExport: () -> Unit,
     exporting: Boolean = false, onOpenPdf: (() -> Unit)? = null,
 ) {
     val c = MaterialTheme.colorScheme
@@ -213,12 +220,6 @@ fun ReportContent(
             )
         },
     ) {
-        // Notes go first: how the export went.
-        when (exportResult) {
-            true -> Note(stringResource(R.string.export_done), tone = NoteTone.GOOD, action = onOpenPdf?.let { stringResource(R.string.open) }, onAction = { onOpenPdf?.invoke() })
-            false -> Note(stringResource(R.string.export_failed), tone = NoteTone.ERROR, action = stringResource(R.string.try_again), onAction = onExport)
-            null -> Unit
-        }
         LensHeader(
             painterResource(if (look) R.drawable.ic_shield_warning else R.drawable.ic_check_circle), words.name(report), line = words.whenLine(report),
             container = if (look) w.container else null, onContainer = if (look) w.onContainer else null,
@@ -273,7 +274,13 @@ fun ReportContent(
         }
         SectionLabel(stringResource(R.string.couldnt_check))
         Grouped {
-            report.gaps.forEach { g -> row { shape -> SignRow(painterResource(R.drawable.ic_not_checked), words.gap(g), shape = shape) } }
+            // The same row as every other list, calm (10b): a title, a muted line, and in a grey circle the skipped check's
+            // own icon or the thing no scan can see (memory card, antenna, shield). Never an alarm colour.
+            report.gaps.forEach { g ->
+                row { shape ->
+                    ListRow(words.gapTitle(g), shape = shape, line = words.gapLine(g), leading = { IconCircle(painterResource(ReportWords.gapIcon(g)), CircleTone.Neutral) })
+                }
+            }
         }
         Spacer(Modifier.height(Space.block))
         Note(stringResource(R.string.report_not_safe_note), tone = NoteTone.HONESTY)

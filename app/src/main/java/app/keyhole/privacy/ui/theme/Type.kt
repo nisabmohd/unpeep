@@ -40,6 +40,7 @@ fun BodyFont.family(): FontFamily = when (this) {
     BodyFont.OUTFIT -> OutfitFamily
     BodyFont.ATKINSON -> AtkinsonFamily
     BodyFont.SPACE_GROTESK -> SpaceGroteskFamily
+    BodyFont.SYSTEM -> FontFamily.Default
 }
 
 /** "Aa" written in [font] (Appearance › Font): the one place a font is chosen on screen, not by the theme. */
@@ -64,17 +65,17 @@ fun keyholeTypography(font: BodyFont, scale: Float, rtl: Boolean = false): Typog
     val supporting = s(14, 20, FontWeight.Normal)
     val label = s(14, 20, FontWeight.Medium)
     val caption = s(12, 16, FontWeight.Medium)
+    val small = s(12, 16, FontWeight.Normal)
     return Typography(
         displayLarge = display, displayMedium = display, displaySmall = display,
         headlineLarge = headline, headlineMedium = headline, headlineSmall = title,
         titleLarge = title, titleMedium = cardTitle, titleSmall = label,
-        bodyLarge = body, bodyMedium = supporting, bodySmall = supporting,
+        bodyLarge = body, bodyMedium = supporting, bodySmall = small,
         labelLarge = label, labelMedium = caption, labelSmall = caption,
     )
 }
 
-/** Nav and button labels shrink to fit long translations, never below these. */
-val NavLabelMinSize = 10.sp
+/** Button labels shrink to fit long translations, never below this. */
 val ButtonMinText = 12.sp
 
 /** The only text styles screens use. Colour is never part of a style. */
@@ -102,4 +103,7 @@ object KeyholeType {
 
     /** 12/16 Medium: nav, check row, tags. */
     val caption: TextStyle @Composable @ReadOnlyComposable get() = MaterialTheme.typography.labelMedium
+
+    /** 12/16 Regular: a scale's step names, beside the picked one in caption (Appearance › Text size). */
+    val small: TextStyle @Composable @ReadOnlyComposable get() = MaterialTheme.typography.bodySmall
 }

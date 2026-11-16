@@ -13,6 +13,8 @@ serialization = "1.8.1"
 profileinstaller = "1.4.1"
 benchmark = "1.5.0"
 uiautomator = "2.3.0"
+# Test only: Compose's test library brings Espresso 3.5, which calls InputManager.getInstance, gone in Android 17.
+espresso = "3.7.0"
 testExtJunit = "1.2.1"
 junit = "4.13.2"
 playReview = "2.0.2"
@@ -38,6 +40,7 @@ androidx-navigation-compose = { group = "androidx.navigation", name = "navigatio
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "serialization" }
 androidx-profileinstaller = { group = "androidx.profileinstaller", name = "profileinstaller", version.ref = "profileinstaller" }
 androidx-benchmark-macro-junit4 = { group = "androidx.benchmark", name = "benchmark-macro-junit4", version.ref = "benchmark" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso" }
 androidx-uiautomator = { group = "androidx.test.uiautomator", name = "uiautomator", version.ref = "uiautomator" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "testExtJunit" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }

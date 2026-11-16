@@ -91,7 +91,8 @@ class AccessibilityTest {
 
     @Test fun appearanceAtTwoHundredPercent() {
         big { AppearanceContent(Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) }
-        rule.onNodeWithText(text(R.string.check_checklist)).performScrollTo().assertIsDisplayed()
+        // Text size is the last block (sweep steps live on their own screen, 14).
+        rule.onNodeWithText(text(R.string.text_size_caption)).performScrollTo().assertIsDisplayed()
         everyTapIsBigEnoughAndNamed()
     }
 

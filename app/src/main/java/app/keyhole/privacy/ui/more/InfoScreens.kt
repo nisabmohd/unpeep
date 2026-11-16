@@ -1,5 +1,11 @@
 package app.keyhole.privacy.ui.more
 
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.width
+import androidx.compose.runtime.remember
+import app.keyhole.privacy.ui.components.Box24
+import app.keyhole.privacy.ui.components.MovingLine
+import app.keyhole.privacy.ui.components.LocalToasts
 import app.keyhole.privacy.ui.hue
 import androidx.compose.material3.Icon
 import app.keyhole.privacy.ui.theme.Shapes
@@ -170,21 +176,21 @@ fun HowItWorksScreen(onBack: () -> Unit) {
 
 /** More › What Keyhole can't find: the honest list (docs/LIMITS.md), and the checklist as the way to look by hand. */
 @Composable
-fun LimitsScreen(onBack: () -> Unit, onChecklist: () -> Unit) {
+fun LimitsScreen(onBack: () -> Unit) {
     DetailScreen(onBack) {
         LensHeader(painterResource(R.drawable.ic_eye_closed), stringResource(R.string.what_keyhole_cant_find), line = stringResource(R.string.limits_intro))
         Spacer(Modifier.height(Space.block))
+        // The four limits as rows (final v2, 13g): a title, one line, and the thing itself in a grey circle.
         Grouped {
             listOf(
-                R.string.limit_memory_card, R.string.limit_other_network, R.string.limit_isolation, R.string.limit_mac, R.string.limit_trackers,
-                R.string.limit_infrared, R.string.limit_hotspot_scans, R.string.limit_magnet, R.string.limit_lens,
-            ).forEach { line -> row { shape -> SignRow(null, stringResource(line), shape = shape) } }
+                Triple(R.string.limit_memory_card_title, R.string.limit_memory_card, R.drawable.ic_memory_card),
+                Triple(R.string.limit_other_network_title, R.string.limit_other_network, R.drawable.ic_antenna),
+                Triple(R.string.limit_isolation_title, R.string.limit_isolation, R.drawable.ic_shield),
+                Triple(R.string.limit_trackers_title, R.string.limit_trackers, R.drawable.ic_tag),
+            ).forEach { (title, line, icon) ->
+                row { shape -> ListRow(stringResource(title), shape = shape, line = stringResource(line), leading = { IconCircle(painterResource(icon), CircleTone.Neutral) }) }
+            }
         }
-        Spacer(Modifier.height(Space.block))
-        ListRow(
-            stringResource(R.string.check_checklist), line = stringResource(R.string.limits_by_hand),
-            leading = { IconCircle(painterResource(Check.CHECKLIST.icon), CircleTone.Hue(Check.CHECKLIST.hue)) }, onClick = onChecklist,
-        )
     }
 }
 
@@ -207,9 +213,9 @@ fun PrivacyScreen(vm: PrivacyViewModel, onBack: () -> Unit) {
     val context = LocalContext.current
     val haptics = rememberHaptics()
     var deleting by rememberSaveable { mutableStateOf(false) }
-    var deleted by rememberSaveable { mutableStateOf(false) }
+    val toasts = LocalToasts.current
+    val deletedText = stringResource(R.string.deleted_all)
     DetailScreen(onBack, title = stringResource(R.string.privacy)) {
-        if (deleted) Note(stringResource(R.string.deleted_all), tone = NoteTone.GOOD)
         LensHeader(painterResource(R.drawable.ic_lock), stringResource(R.string.privacy_line), line = stringResource(R.string.privacy_header_line))
         SectionLabel(stringResource(R.string.why_keyhole_asks))
         Grouped {
@@ -237,7 +243,7 @@ fun PrivacyScreen(vm: PrivacyViewModel, onBack: () -> Unit) {
     if (deleting) {
         DeleteSheet(
             onDismiss = { deleting = false },
-            onDelete = { haptics.buzz(Buzz.CONFIRM); vm.deleteAll { deleted = true }; deleting = false },
+            onDelete = { haptics.buzz(Buzz.CONFIRM); vm.deleteAll { toasts.show(deletedText) }; deleting = false },
             title = R.string.delete_all_title, line = R.string.delete_all_sheet_line,
         )
     }
@@ -258,11 +264,26 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
     // What GitHub said, kept across rotation: "new:<version>|<page>", "latest" or "failed"; null while asking or closed.
     var update by rememberSaveable { mutableStateOf<String?>(null) }
     var checking by rememberSaveable { mutableStateOf(false) }
+    var result by remember { mutableStateOf<UpdateResult?>(null) }
+    val runCheck = {
+        checking = true
+        result = null
+        scope.launch {
+            val r = UpdateCheck(BuildConfig.REPO_URL, BuildConfig.VERSION_NAME).check()
+            result = r
+            update = when (r) {
+                is UpdateResult.Newer -> "new:${r.version}|${r.page}"
+                is UpdateResult.Latest -> "latest"
+                UpdateResult.Failed -> "failed"
+            }
+            checking = false
+        }
+    }
     DetailScreen(onBack, title = stringResource(R.string.about)) {
         Column(Modifier.fillMaxWidth().padding(vertical = Space.heading), horizontalAlignment = Alignment.CenterHorizontally) {
             MarkTile(Size.logo)
             Spacer(Modifier.height(Space.block))
-            Text(stringResource(R.string.app_name), style = KeyholeType.headline, color = c.onSurface, modifier = Modifier.semantics { heading() })
+            Text(stringResource(R.string.app_name), style = KeyholeType.title, color = c.onSurface, modifier = Modifier.semantics { heading() })
             Text(stringResource(R.string.version_by, BuildConfig.VERSION_NAME), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
         }
         Grouped {
@@ -270,18 +291,7 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
                 ListRow(
                     stringResource(R.string.update_check), shape = shape, line = stringResource(R.string.update_check_line),
                     leading = { NeutralCircle(painterResource(R.drawable.ic_refresh)) },
-                    onClick = {
-                        checking = true
-                        scope.launch {
-                            val r = UpdateCheck(BuildConfig.REPO_URL, BuildConfig.VERSION_NAME).check()
-                            update = when (r) {
-                                is UpdateResult.Newer -> "new:${r.version}|${r.page}"
-                                is UpdateResult.Latest -> "latest"
-                                UpdateResult.Failed -> "failed"
-                            }
-                            checking = false
-                        }
-                    },
+                    onClick = { runCheck() },
                 )
             }
             row { shape ->
@@ -298,10 +308,11 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
                 )
             }
             row { shape ->
+                // A problem is reported where the code lives (17): a new GitHub issue; mid apps below is the email.
                 ListRow(
-                    stringResource(R.string.report_problem), shape = shape, line = BuildConfig.CONTACT_EMAIL,
+                    stringResource(R.string.report_problem), shape = shape, line = stringResource(R.string.report_problem_line),
                     leading = { NeutralCircle(painterResource(R.drawable.ic_mail)) }, trailing = { OpenIcon() },
-                    onClick = { send(context, Intent(Intent.ACTION_SENDTO, ("mailto:" + BuildConfig.CONTACT_EMAIL).toUri())) },
+                    onClick = { openInBrowser(context, BuildConfig.REPO_URL + "/issues/new") },
                 )
             }
             row { shape -> ListRow(stringResource(R.string.licences), shape = shape, line = stringResource(R.string.licences_line), leading = { NeutralCircle(painterResource(R.drawable.ic_reports)) }, onClick = onLicences) }
@@ -327,38 +338,21 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
         ListRow(
             stringResource(R.string.mid_apps), line = stringResource(R.string.about_contact, BuildConfig.CONTACT_EMAIL),
             leading = { Image(painterResource(R.drawable.app_mid_apps_mark), null, Modifier.size(Size.iconCircle).clip(Shapes.pill)) },
-            trailing = { Icon(painterResource(R.drawable.ic_mail), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.iconSmall)) },
+            trailing = { OpenIcon() },
             onClick = { send(context, Intent(Intent.ACTION_SENDTO, ("mailto:" + BuildConfig.CONTACT_EMAIL).toUri()).putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))) },
         )
         Text(
-            stringResource(R.string.made_by), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center,
+            stringResource(R.string.made_by), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(vertical = Space.heading),
         )
     }
     if (checking || update != null) {
-        val u = update
-        val newer = u?.startsWith("new:") == true
-        KeyholeSheet(
-            when {
-                u == null -> stringResource(R.string.update_checking)
-                newer -> stringResource(R.string.update_new_title, u.removePrefix("new:").substringBefore('|'))
-                u == "latest" -> stringResource(R.string.update_latest_title)
-                else -> stringResource(R.string.update_failed_title)
-            },
-            onDismiss = { update = null; checking = false },
-            line = when {
-                u == null -> stringResource(R.string.update_note)
-                newer -> stringResource(R.string.update_new_line)
-                u == "latest" -> stringResource(R.string.version_by, BuildConfig.VERSION_NAME)
-                else -> stringResource(R.string.update_failed_line)
-            },
-            footer = if (newer) { {
-                ButtonPair(
-                    secondary = { m -> SecondaryButton(stringResource(R.string.cancel), { update = null }, m) },
-                    primary = { m -> PrimaryButton(stringResource(R.string.update_open), { openInBrowser(context, u.substringAfter('|')); update = null }, m) },
-                )
-            } } else null,
-        ) { Spacer(Modifier.height(Space.block)) }
+        UpdateSheet(
+            result = result, checking = checking,
+            onDismiss = { update = null; result = null; checking = false },
+            onOpen = { page -> openInBrowser(context, page); update = null; result = null },
+            onRetry = { runCheck() },
+        )
     }
 }
 
@@ -425,3 +419,61 @@ private fun AppTile(@androidx.annotation.DrawableRes mark: Int, color: androidx.
 }
 
 private const val APP_MARK_SCALE = 1.15f
+
+/**
+ * Check for updates (17a–17d, github build): checking, with a moving line · on the latest version (Done) · a new
+ * version with what's new (Later / Open release page) · couldn't check (Close / Try again).
+ */
+@Composable
+private fun UpdateSheet(result: UpdateResult?, checking: Boolean, onDismiss: () -> Unit, onOpen: (String) -> Unit, onRetry: () -> Unit) {
+    val c = MaterialTheme.colorScheme
+    val r = if (checking) null else result
+    KeyholeSheet(
+        when (r) {
+            null -> stringResource(R.string.update_checking)
+            is UpdateResult.Newer -> stringResource(R.string.update_available)
+            is UpdateResult.Latest -> stringResource(R.string.update_latest_title)
+            UpdateResult.Failed -> stringResource(R.string.update_failed_title)
+        },
+        onDismiss = onDismiss,
+        line = when (r) {
+            null -> stringResource(R.string.update_asking)
+            is UpdateResult.Newer -> stringResource(R.string.update_versions, r.version, UpdateCheck.plain(BuildConfig.VERSION_NAME))
+            is UpdateResult.Latest -> stringResource(R.string.version_line, UpdateCheck.plain(BuildConfig.VERSION_NAME))
+            UpdateResult.Failed -> stringResource(R.string.update_failed_line)
+        },
+        footer = when (r) {
+            null -> null
+            is UpdateResult.Newer -> { {
+                ButtonPair(
+                    secondary = { m -> SecondaryButton(stringResource(R.string.later), onDismiss, m) },
+                    primary = { m -> PrimaryButton(stringResource(R.string.update_open), { onOpen(r.page) }, m) },
+                )
+            } }
+            is UpdateResult.Latest -> { { PrimaryButton(stringResource(R.string.done), onDismiss, Modifier.fillMaxWidth()) } }
+            UpdateResult.Failed -> { {
+                ButtonPair(
+                    secondary = { m -> SecondaryButton(stringResource(R.string.close), onDismiss, m) },
+                    primary = { m -> PrimaryButton(stringResource(R.string.try_again), onRetry, m) },
+                )
+            } }
+        },
+    ) {
+        when {
+            r == null -> {
+                // Asking GitHub: a line that keeps moving, never a spinner (17a).
+                MovingLine(Modifier.padding(horizontal = Space.heading, vertical = Space.block))
+            }
+            r is UpdateResult.Newer && r.notes.isNotEmpty() -> Box24(Modifier.padding(horizontal = Space.screen), title = stringResource(R.string.whats_new)) {
+                r.notes.forEach { n ->
+                    Row(Modifier.padding(horizontal = Space.card, vertical = Space.small), verticalAlignment = Alignment.CenterVertically) {
+                        Box(Modifier.size(Size.waitingDot).clip(Shapes.pill).background(c.primary))
+                        Spacer(Modifier.width(Space.block))
+                        Text(n, style = KeyholeType.supporting, color = c.onSurface)
+                    }
+                }
+            }
+        }
+        Spacer(Modifier.height(Space.block))
+    }
+}

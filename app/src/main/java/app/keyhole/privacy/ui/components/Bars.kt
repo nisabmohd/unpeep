@@ -45,7 +45,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
 import app.keyhole.privacy.ui.theme.KeyholeType
-import app.keyhole.privacy.ui.theme.NavLabelMinSize
 import app.keyhole.privacy.ui.theme.Shapes
 import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.Space
@@ -73,15 +72,19 @@ fun TabTopBar(title: String, modifier: Modifier = Modifier, actions: @Composable
 /** Top bar of a pushed screen: 72 dp, a round back button, an optional title, round actions at the end. */
 @Composable
 fun BackTopBar(onBack: () -> Unit, modifier: Modifier = Modifier, title: String? = null, close: Boolean = false, actions: @Composable RowScope.() -> Unit = {}) {
+    // The first screen of a tablet's second pane has nowhere to go back to while both panes show (review 2).
+    val inPane = LocalFirstInPane.current
     Row(
         modifier.fillMaxWidth().heightIn(min = Size.topBar).padding(horizontal = Space.screen),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(Space.inline),
     ) {
-        RoundIconButton(
-            painterResource(if (close) R.drawable.ic_close else R.drawable.ic_back),
-            stringResource(if (close) R.string.close else R.string.back), onBack,
-        )
+        if (!inPane) {
+            RoundIconButton(
+                painterResource(if (close) R.drawable.ic_close else R.drawable.ic_back),
+                stringResource(if (close) R.string.close else R.string.back), onBack,
+            )
+        }
         Box(Modifier.weight(1f).padding(start = Space.inline)) {
             if (title != null) {
                 BasicText(
@@ -107,9 +110,9 @@ fun TopBarAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
     ) {
         // Waiting (E01: "Scan again in 48 s"): muted, and not a target.
         BasicText(
-            text, style = KeyholeType.cardTitle.copy(color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
+            text, style = KeyholeType.label.copy(color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
             maxLines = 1, overflow = TextOverflow.Ellipsis, softWrap = false,
-            autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.cardTitle.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.label.fontSize),
         )
     }
 }
@@ -184,10 +187,8 @@ fun KeyholeNavBar(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit, 
                 icon = { Icon(painterResource(item.icon), contentDescription = null, modifier = Modifier.size(Size.icon)) },
                 label = {
                     CappedFontScale {
-                        BasicText(
-                            item.label, style = KeyholeType.caption.copy(color = LocalContentColor.current, textAlign = TextAlign.Center), maxLines = 1,
-                            autoSize = TextAutoSize.StepBased(minFontSize = NavLabelMinSize, maxFontSize = KeyholeType.caption.fontSize),
-                        )
+                        // One size for all three labels (none shrunk alone); "…" only if a translation can't fit.
+                        Text(item.label, style = KeyholeType.caption, color = LocalContentColor.current, textAlign = TextAlign.Center, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
                     }
                 },
                 colors = NavigationBarItemDefaults.colors(
@@ -223,10 +224,8 @@ fun KeyholeNavRail(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit,
                 icon = { Icon(painterResource(item.icon), contentDescription = null, modifier = Modifier.size(Size.icon)) },
                 label = {
                     CappedFontScale {
-                        BasicText(
-                            item.label, style = KeyholeType.caption.copy(color = LocalContentColor.current, textAlign = TextAlign.Center), maxLines = 1,
-                            autoSize = TextAutoSize.StepBased(minFontSize = NavLabelMinSize, maxFontSize = KeyholeType.caption.fontSize),
-                        )
+                        // One size for all three labels (none shrunk alone); "…" only if a translation can't fit.
+                        Text(item.label, style = KeyholeType.caption, color = LocalContentColor.current, textAlign = TextAlign.Center, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
                     }
                 },
                 colors = androidx.compose.material3.NavigationRailItemDefaults.colors(
@@ -237,3 +236,6 @@ fun KeyholeNavRail(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit,
         }
     }
 }
+
+/** True inside a tablet's second pane for its first screen: no back button there (T02, T04). Deeper screens keep it. */
+val LocalFirstInPane = androidx.compose.runtime.compositionLocalOf { false }

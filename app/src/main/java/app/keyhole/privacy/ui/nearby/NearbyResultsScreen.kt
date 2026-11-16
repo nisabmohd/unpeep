@@ -215,7 +215,7 @@ fun NearbyOthersContent(n: NearbySnapshot, onBack: () -> Unit, onFind: (String) 
     val other = n.devices.filter { it.risk == Risk.UNKNOWN }
     DetailScreen(onBack, title = stringResource(words.othersTitle)) {
         if (other.isEmpty()) {
-            EmptyState(painterResource(n.check.icon), stringResource(words.othersTitle), stringResource(R.string.nothing_flagged_yet))
+            EmptyState(painterResource(n.check.icon), null, stringResource(R.string.nothing_flagged_yet))
         } else {
             Note(stringResource(words.othersLine))
             Spacer(Modifier.height(Space.block))

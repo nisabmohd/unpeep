@@ -1,5 +1,14 @@
 package app.keyhole.privacy.ui.lens
 
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import app.keyhole.privacy.ui.components.FinderPanel
+import app.keyhole.privacy.optics.onScreen
+import app.keyhole.privacy.ui.theme.shortSpec
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.layout.fillMaxHeight
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
@@ -135,7 +144,9 @@ fun LensScreen(vm: LensViewModel, onBack: () -> Unit, onNext: (Check?) -> Unit) 
     val granted = s.status != CameraStatus.NEEDS_PERMISSION
     LifecycleResumeEffect(granted, texture, spec, s.attempt) {
         val surface = texture?.surfaceTexture
-        if (granted && surface != null && spec != null) {
+        // Asked here too, not only from the state: on a first run the state starts as "starting" before the
+        // permission check has run, and opening the camera without it ends in "Can't open the camera".
+        if (granted && Access.granted(context, Check.LENS) && surface != null && spec != null) {
             controller.start(spec, surface, vm.state.value.camera, vm, onRunning = vm::onRunning, onProblem = vm::onProblem)
         }
         onPauseOrDispose { controller.stop() }
@@ -168,6 +179,7 @@ fun LensScreen(vm: LensViewModel, onBack: () -> Unit, onNext: (Check?) -> Unit) 
             onZoom = { haptics.buzz(if (s.zoom2x) Buzz.TOGGLE_OFF else Buzz.TOGGLE_ON); vm.toggleZoom() },
             onTorch = { haptics.buzz(if (s.torch) Buzz.TOGGLE_OFF else Buzz.TOGGLE_ON); vm.toggleTorch() },
             onTips = { tips = true },
+            onFlip = { haptics.buzz(Buzz.TICK); vm.flip() },
             onShutter = { vm.onPhoto(texture?.bitmap) },
             onAllow = { if (ask.settingsOnly) openAppSettings(context) else ask.ask() }, settingsOnly = ask.settingsOnly,
             onRetry = vm::retry, photoFailed = photoFailed,
@@ -216,25 +228,33 @@ private const val CHANNEL_MAX = 255f
 fun LensContent(
     s: LensState, onBack: () -> Unit, onNext: () -> Unit, onMode: (Check) -> Unit, onFilter: (LensFilter) -> Unit,
     onZoom: () -> Unit, onTorch: () -> Unit, onTips: () -> Unit, onShutter: () -> Unit, onAllow: () -> Unit, settingsOnly: Boolean,
-    onRetry: () -> Unit, photoFailed: Boolean = false, preview: @Composable (Modifier) -> Unit = {},
+    onRetry: () -> Unit, photoFailed: Boolean = false, preview: @Composable (Modifier) -> Unit = {}, onFlip: () -> Unit = {},
 ) {
     val c = MaterialTheme.colorScheme
     val running = s.status == CameraStatus.RUNNING || s.status == CameraStatus.STARTING
-    // On its side (T05, large screens ignore the portrait lock): the picture fills the screen, the controls move to a
-    // rail on the trailing side.
+    // On its side (T05, large screens ignore the portrait lock): the controls move to a panel on the trailing side.
     val config = androidx.compose.ui.platform.LocalConfiguration.current
     val sideways = config.screenWidthDp > config.screenHeightDp
+    // The spots on screen: the camera sees a little more than the picture shows (centre crop), so the count and the
+    // rings are the same spots, never "3 spots" with nothing ringed.
+    var box by remember { mutableStateOf(IntSize.Zero) }
+    val density = androidx.compose.ui.platform.LocalDensity.current
+    val marks = s.spec?.takeIf { box.width > 0 }?.let { spec ->
+        val scale = cropScale(spec.uprightWidth.toFloat(), spec.uprightHeight.toFloat(), box.width.toFloat(), box.height.toFloat())
+        val clear = if (sideways || box.height == 0) 1f else 1f - with(density) { Size.panelCorner.toPx() } / box.height
+        s.spots.map { val (x, y) = toView(it.x, it.y, scale); SpotMark(x, y, it.id) }.filter { onScreen(it.x, it.y) && it.y <= clear }
+    }.orEmpty()
     val topBar: @Composable () -> Unit = {
         BackTopBar(
             onBack, Modifier.widthIn(max = Size.contentMax),
             title = stringResource(if (s.mode == Check.INFRARED) R.string.infrared_finder else R.string.lens_finder), close = s.sweep,
+            // Back, title, Next in a sweep, tips (review 2): the spot count sits on the picture, so all of it fits 360 dp.
             actions = {
-                if (running) Tag(pluralStringResource(R.plurals.spots_count, s.spots.size, s.spots.size), TagKind.KNOWN)
                 if (s.sweep) TopBarAction(stringResource(if (s.next == null) R.string.see_report else R.string.next), onNext)
+                if (!sideways) RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips)
             },
         )
     }
-    var box by remember { mutableStateOf(IntSize.Zero) }
     val picture: @Composable (Modifier) -> Unit = { m ->
         Box(m.onSizeChanged { box = it }) {
             when (s.status) {
@@ -243,15 +263,24 @@ fun LensContent(
                 CameraStatus.FAILED -> CameraMessage(R.drawable.ic_camera, R.string.camera_problem_title, R.string.camera_failed_line)
                 CameraStatus.NO_CAMERA -> CameraMessage(R.drawable.ic_camera, R.string.no_camera_title, R.string.block_no_bluetooth_line)
                 CameraStatus.STARTING, CameraStatus.RUNNING -> {
-                    preview(Modifier.fillMaxSize())
-                    val spec = s.spec
-                    if (spec != null && box.width > 0) {
-                        val scale = cropScale(spec.uprightWidth.toFloat(), spec.uprightHeight.toFloat(), box.width.toFloat(), box.height.toFloat())
-                        val marks = s.spots.map { val (x, y) = toView(it.x, it.y, scale); SpotMark(x, y) }
-                        SpotRings(marks, stringResource(R.string.look_here), pluralStringResource(R.plurals.spots_ringed, marks.size, marks.size))
+                    // The picture shows only once this camera is running, and fades in; switching Lens ↔ Infrared
+                    // never shows the other camera's last frame, stretched (08e: "Opening the camera").
+                    val shown by animateFloatAsState(if (s.status == CameraStatus.RUNNING) 1f else 0f, shortSpec(), label = "picture")
+                    preview(Modifier.fillMaxSize().graphicsLayer { alpha = shown })
+                    if (s.status == CameraStatus.STARTING) {
+                        Text(
+                            stringResource(R.string.opening_camera), style = KeyholeType.supporting, color = c.onSurfaceVariant,
+                            modifier = Modifier.align(Alignment.Center),
+                        )
                     }
-                    // Notes go first: on top of the picture.
-                    Column(Modifier.padding(Space.screen), verticalArrangement = Arrangement.spacedBy(Space.inline)) {
+                    SpotRings(marks, stringResource(R.string.look_here), pluralStringResource(R.plurals.spots_ringed, marks.size, marks.size))
+                    // On the picture, under the top bar: the spot count, then any Note.
+                    val spots: @Composable () -> Unit = { Tag(pluralStringResource(R.plurals.spots_count, marks.size, marks.size), TagKind.KNOWN) }
+                    Column(
+                        Modifier.statusBarsPadding().padding(top = Size.topBar).padding(horizontal = Space.screen, vertical = Space.block),
+                        verticalArrangement = Arrangement.spacedBy(Space.inline),
+                    ) {
+                        spots()
                         if (s.mode == Check.INFRARED && s.seesInfrared == false) {
                             Note(stringResource(R.string.ir_blocked_text), title = stringResource(R.string.ir_blocked_title), tone = NoteTone.WARNING)
                         }
@@ -262,37 +291,52 @@ fun LensContent(
         }
     }
     if (sideways) {
-        Row(Modifier.fillMaxSize().background(c.background).statusBarsPadding().navigationBarsPadding()) {
-            Column(Modifier.weight(1f).fillMaxSize()) {
-                topBar()
-                picture(Modifier.weight(1f).fillMaxWidth())
-                if (running) {
-                    Row(Modifier.fillMaxWidth().padding(Space.block), verticalAlignment = Alignment.CenterVertically) {
-                        LensFilters(s, onFilter, onZoom, Modifier.weight(1f))
-                    }
-                }
-                when (s.status) {
-                    CameraStatus.NEEDS_PERMISSION -> Dock { PrimaryButton(stringResource(if (settingsOnly) R.string.open_settings else R.string.allow), onAllow, Modifier.fillMaxWidth()) }
-                    CameraStatus.IN_USE, CameraStatus.FAILED -> Dock { PrimaryButton(stringResource(R.string.try_again), onRetry, Modifier.fillMaxWidth(), icon = painterResource(R.drawable.ic_refresh)) }
-                    else -> Unit
+        // T05: the picture on the left with the top bar (and tips) over it; every control on a panel on the trailing
+        // side: Lens · Infrared, the filters two by two, then Switch camera · shutter · torch at the bottom. Lens and
+        // the torch share an icon, so they are never two round buttons in one rail.
+        Row(Modifier.fillMaxSize().background(c.background)) {
+            Box(Modifier.weight(1f).fillMaxHeight()) {
+                picture(Modifier.fillMaxSize())
+                Row(Modifier.fillMaxWidth().statusBarsPadding().align(Alignment.TopStart), verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.weight(1f)) { topBar() }
+                    RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips, Modifier.padding(end = Space.screen))
                 }
             }
-            LensRail(s, running, onMode, onTorch, onTips, onShutter)
+            FinderPanel(Modifier.navigationBarsPadding(), sideways = true) {
+                Column(
+                    Modifier.fillMaxHeight().statusBarsPadding().padding(vertical = Space.screen),
+                    verticalArrangement = Arrangement.spacedBy(Space.block),
+                ) {
+                LensModes(s, onMode, Modifier.padding(horizontal = Space.screen))
+                if (running) LensFilterGrid(s, onFilter, onZoom, Modifier.padding(horizontal = Space.screen))
+                if (running) LensHint(s, Modifier.fillMaxWidth().padding(horizontal = Space.screen), oneLine = false)
+                Spacer(Modifier.weight(1f))
+                when (s.status) {
+                    CameraStatus.NEEDS_PERMISSION -> PrimaryButton(stringResource(if (settingsOnly) R.string.open_settings else R.string.allow), onAllow, Modifier.fillMaxWidth().padding(horizontal = Space.screen))
+                    CameraStatus.IN_USE, CameraStatus.FAILED -> PrimaryButton(stringResource(R.string.try_again), onRetry, Modifier.fillMaxWidth().padding(horizontal = Space.screen), icon = painterResource(R.drawable.ic_refresh))
+                    else -> if (running) ShutterControls(s, onTorch, onFlip, onShutter, Modifier.padding(horizontal = Space.screen))
+                }
+                }
+            }
         }
         return
     }
-    Column(Modifier.fillMaxSize().background(c.background).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
-        topBar()
-        picture(Modifier.weight(1f).fillMaxWidth())
-        LensControls(s, running, onMode, onFilter, onZoom, onTorch, onTips, onShutter)
-        when (s.status) {
-            CameraStatus.NEEDS_PERMISSION -> Dock(Modifier.widthIn(max = Size.contentMax)) {
-                PrimaryButton(stringResource(if (settingsOnly) R.string.open_settings else R.string.allow), onAllow, Modifier.fillMaxWidth())
+    // Picture and panel (final v2): the picture runs from the top edge, behind the status bar and the top bar, and
+    // stops at a rounded panel that holds every control, so a ring is never covered. Only the top bar and the spot
+    // count sit on the picture.
+    Box(Modifier.fillMaxSize().background(c.background)) {
+        val panel = Size.finderPanel + WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+        // Under the panel's rounded corners the picture still shows; spots there are never ringed (see marks).
+        picture(Modifier.fillMaxWidth().fillMaxHeight().padding(bottom = panel - Size.panelCorner))
+        Box(Modifier.statusBarsPadding()) { topBar() }
+        FinderPanel(Modifier.align(Alignment.BottomCenter).heightIn(min = panel)) {
+            LensControls(s, running, onMode, onFilter, onZoom, onTorch, onFlip, onShutter)
+            when (s.status) {
+                CameraStatus.NEEDS_PERMISSION -> PrimaryButton(stringResource(if (settingsOnly) R.string.open_settings else R.string.allow), onAllow, Modifier.fillMaxWidth().padding(horizontal = Space.screen))
+                CameraStatus.IN_USE, CameraStatus.FAILED -> PrimaryButton(stringResource(R.string.try_again), onRetry, Modifier.fillMaxWidth().padding(horizontal = Space.screen), icon = painterResource(R.drawable.ic_refresh))
+                else -> Unit
             }
-            CameraStatus.IN_USE, CameraStatus.FAILED -> Dock(Modifier.widthIn(max = Size.contentMax)) {
-                PrimaryButton(stringResource(R.string.try_again), onRetry, Modifier.fillMaxWidth(), icon = painterResource(R.drawable.ic_refresh))
-            }
-            else -> Spacer(Modifier.navigationBarsPadding())
+            Spacer(Modifier.navigationBarsPadding())
         }
     }
 }
@@ -316,55 +360,81 @@ private fun LensFilters(s: LensState, onFilter: (LensFilter) -> Unit, onZoom: ()
 }
 
 /**
- * The trailing rail on its side (T05): Lens · Infrared at the top, the shutter in the middle, the torch and tips
- * below. The same controls as upright, in a column.
+ * The hint, and how many photos were saved for the report. Upright it is one line (the rest is in tips); in the
+ * narrower side panel it may wrap (T05a).
  */
 @Composable
-private fun LensRail(s: LensState, running: Boolean, onMode: (Check) -> Unit, onTorch: () -> Unit, onTips: () -> Unit, onShutter: () -> Unit) {
-    Column(
-        Modifier.fillMaxHeight().padding(horizontal = Space.block, vertical = Space.screen),
-        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.block),
-    ) {
-        RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.check_lens), { onMode(Check.LENS) }, active = s.mode == Check.LENS)
-        RoundIconButton(painterResource(R.drawable.ic_infrared), stringResource(R.string.check_infrared), { onMode(Check.INFRARED) }, active = s.mode == Check.INFRARED)
-        Spacer(Modifier.weight(1f))
-        if (running) Shutter(painterResource(R.drawable.ic_camera), stringResource(R.string.take_photo), onShutter, enabled = s.status == CameraStatus.RUNNING)
-        Spacer(Modifier.weight(1f))
-        if (running && s.mode == Check.LENS && s.spec?.hasTorch == true) RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.torch), onTorch, active = s.torch)
-        RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips)
+private fun LensHint(s: LensState, modifier: Modifier, oneLine: Boolean) {
+    val c = MaterialTheme.colorScheme
+    Column(modifier, horizontalAlignment = Alignment.CenterHorizontally) {
+        Text(
+            stringResource(if (s.mode == Check.INFRARED) R.string.infrared_hint else R.string.lens_hint), style = KeyholeType.supporting,
+            color = c.onSurfaceVariant, textAlign = TextAlign.Center, maxLines = if (oneLine) 1 else Int.MAX_VALUE,
+            overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis,
+        )
+        if (s.photos > 0) Text(pluralStringResource(R.plurals.photos_saved, s.photos, s.photos), style = KeyholeType.supporting, color = c.primary, textAlign = TextAlign.Center)
     }
+}
+
+/** The filters two by two, filling the side panel (T05). */
+@Composable
+private fun LensFilterGrid(s: LensState, onFilter: (LensFilter) -> Unit, onZoom: () -> Unit, modifier: Modifier = Modifier) {
+    val chips = buildList<@Composable (Modifier) -> Unit> {
+        add { m -> Chip(stringResource(R.string.filter_none), s.filter == LensFilter.NONE, { onFilter(LensFilter.NONE) }, m, fill = true) }
+        add { m -> Chip(stringResource(R.string.filter_red), s.filter == LensFilter.RED, { onFilter(LensFilter.RED) }, m, fill = true) }
+        add { m -> Chip(stringResource(R.string.filter_contrast), s.filter == LensFilter.CONTRAST, { onFilter(LensFilter.CONTRAST) }, m, fill = true) }
+        if (s.spec?.canZoom2x == true) add { m -> Chip(stringResource(R.string.zoom_2x), s.zoom2x, onZoom, m, fill = true) }
+    }
+    Column(modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(Space.inline)) {
+        chips.chunked(2).forEach { pair ->
+            Row(horizontalArrangement = Arrangement.spacedBy(Space.inline)) {
+                pair.forEach { it(Modifier.weight(1f)) }
+                if (pair.size == 1) Spacer(Modifier.weight(1f))
+            }
+        }
+    }
+}
+
+/** Switch camera · shutter · torch: the same row upright and on its side. */
+@Composable
+private fun ShutterControls(s: LensState, onTorch: () -> Unit, onFlip: () -> Unit, onShutter: () -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
+        // Switch camera on the left, as a phone's camera app has it; the torch on the right.
+        RoundIconButton(painterResource(R.drawable.ic_flip_camera), stringResource(R.string.switch_camera), onFlip)
+        Shutter(painterResource(R.drawable.ic_camera), stringResource(R.string.take_photo), onShutter, enabled = s.status == CameraStatus.RUNNING)
+        if (s.mode == Check.LENS && s.spec?.hasTorch == true) {
+            RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.torch), onTorch, active = s.torch)
+        } else {
+            Spacer(Modifier.size(Size.iconButton))
+        }
+    }
+}
+
+/** Lens · Infrared: the one labelled control for the two finders (it hugs its labels over the viewfinder). */
+@Composable
+private fun LensModes(s: LensState, onMode: (Check) -> Unit, modifier: Modifier = Modifier, fill: Boolean = false) {
+    Segmented(
+        listOf(Segment(stringResource(R.string.check_lens), painterResource(R.drawable.ic_lens)), Segment(stringResource(R.string.check_infrared), painterResource(R.drawable.ic_infrared))),
+        if (s.mode == Check.INFRARED) 1 else 0, { onMode(if (it == 1) Check.INFRARED else Check.LENS) }, modifier, fill = fill,
+    )
 }
 
 /** Filters and 2× · Lens or Infrared · the hint · tips, the shutter and the torch. */
 @Composable
 private fun LensControls(
     s: LensState, running: Boolean, onMode: (Check) -> Unit, onFilter: (LensFilter) -> Unit,
-    onZoom: () -> Unit, onTorch: () -> Unit, onTips: () -> Unit, onShutter: () -> Unit,
+    onZoom: () -> Unit, onTorch: () -> Unit, onFlip: () -> Unit, onShutter: () -> Unit,
 ) {
     val c = MaterialTheme.colorScheme
     Column(
-        Modifier.widthIn(max = Size.contentMax).fillMaxWidth().padding(top = Space.block),
+        Modifier.widthIn(max = Size.contentMax).fillMaxWidth().padding(top = Space.heading),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.block),
     ) {
         if (running) LensFilters(s, onFilter, onZoom, Modifier.padding(horizontal = Space.screen))
-        Segmented(
-            listOf(Segment(stringResource(R.string.check_lens), painterResource(R.drawable.ic_lens)), Segment(stringResource(R.string.check_infrared), painterResource(R.drawable.ic_infrared))),
-            if (s.mode == Check.INFRARED) 1 else 0, { onMode(if (it == 1) Check.INFRARED else Check.LENS) },
-        )
+        LensModes(s, onMode)
         if (running) {
-            Column(Modifier.padding(horizontal = Space.heading), horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(stringResource(if (s.mode == Check.INFRARED) R.string.infrared_hint else R.string.lens_hint), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
-                if (s.photos > 0) Text(pluralStringResource(R.plurals.photos_saved, s.photos, s.photos), style = KeyholeType.supporting, color = c.primary, textAlign = TextAlign.Center)
-            }
-            Row(Modifier.fillMaxWidth().padding(horizontal = Space.heading, vertical = Space.block), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
-                RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips)
-                Shutter(painterResource(R.drawable.ic_camera), stringResource(R.string.take_photo), onShutter, enabled = s.status == CameraStatus.RUNNING)
-                if (s.mode == Check.LENS && s.spec?.hasTorch == true) {
-                    RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.torch), onTorch, active = s.torch)
-                } else {
-                    Spacer(Modifier.size(Size.iconButton))
-                }
-            }
+            LensHint(s, Modifier.padding(horizontal = Space.heading), oneLine = true)
+            ShutterControls(s, onTorch, onFlip, onShutter, Modifier.padding(horizontal = Space.heading, vertical = Space.block))
         }
     }
 }
@@ -378,6 +448,7 @@ internal fun LensTipsSheet(mode: Check, onDismiss: () -> Unit, onTestAgain: () -
             row { shape -> SignRow(painterResource(R.drawable.ic_walking), stringResource(R.string.tip_slow), shape = shape) }
             row { shape -> SignRow(painterResource(R.drawable.ic_search), stringResource(R.string.tip_places), shape = shape) }
             row { shape -> SignRow(painterResource(R.drawable.ic_lens), stringResource(R.string.tip_glint), shape = shape) }
+            row { shape -> SignRow(painterResource(R.drawable.ic_camera), stringResource(R.string.tip_photo), shape = shape) }
             if (mode == Check.INFRARED) row { shape -> SignRow(painterResource(R.drawable.ic_infrared), stringResource(R.string.tip_infrared), shape = shape) }
         }
         Spacer(Modifier.height(Space.block))

@@ -89,6 +89,26 @@ val WifiDevice.title: String get() = name ?: ip
 fun signText(sign: Sign): String = app.keyhole.privacy.ui.report.ReportWords.sign(androidx.compose.ui.platform.LocalContext.current.resources, sign)
 
 /** The first reason, for a row's second line; a device with no reason says so. */
+/**
+ * A row's line (04): the reason in a few words, with the port where it tells something ("Answers as a camera ·
+ * port 554", "Has a web page on port 8080"). The device screen gives every reason in full.
+ */
+@Composable
+fun WifiDevice.rowReason(): String {
+    val signs = verdict.signs
+    val rtsp = signs.filterIsInstance<Sign.Rtsp>().firstOrNull()?.port
+    val webPort = evidence.openPorts.firstOrNull { it in WEB_PORTS && it != DEFAULT_WEB_PORT }
+    return when {
+        verdict.risk == Risk.LIKELY_CAMERA && rtsp != null -> stringResource(R.string.row_camera_port, rtsp)
+        verdict.risk == Risk.LIKELY_CAMERA -> stringResource(R.string.row_camera)
+        Sign.WebPage in signs && webPort != null -> stringResource(R.string.row_web_port, webPort)
+        else -> reason()
+    }
+}
+
+private val WEB_PORTS = setOf(80, 8000, 8080, 8443, 443, 81, 88, 8888)
+private const val DEFAULT_WEB_PORT = 80
+
 @Composable
 fun WifiDevice.reason(): String = verdict.signs.firstOrNull()?.let { signText(it) } ?: stringResource(R.string.sign_none)
 
@@ -111,7 +131,7 @@ fun DeviceTag(device: WifiDevice) {
 fun DeviceListRow(device: WifiDevice, modifier: Modifier = Modifier, shape: Shape = Shapes.surface, onClick: (() -> Unit)? = null) {
     ListRow(
         device.title, modifier, shape,
-        line = if (onClick == null) device.ip.takeIf { device.name != null } else device.reason(),
+        line = if (onClick == null) device.ip.takeIf { device.name != null } else device.rowReason(),
         leading = { IconCircle(painterResource(device.icon), device.risk.tone) },
         tag = if (onClick == null && device.risk != Risk.UNKNOWN) { { DeviceTag(device) } } else null,
         onClick = onClick,

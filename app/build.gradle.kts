@@ -178,5 +178,6 @@ dependencies {
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.androidx.test.espresso.core) // 3.7: runs on Android 17 (see libs.versions.toml)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
 }

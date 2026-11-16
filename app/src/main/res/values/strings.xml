@@ -62,7 +62,7 @@
 
     <!-- 12 Reports -->
     <string name="reports_empty_title">No reports yet</string>
-    <string name="reports_empty_line">Check a room and its report is kept here, on this phone only.</string>
+    <string name="reports_empty_line">Check a room and its report shows up here.</string>
 
     <!-- 13 More -->
     <string name="appearance">Appearance</string>
@@ -103,7 +103,7 @@
     <string name="colour_accent">Dark blue</string>
     <string name="font_lexend" translatable="false">Lexend</string>
     <string name="font_outfit" translatable="false">Outfit</string>
-    <string name="font_atkinson" translatable="false">Atkinson</string>
+    <string name="font_atkinson" translatable="false">Atkinson Hyperlegible</string>
     <string name="font_space_grotesk" translatable="false">Space Grotesk</string>
 
     <!-- Actions used on more than one screen -->
@@ -124,7 +124,7 @@
     <string name="found_so_far">Found so far</string>
     <string name="nothing_answered_yet">Nothing has answered yet</string>
     <string name="not_on_wifi_title">Not on Wi-Fi</string>
-    <string name="not_on_wifi_line">Join the Wi-Fi of this room, then scan again. Keyhole only checks the network you\'re on.</string>
+    <string name="not_on_wifi_line">Join this room\'s Wi-Fi, then scan again.</string>
     <string name="next_wifi">Next: Wi-Fi</string>
     <string name="next_hotspots">Next: hotspots</string>
     <string name="next_bluetooth">Next: Bluetooth</string>
@@ -165,9 +165,9 @@
         <item quantity="other">%1$d devices on this Wi-Fi</item>
     </plurals>
     <string name="isolation_title">Only the router answered</string>
-    <string name="isolation_text">This Wi-Fi may keep devices apart, so a camera on it can\'t be seen from here. The other checks still work.</string>
+    <string name="isolation_text">This Wi-Fi keeps devices apart, so a camera on it can\'t be seen. The other checks still work.</string>
     <string name="wifi_none_title">No cameras found on this Wi-Fi</string>
-    <string name="wifi_none_text">A camera on another network, on mobile data or recording to a memory card doesn\'t show up in this scan.</string>
+    <string name="wifi_none_text">Cameras on other networks or memory cards don\'t show here.</string>
     <plurals name="known_devices">
         <item quantity="one">%1$d known device</item>
         <item quantity="other">%1$d known devices</item>
@@ -216,8 +216,6 @@
     <string name="maker_likely">%1$s, likely</string>
     <string name="not_a_camera">Not a camera?</string>
     <string name="not_a_camera_line">Mark it as yours or the room\'s</string>
-    <string name="marked_mine_line">You marked it as yours</string>
-    <string name="marked_room_line">You marked it as part of the room</string>
     <string name="found_it">Found it?</string>
     <string name="find_its_lens">Find its lens</string>
     <string name="share_footer">Checked with Keyhole. Nothing was sent anywhere.</string>
@@ -230,7 +228,7 @@
     <string name="part_of_the_room_line">The TV, a speaker or the router</string>
     <string name="not_sure">Not sure</string>
     <string name="not_sure_line">Keep it on the list to check</string>
-    <string name="report_wrong">Keyhole got it wrong? Report it to help fix the device list</string>
+    <string name="report_wrong">Got it wrong? Report it</string>
     <string name="mark_as_known">Mark as known</string>
 
     <!-- Hotspots and Bluetooth: the sweep step -->
@@ -240,18 +238,18 @@
     <string name="allow">Allow</string>
     <string name="open_settings">Open settings</string>
     <string name="perm_hotspots_title">Allow Location</string>
-    <string name="perm_hotspots_line">To list camera hotspots around you. Android only shows Wi-Fi names with it. Keyhole never reads where you are.</string>
+    <string name="perm_hotspots_line">Android only shows Wi-Fi names with it. Keyhole never reads where you are.</string>
     <string name="perm_bluetooth_title">Allow Nearby devices</string>
     <string name="perm_bluetooth_line">To find trackers and Bluetooth cameras.</string>
-    <string name="perm_denied_line">Android won\'t ask again: allow it in Settings, then come back.</string>
+    <string name="perm_denied_line">Allow it in Settings, then come back.</string>
     <string name="block_wifi_off_title">Wi-Fi is off</string>
-    <string name="block_wifi_off_line">Switch it on, then scan again. You don\'t need to join a network.</string>
+    <string name="block_wifi_off_line">Switch it on, then scan again.</string>
     <string name="block_bluetooth_off_title">Bluetooth is off</string>
     <string name="block_bluetooth_off_line">Switch it on, then scan again.</string>
     <string name="block_location_off_title">Location is off</string>
-    <string name="block_location_off_line">Switch Location on so Android can list the Wi-Fi names around you, then scan again.</string>
+    <string name="block_location_off_line">Android needs Location on to list Wi-Fi names.</string>
     <string name="block_no_bluetooth_title">This phone has no Bluetooth</string>
-    <string name="block_no_bluetooth_line">Skip this step. The report will list it under Couldn\'t check.</string>
+    <string name="block_no_bluetooth_line">Skip it. The report will say so.</string>
 
     <!-- Hotspots and Bluetooth: results -->
     <plurals name="networks_nearby">
@@ -267,9 +265,9 @@
         <item quantity="other">%1$d others</item>
     </plurals>
     <string name="hotspots_none_title">No camera hotspots found</string>
-    <string name="hotspots_none_text">A camera that is already set up on a Wi-Fi doesn\'t broadcast a name of its own. The Wi-Fi check looks for those.</string>
+    <string name="hotspots_none_text">A camera already on a Wi-Fi hides its name. The Wi-Fi check looks for those.</string>
     <string name="bluetooth_none_title">No trackers or Bluetooth cameras found</string>
-    <string name="bluetooth_none_text">A device that stays quiet, or isn\'t switched on, doesn\'t show here.</string>
+    <string name="bluetooth_none_text">Devices that are off or quiet don\'t show here.</string>
     <plurals name="other_networks">
         <item quantity="one">%1$d other network</item>
         <item quantity="other">%1$d other networks</item>
@@ -304,7 +302,7 @@
     <!-- 07 Find it -->
     <string name="find_it">Find it</string>
     <string name="nearness_very_close">Right here</string>
-    <string name="nearness_very_close_line">within 1 m</string>
+    <string name="nearness_very_close_line">under 1 m</string>
     <string name="nearness_close">Close</string>
     <string name="nearness_close_line">about 1–2 m</string>
     <string name="nearness_near">Near</string>
@@ -316,11 +314,10 @@
     <string name="trend_steady">Steady</string>
     <string name="getting_warmer">Getting warmer</string>
     <string name="getting_colder">Getting colder</string>
-    <string name="about_the_same">About the same</string>
     <string name="find_note_hotspots">Walk slowly and point the top of your phone around the room. Android updates the signal about every 30 s.</string>
-    <string name="find_note_bluetooth">Walk slowly and point the top of your phone around the room. The signal updates about once a second.</string>
+    <string name="find_note_bluetooth">Walk slowly and point the top of your phone around the room. The signal updates every second.</string>
     <string name="find_lost_title">Not heard for a while</string>
-    <string name="find_lost_text">It may be switched off or out of reach. The last signal is shown.</string>
+    <string name="find_lost_text">The signal may be out of date. Move a few steps and wait.</string>
     <string name="add_to_report">Add to report</string>
     <string name="remove_from_report">Remove from report</string>
     <string name="added_to_report">Added to report</string>
@@ -342,8 +339,8 @@
         <item quantity="other">%1$d possible lenses ringed</item>
     </plurals>
     <string name="look_here">Look here</string>
-    <string name="lens_hint">Lights off, move slowly. Glass and screws shine too. Save a photo of any spot you want to check.</string>
-    <string name="infrared_hint">Lights off. Infrared lights show as purple or white dots that stay put. Save a photo of any you want to check.</string>
+    <string name="lens_hint">Lights off, move slowly.</string>
+    <string name="infrared_hint">Lights off. Infrared shows as a still purple or white dot.</string>
     <string name="camera_preview">Camera picture</string>
     <string name="take_photo">Save a photo</string>
     <string name="torch">Torch</string>
@@ -354,7 +351,7 @@
     </plurals>
     <string name="photo_not_saved">The photo couldn\'t be saved. The phone may be full.</string>
     <string name="perm_camera_title">Use the camera to look for lenses</string>
-    <string name="perm_camera_line">For the lens and infrared finders. Nothing is recorded: only the photos you take are kept, on this phone.</string>
+    <string name="perm_camera_line">Nothing is recorded. Only photos you take are kept.</string>
     <string name="camera_problem_title">Can\'t open the camera</string>
     <string name="camera_in_use_line">Another app may be using it. Close that app and try again.</string>
     <string name="camera_failed_line">Android didn\'t let Keyhole use the camera this time.</string>
@@ -364,9 +361,9 @@
     <string name="tips_line">Rings possible lenses. Look closely to be sure.</string>
     <string name="tip_dark">Turn the lights off and close the curtains</string>
     <string name="tip_slow">Move slowly, holding the phone at eye level</string>
-    <string name="tip_places">Look at smoke detectors, clocks, chargers, vents, frames and mirrors</string>
-    <string name="tip_glint">A lens shines back as a small, sharp dot that stays put as you move</string>
-    <string name="tip_infrared">Infrared uses the front camera: many rear cameras block infrared light</string>
+    <string name="tip_places">Smoke detectors, clocks, chargers, vents and mirrors</string>
+    <string name="tip_glint">A lens is a small, sharp dot that stays put</string>
+    <string name="tip_infrared">Infrared uses the front camera</string>
     <string name="ir_test_title">Can this phone see infrared?</string>
     <string name="ir_test_line">Point a TV remote at the screen and press any button.</string>
     <string name="ir_saw">I saw a light</string>
@@ -374,12 +371,12 @@
     <string name="ir_not_seen">No light</string>
     <string name="ir_not_seen_line">This phone\'s camera blocks infrared</string>
     <string name="ir_blocked_title">This phone may not see infrared</string>
-    <string name="ir_blocked_text">Its camera blocks most infrared light, so infrared lights may not show. The lens finder still works.</string>
+    <string name="ir_blocked_text">Its camera blocks most infrared. The lens finder still works.</string>
     <string name="test_again">Test again</string>
 
     <!-- 08 Magnet -->
     <string name="magnet_learning_title">Learning this room\'s normal</string>
-    <string name="magnet_learning_line">Hold the phone still for a moment, away from other things</string>
+    <string name="magnet_learning_line">Hold still for a moment</string>
     <string name="magnet_learning_value">%1$d%%</string>
     <string name="magnet_learning_unit">learned</string>
     <string name="magnet_above_value">+%1$d µT</string>
@@ -505,19 +502,18 @@
     <string name="undo_line">It goes back to the list of things to look at.</string>
     <string name="undo">Undo</string>
     <string name="gap_not_run">%1$s: skipped</string>
-    <string name="gap_isolated">Other devices on the Wi-Fi: it keeps devices apart, so only the router answered</string>
+    <string name="gap_isolated">Other devices on this Wi-Fi: it keeps them apart</string>
     <string name="gap_no_infrared">Infrared lights: this phone\'s camera may block them</string>
-    <string name="gap_memory_card">A camera that records to a memory card and sends nothing: no scan can see it</string>
+    <string name="gap_memory_card">Cameras that only record to a memory card</string>
     <string name="gap_other_network">Cameras on another network or on mobile data</string>
-    <string name="report_not_safe_note">This report lists what was checked. It doesn\'t mean the room is safe.</string>
+    <string name="report_not_safe_note">This lists what was checked. It doesn\'t promise the room is safe.</string>
     <string name="found_something">Found something?</string>
     <string name="export">Export</string>
     <string name="export_done">Saved as a PDF</string>
-    <string name="export_failed">The PDF couldn\'t be saved.</string>
+    <string name="export_failed">The PDF couldn\'t be saved</string>
     <string name="magnet_finding">Electronics nearby</string>
     <string name="magnet_finding_line">+%1$d µT above a normal of %2$d µT</string>
-    <string name="report_pdf_title">Keyhole report</string>
-    <string name="report_pdf_footer">Made with Keyhole on this phone. Nothing was sent anywhere.</string>
+    <string name="report_pdf_footer">Made with Keyhole. Nothing was sent anywhere.</string>
     <string name="photo">Photo</string>
     <string name="delete">Delete</string>
     <string name="delete_report_title">Delete this report?</string>
@@ -574,7 +570,7 @@
 
     <!-- 01 Welcome -->
     <string name="welcome_title">Know the room you\'re in</string>
-    <string name="welcome_line">Check a hotel room, stay or trial room for hidden cameras and trackers. Keyhole says plainly what it found.</string>
+    <string name="welcome_line">Check any room for hidden cameras and trackers, and see plainly what was found.</string>
     <string name="get_started">Get started</string>
     <string name="welcome_footer">Free and open source · Nothing leaves your phone</string>
     <string name="welcome_art_camera" translatable="false">IPC-3F2A</string>
@@ -601,11 +597,11 @@
     <string name="drag_to_reorder">Drag to reorder</string>
     <string name="move_up">Move up</string>
     <string name="move_down">Move down</string>
-    <string name="sweep_steps_note">A sweep runs the steps that are on, in this order. Steps a place doesn\'t have are left out, and anything switched off shows as not checked in the report.</string>
+    <string name="sweep_steps_note">A sweep runs the steps that are on, in this order.</string>
     <string name="language_line">Keyhole\'s own language, apart from the phone\'s</string>
 
     <!-- Marked as known -->
-    <string name="marked_known_note">Devices you said aren\'t cameras. They are listed as known in every scan. Tap one to take the mark away.</string>
+    <string name="marked_known_note">Devices you said aren\'t cameras. Tap one to undo.</string>
     <string name="marked_mine">Marked as yours</string>
     <string name="marked_room">Marked as part of the room</string>
     <string name="marked_known_empty_line">Mark a device with \"Not a camera?\" and it shows here.</string>
@@ -618,25 +614,20 @@
     <string name="how_infrared">Front camera shows infrared lights in the dark.</string>
     <string name="how_magnet">Shows when the magnetic field jumps near electronics.</string>
     <string name="how_checklist">The places worth a look by hand.</string>
-    <string name="how_note">Every check runs only when you start it, and nothing leaves your phone.</string>
-    <string name="limits_intro">No check can promise a room is safe. This is what Keyhole can\'t see, and how to look by hand.</string>
-    <string name="limit_memory_card">Cameras that only record to a memory card. Use the lens, infrared and checklist.</string>
-    <string name="limit_other_network">Cameras on another network or on mobile data.</string>
-    <string name="limit_isolation">Guest Wi-Fi that keeps devices apart.</string>
-    <string name="limit_mac">Most makers: Android hides the address that would tell.</string>
-    <string name="limit_trackers">Trackers that stay quiet.</string>
-    <string name="limit_infrared">Infrared, on phones whose camera blocks it.</string>
-    <string name="limit_hotspot_scans">Hotspots update slowly: 4 scans every 2 minutes.</string>
-    <string name="limit_magnet">The magnet reacts to any electronics, not just cameras.</string>
-    <string name="limit_lens">The lens finder rings glass and screws too.</string>
-    <string name="limits_by_hand">The checklist walks you through looking by hand, place by place.</string>
+    <string name="how_note">Checks only run when you start them. Nothing leaves your phone.</string>
+    <string name="limits_intro">No check can promise a room is safe. This is what Keyhole can\'t see.</string>
+    <string name="limit_memory_card">They record to a card and send nothing. Use the lens finder, infrared, magnet and checklist.</string>
+    <string name="limit_other_network">Cameras on another Wi-Fi, on mobile data, or on a Wi-Fi the phone can\'t see</string>
+    <string name="limit_isolation">Other devices don\'t answer</string>
+    <string name="limit_trackers">Ones that don\'t advertise, or do it in a way Keyhole doesn\'t know yet</string>
+    <string name="limit_infrared">Their camera blocks it; the TV-remote test tells you.</string>
 
     <!-- 16 Privacy -->
-    <string name="privacy_header_line">No account, no ads, no tracking. Scans only talk to devices on the Wi-Fi you\'re on.</string>
+    <string name="privacy_header_line">No account, no ads, no tracking.</string>
     <string name="why_keyhole_asks">Why Keyhole asks</string>
-    <string name="perm_row_wifi_line">To list devices on the Wi-Fi you\'re on. No permission needed.</string>
+    <string name="perm_row_wifi_line">No permission needed.</string>
     <string name="perm_row_location">Location, for hotspots</string>
-    <string name="perm_row_location_line">Android only lists Wi-Fi names with it. Keyhole never reads where you are.</string>
+    <string name="perm_row_location_line">Only to list Wi-Fi names. Never where you are.</string>
     <string name="perm_row_bluetooth_line">To find trackers and Bluetooth cameras</string>
     <string name="perm_row_camera">Camera</string>
     <string name="perm_row_camera_line">For the lens and infrared finders. Nothing is recorded.</string>
@@ -645,8 +636,8 @@
     <string name="delete_all">Delete all reports</string>
     <string name="delete_all_line">And the devices you marked</string>
     <string name="delete_all_title">Delete everything?</string>
-    <string name="delete_all_sheet_line">Every report, its photos and the devices you marked. This can\'t be undone.</string>
-    <string name="deleted_all">Every report, photo and mark was deleted.</string>
+    <string name="delete_all_sheet_line">Every report, photo and mark. This can\'t be undone.</string>
+    <string name="deleted_all">Everything was deleted</string>
 
     <!-- 17 About, update check -->
     <string name="version_by">Version %1$s · by mid apps</string>
@@ -658,14 +649,11 @@
     <string name="rate_play_line">It helps others find Keyhole</string>
     <string name="report_problem">Report a problem</string>
     <string name="licences_line">Open-source software in Keyhole</string>
-    <string name="update_checking">Checking…</string>
-    <string name="update_latest_title">You have the latest version</string>
-    <string name="update_new_title">Version %1$s is out</string>
-    <string name="update_new_line">Open the release page to download it.</string>
+    <string name="update_checking">Checking for updates</string>
+    <string name="update_latest_title">You\'re on the latest version</string>
     <string name="update_open">Open release page</string>
     <string name="update_failed_title">Couldn\'t check</string>
     <string name="update_failed_line">GitHub didn\'t answer. Check your connection and try again.</string>
-    <string name="update_note">Asks GitHub for the latest version number. Nothing else is sent.</string>
 
     <!-- 18 Licences -->
     <string name="section_libraries">Libraries</string>
@@ -752,7 +740,7 @@
         <item quantity="other">%1$d of %2$d checks are done. Nothing was lost while Keyhole was in the background.</item>
     </plurals>
     <string name="aeroplane_title">Aeroplane mode is on</string>
-    <string name="aeroplane_line">Wi-Fi, hotspots and Bluetooth can\'t run. Switch it off, or skip to the checks that don\'t need a signal.</string>
+    <string name="aeroplane_line">Switch it off, or skip to the checks that need no signal.</string>
     <string name="skip_to_lens">Skip to lens finder</string>
     <string name="skip_to_infrared">Skip to infrared finder</string>
     <string name="skip_to_magnet">Skip to magnet</string>
@@ -768,13 +756,46 @@
         <item quantity="other">Wait %d s</item>
     </plurals>
     <string name="scan_paused_title">Scanning is paused</string>
-    <string name="scan_paused_text">Android allows 4 Wi-Fi scans every 2 minutes. These are the last results.</string>
+    <string name="scan_paused_text">Android allows 4 Wi-Fi scans every 2 minutes.</string>
     <string name="font_sample" translatable="false">Aa</string>
-    <string name="font_lexend_line">Made for easy reading</string>
-    <string name="font_outfit_line">Round and friendly</string>
-    <string name="font_atkinson_line">Clear letters for low vision</string>
+    <string name="font_lexend_line">Built for easy reading · default</string>
+    <string name="font_outfit_line">Rounded and friendly</string>
+    <string name="font_atkinson_line">Made for low vision</string>
     <string name="font_space_grotesk_line">Sharp and technical</string>
     <string name="mid_apps" translatable="false">mid apps</string>
     <string name="made_by" translatable="false">Made by Nisab Mohd &amp; Contributors</string>
     <string name="about_contact">Contact: %1$s</string>
+    <string name="opening_camera">Opening the camera</string>
+    <string name="switch_camera">Switch camera</string>
+    <string name="row_camera_port">Answers as a camera · port %1$d</string>
+    <string name="row_camera">Answers as a camera</string>
+    <string name="row_web_port">Has a web page on port %1$d</string>
+    <string name="holding">Holding</string>
+    <string name="last_signal">Last signal</string>
+    <string name="marked_toast">Marked as known</string>
+    <string name="marked_change_line">Tap to change or undo</string>
+    <string name="text_size_caption">On top of your phone\'s font size</string>
+    <string name="report_problem_line">Opens an issue on GitHub</string>
+    <string name="update_asking">Asking GitHub Releases…</string>
+    <string name="update_available">Update available</string>
+    <string name="update_versions">Version %1$s · you have %2$s</string>
+    <string name="version_line">Version %1$s</string>
+    <string name="whats_new">What\'s new</string>
+    <string name="later">Later</string>
+    <string name="limit_memory_card_title">Memory-card cameras</string>
+    <string name="limit_other_network_title">Other networks</string>
+    <string name="limit_isolation_title">Guest Wi-Fi that keeps devices apart</string>
+    <string name="limit_trackers_title">Quiet trackers</string>
+    <string name="limit_infrared_title">Infrared on some phones</string>
+    <string name="pdf_page">Page %1$d of %2$d</string>
+    <string name="pdf_checks">Checks</string>
+    <string name="pdf_ran">Ran</string>
+    <string name="pdf_skipped">Skipped</string>
+    <string name="pdf_unseen">No scan can see it</string>
+    <string name="gap_skipped_line">Skipped in this sweep</string>
+    <string name="gap_memory_card_line">A camera that records to a card and sends nothing</string>
+    <string name="gap_other_network_line">Cameras on another Wi-Fi or on mobile data</string>
+    <string name="tip_photo">Save a photo of any spot for the report</string>
+    <string name="font_system">System default</string>
+    <string name="font_system_line">Your phone\'s font</string>
 </resources>

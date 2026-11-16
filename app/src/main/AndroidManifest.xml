@@ -61,7 +61,7 @@
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-            <!-- Long-press the icon: Check this room, Lens finder, Infrared finder, Reports. -->
+            <!-- Long-press the icon: Check this room, Lens finder, Magnet, Reports. -->
             <meta-data android:name="android.app.shortcuts" android:resource="@xml/shortcuts" />
         </activity>
     </application>

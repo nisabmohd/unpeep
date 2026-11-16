@@ -70,8 +70,9 @@ fun NearbyTag(device: NearbyDevice) {
 fun NearbyListRow(device: NearbyDevice, modifier: Modifier = Modifier, shape: Shape = Shapes.surface, onClick: (() -> Unit)? = null) {
     val line = when {
         onClick == null -> stringResource(device.kind.label)
-        device.added -> stringResource(R.string.two_parts, device.reason(), stringResource(R.string.added_to_report))
-        else -> device.reason()
+        // A row says what it is (04f: "Camera hotspot · Added to report"); Find it gives the reason in full.
+        device.added -> stringResource(R.string.two_parts, stringResource(device.kind.label), stringResource(R.string.added_to_report))
+        else -> stringResource(device.kind.label)
     }
     ListRow(
         device.title(), modifier, shape, line = line,

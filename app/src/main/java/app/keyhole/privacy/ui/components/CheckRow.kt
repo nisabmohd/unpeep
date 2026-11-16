@@ -1,5 +1,11 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Dp
+import androidx.compose.foundation.layout.requiredSize
 import app.keyhole.privacy.ui.theme.Alpha
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.runtime.remember
@@ -63,27 +69,32 @@ enum class CheckState { PLAIN, DONE, CURRENT, SKIPPED }
 
 /** One check: its hue circle and Solar icon. The hue is on the circle only. */
 @Composable
-fun CheckIcon(check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN, pressed: Boolean = false, focused: Boolean = false) {
+fun CheckIcon(
+    check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN, pressed: Boolean = false, focused: Boolean = false,
+    /** The circle's size: 44 dp, smaller only where a row of seven must fit a narrow width (the ring and badge follow). */
+    circle: Dp = Size.iconCircle,
+) {
     val c = MaterialTheme.colorScheme
     val colors = checkColors(check.hue)
     val ring by animateFloatAsState(if (state == CheckState.CURRENT || focused) 1f else 0f, shortSpec(), label = "checkRing")
     val halo by animateFloatAsState(if (pressed) 1f else 0f, shortSpec(), label = "checkHalo")
     Box(modifier.widthIn(max = Size.checkSlot).size(Size.checkSlot), contentAlignment = Alignment.Center) {
         // Pressed (00-focus-states): a soft halo of the circle's own colour spreads out; the circle darkens a little.
-        Box(Modifier.size(Size.iconCircle + Size.pressHalo * 2).graphicsLayer { alpha = halo * Alpha.halo }.clip(Shapes.pill).background(colors.container))
+        val ringSize = circle + (Size.checkRing - Size.iconCircle)
+        Box(Modifier.requiredSize(circle + Size.pressHalo * 2).graphicsLayer { alpha = halo * Alpha.halo }.clip(Shapes.pill).background(colors.container))
         // The current step, or keyboard focus: a primary ring a little outside the circle, fading in.
-        Box(Modifier.size(Size.checkRing).graphicsLayer { alpha = ring }.border(if (focused) Size.focusRing else Size.ring, c.primary, Shapes.pill))
+        Box(Modifier.requiredSize(ringSize).graphicsLayer { alpha = ring }.border(if (focused) Size.focusRing else Size.ring, c.primary, Shapes.pill))
         Box(
-            Modifier.size(Size.iconCircle).clip(Shapes.pill)
+            Modifier.requiredSize(circle).clip(Shapes.pill)
                 .then(
                     if (state == CheckState.SKIPPED) Modifier.border(Size.outline, c.outline, Shapes.pill)
                     else Modifier.background(if (pressed) lerp(colors.container, colors.onContainer, Alpha.pressDarken) else colors.container),
                 ),
             contentAlignment = Alignment.Center,
         ) {
-            Icon(painterResource(check.icon), null, tint = if (state == CheckState.SKIPPED) c.onSurfaceVariant else colors.onContainer, modifier = Modifier.size(Size.iconInCircle))
+            Icon(painterResource(check.icon), null, tint = if (state == CheckState.SKIPPED) c.onSurfaceVariant else colors.onContainer, modifier = Modifier.size(Size.iconInCircle * (circle / Size.iconCircle)))
         }
-        Box(Modifier.size(Size.iconCircle), contentAlignment = Alignment.BottomEnd) {
+        Box(Modifier.requiredSize(circle), contentAlignment = Alignment.BottomEnd) {
             AnimatedVisibility(state == CheckState.DONE, enter = scaleIn(shortSpec()), exit = scaleOut(shortSpec())) {
                 Box(Modifier.size(Size.badge).border(Size.ring, c.surfaceContainerLow, Shapes.pill).padding(Size.outline).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
                     Icon(painterResource(R.drawable.ic_check), null, tint = c.onPrimary, modifier = Modifier.size(Size.badgeIcon))
@@ -109,13 +120,25 @@ private fun stateWord(state: CheckState): String? = when (state) {
 fun CheckRow(checks: List<Check>, modifier: Modifier = Modifier, state: (Check) -> CheckState = { CheckState.PLAIN }, onRun: ((Check) -> Unit)? = null) {
     val c = MaterialTheme.colorScheme
     if (onRun == null) {
-        // Progress: every check fits the width, spread evenly; nothing to scroll.
-        Row(modifier.fillMaxWidth().padding(horizontal = Space.inline)) {
+        // Progress: every check fits the width, each in an equal share with at least a gap between circles; the
+        // circles shrink a little on a narrow row rather than touch (a large display size), never overlap.
+        val density = LocalDensity.current
+        var width by remember { mutableIntStateOf(0) }
+        val share = if (width == 0 || checks.isEmpty()) Size.iconCircle else with(density) { (width / checks.size).toDp() }
+        // 44 dp at 412 dp, shrinking evenly to 36 dp with at least 6 dp between circles (10l); narrower than that,
+        // fixed 36 dp circles and the row scrolls sideways.
+        val circle = (share - Size.checkGap).coerceIn(Size.checkCircleMin, Size.iconCircle)
+        val scrolls = width > 0 && share - Size.checkGap < Size.checkCircleMin
+        Row(
+            modifier.fillMaxWidth().padding(horizontal = Space.inline).onSizeChanged { width = it.width }
+                .then(if (scrolls) Modifier.horizontalScroll(rememberScrollState()) else Modifier),
+        ) {
             checks.forEach { check ->
                 val name = stringResource(check.label)
                 val s = state(check)
                 val word = stateWord(s)
-                CheckIcon(check, Modifier.weight(1f).clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s)
+                val slot = if (scrolls) Modifier.width(Size.checkCircleMin + Size.checkGap) else Modifier.weight(1f)
+                CheckIcon(check, slot.height(Size.iconCircle).clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s, circle = circle)
             }
         }
         return

@@ -248,7 +248,7 @@ fun AnswerSheet(item: ChecklistItem, current: ChecklistEntry?, onDismiss: () -> 
                 val take = { if (app.keyhole.privacy.scan.Access.granted(context, Check.LENS)) takePhoto() else ask.ask() }
                 Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.inline)) {
                     photo?.let { PhotoThumb(it, stringResource(R.string.change_photo), size = Size.photoSmall, onClick = take) }
-                    AddPhotoTile(stringResource(if (photo == null) R.string.add_photo else R.string.change_photo), take)
+                    AddPhotoTile(stringResource(R.string.add_photo), take)
                 }
             }
         }

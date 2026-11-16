@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.nav
 
+import app.keyhole.privacy.ui.components.LocalFirstInPane
 import androidx.compose.foundation.layout.Row
 import app.keyhole.privacy.ui.isWide
 import app.keyhole.privacy.ui.components.KeyholeNavRail
@@ -156,7 +157,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
             MoreItem.LANGUAGE -> LanguageSheet(onDismiss = back)
             MoreItem.MARKED_KNOWN -> MarkedKnownScreen(viewModel { MarkedKnownViewModel(container.reports) }, onBack = back)
             MoreItem.HOW_IT_WORKS -> HowItWorksScreen(onBack = back)
-            MoreItem.LIMITS -> LimitsScreen(onBack = back, onChecklist = { nav.navigate(CheckRoute(Check.CHECKLIST, settings.place)) })
+            MoreItem.LIMITS -> LimitsScreen(onBack = back)
             MoreItem.PRIVACY -> PrivacyScreen(viewModel { PrivacyViewModel(container.reports, container.notes) }, onBack = back)
             MoreItem.ABOUT -> AboutScreen(onBack = back, onPrivacy = { nav.navigate(MoreItemRoute(MoreItem.PRIVACY)) }, onLicences = { nav.navigate(MoreItemRoute(MoreItem.LICENCES)) })
             MoreItem.LICENCES -> LicencesScreen(onBack = back, onOpen = { nav.navigate(LicenceRoute(it.title, it.file)) })
@@ -201,8 +202,12 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
         Box(Modifier.weight(1f)) {
             NavHost(
                 nav, startDestination = if (settings.onboarded) HomeRoute else WelcomeRoute,
-                enterTransition = NavMotion.push, exitTransition = NavMotion.pushExit,
-                popEnterTransition = NavMotion.pop, popExitTransition = NavMotion.popExit,
+                // One rule for every move (as Burrow): tab to tab fades through; anything else is the shared slide.
+                // Per-screen transitions on the tabs mixed the two when a tab opened a detail, which looked glitched.
+                enterTransition = { if (initialState.isTab() && targetState.isTab()) NavMotion.tabEnter(this) else NavMotion.push(this) },
+                exitTransition = { if (initialState.isTab() && targetState.isTab()) NavMotion.tabExit(this) else NavMotion.pushExit(this) },
+                popEnterTransition = { if (initialState.isTab() && targetState.isTab()) NavMotion.tabEnter(this) else NavMotion.pop(this) },
+                popExitTransition = { if (initialState.isTab() && targetState.isTab()) NavMotion.tabExit(this) else NavMotion.popExit(this) },
             ) {
                 composable<WelcomeRoute> {
                     WelcomeScreen(onStart = {
@@ -210,7 +215,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                         nav.navigate(HomeRoute) { popUpTo<WelcomeRoute> { inclusive = true } }
                     })
                 }
-                composable<HomeRoute>(enterTransition = NavMotion.tabEnter, exitTransition = NavMotion.tabExit, popEnterTransition = NavMotion.tabEnter, popExitTransition = NavMotion.tabExit) {
+                composable<HomeRoute> {
                     val vm = viewModel { HomeViewModel(container.settings, container.reports, container.notes) }
                     HomeScreen(
                         vm,
@@ -221,7 +226,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                         onSeeVisit = finish,
                     )
                 }
-                composable<ReportsRoute>(enterTransition = NavMotion.tabEnter, exitTransition = NavMotion.tabExit, popEnterTransition = NavMotion.tabEnter, popExitTransition = NavMotion.tabExit) {
+                composable<ReportsRoute> {
                     val vm = viewModel { ReportsViewModel(container.reports, container.appScope) }
                     if (wide) {
                         // T02: the list on the left, the picked report (the newest at first) on the right.
@@ -231,7 +236,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                         Row(Modifier.fillMaxSize()) {
                             Box(Modifier.weight(1f)) { ReportsScreen(vm, onOpen = { picked = it }) }
                             Box(Modifier.weight(1f)) {
-                                if (shown != null) {
+                                if (shown != null) androidx.compose.runtime.CompositionLocalProvider(LocalFirstInPane provides true) {
                                     val report = viewModel(key = "report-$shown") { ReportViewModel(shown, container.reports) }
                                     ReportScreen(
                                         report, onBack = { picked = null },
@@ -246,7 +251,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                         ReportsScreen(vm, onOpen = { nav.navigate(ReportRoute(it)) })
                     }
                 }
-                composable<MoreRoute>(enterTransition = NavMotion.tabEnter, exitTransition = NavMotion.tabExit, popEnterTransition = NavMotion.tabEnter, popExitTransition = NavMotion.tabExit) {
+                composable<MoreRoute> {
                     val vm = viewModel { MoreViewModel(container.settings, container.reports, container.helpNumbers) }
                     val help = viewModel { HelpViewModel(container.helpNumbers, container.settings) }
                     val helpState by help.state.collectAsStateWithLifecycle()
@@ -257,7 +262,9 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                         var picked by rememberSaveable { mutableStateOf(MoreItem.APPEARANCE) }
                         Row(Modifier.fillMaxSize()) {
                             Box(Modifier.weight(1f)) { MoreScreen(vm, onOpen = { if (it == MoreItem.FOUND_CAMERA) nav.navigate(MoreItemRoute(it)) else picked = it }, onHelpNumbers = { helpOpen = true }, onLanguage = { languageOpen = true }) }
-                            Box(Modifier.weight(1f)) { MoreItemScreen(picked) { picked = MoreItem.APPEARANCE } }
+                            Box(Modifier.weight(1f)) {
+                                androidx.compose.runtime.CompositionLocalProvider(LocalFirstInPane provides true) { MoreItemScreen(picked) { picked = MoreItem.APPEARANCE } }
+                            }
                         }
                     } else {
                         MoreScreen(vm, onOpen = { nav.navigate(MoreItemRoute(it)) }, onHelpNumbers = { helpOpen = true }, onLanguage = { languageOpen = true })
@@ -417,7 +424,8 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOu
                 }
             }
             // Over every screen; above the nav bar on a tab (the bar sits under this box), else above the dock.
-            ToastHost(toasts, overNav = tab >= 0 && !rail)
+            // Never on the viewfinder (its photo line and Notes speak there); never over a sheet (sheets close first).
+            if (!fullScreen) ToastHost(toasts, overNav = tab >= 0 && !rail)
         }
         if (tab >= 0 && !keyboard && !rail) KeyholeNavBar(items, tab, onSelect = goTab)
     }
@@ -437,3 +445,6 @@ val MoreItem.title: Int
         MoreItem.LICENCES -> R.string.licences
         MoreItem.FOUND_CAMERA -> R.string.if_you_find_a_camera
     }
+
+/** A bottom tab (Check · Reports · More): moving between two of them fades through instead of sliding. */
+private fun androidx.navigation.NavBackStackEntry.isTab(): Boolean = TABS.any { t -> destination.hierarchy.any { it.hasRoute(t::class) } }

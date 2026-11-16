@@ -124,6 +124,8 @@ fun ListRow(
     line: String? = null,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,
+    /** The title in another font family: only to show a font in itself (Appearance › Font). */
+    titleFont: androidx.compose.ui.text.font.FontFamily? = null,
     /** A pick-one row (Appearance › Font): TalkBack reads it as a choice, picked or not. */
     selected: Boolean? = null,
     /** A result tag ("Likely camera"): at the end of the row, or under the line once text is large (00-decisions). */
@@ -160,7 +162,7 @@ fun ListRow(
         }
         val tagBelow = tag != null && isLargeText()
         Column(Modifier.weight(1f)) {
-            Text(title, style = KeyholeType.cardTitle, color = if (alert) c.error else c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(title, style = if (titleFont != null) KeyholeType.cardTitle.copy(fontFamily = titleFont) else KeyholeType.cardTitle, color = if (alert) c.error else c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
             if (line != null) Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 3, overflow = TextOverflow.Ellipsis)
             if (tagBelow) {
                 Spacer(Modifier.height(Space.small))
@@ -315,7 +317,8 @@ fun Note(
     // container, text, circle, icon in the circle
     val (bg, fg, circle, glyph) = when (tone) {
         NoteTone.INFO -> listOf(c.secondaryContainer, c.onSecondaryContainer, c.primary, c.onPrimary)
-        NoteTone.GOOD -> listOf(c.primaryContainer, c.onPrimaryContainer, c.primary, c.onPrimary)
+        // Good news is calm, never a loud block of the accent: the same container as info, its ✓ says it went well.
+        NoteTone.GOOD -> listOf(c.secondaryContainer, c.onSecondaryContainer, c.primary, c.onPrimary)
         NoteTone.WARNING -> listOf(w.container, w.onContainer, w.onContainer, w.container)
         NoteTone.ERROR -> listOf(c.errorContainer, c.onErrorContainer, c.error, c.onError)
         NoteTone.HONESTY -> listOf(c.surfaceContainer, c.onSurface, c.onSurfaceVariant, c.surfaceContainer)
@@ -424,7 +427,7 @@ fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(Size.dot).clip(Shapes.pill).background(colour(part.tone)))
                     Spacer(Modifier.width(Space.inline))
-                    Text(part.label, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+                    Text(part.label, style = KeyholeType.caption, color = c.onSurfaceVariant)
                 }
             }
         }

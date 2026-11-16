@@ -265,7 +265,8 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
                 }
             }
             Spacer(Modifier.height(Space.block))
-            BarMeter(s.bars, MagnetMeter.BARS, MagnetMeter.JUMP, MagnetViewModel.FULL, stringResource(R.string.magnet_chart, s.above))
+            // Two readings to a bar (the stronger): about a dozen bars still cover the last ten seconds.
+            BarMeter(s.bars.chunked(2) { it.max() }, MagnetMeter.BARS / 2, MagnetMeter.JUMP, MagnetViewModel.FULL, stringResource(R.string.magnet_chart, s.above))
         }
         Spacer(Modifier.height(Space.block))
         Note(stringResource(R.string.magnet_note), tone = NoteTone.HONESTY, icon = painterResource(R.drawable.ic_info))

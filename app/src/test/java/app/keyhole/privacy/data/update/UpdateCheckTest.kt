@@ -37,4 +37,11 @@ class UpdateCheckTest {
         assertEquals(UpdateResult.Failed, UpdateCheck("a/b", "0.1.0") { "<html>rate limited</html>" }.check())
         assertEquals(UpdateResult.Failed, UpdateCheck("a/b", "0.1.0") { "{}" }.check())
     }
+
+    @Test fun releaseNotesBecomeWhatsNew() {
+        val body = "## 1.1.0\n- Calmer **nothing found** screens\n* Fixes for large text\nSome prose\n- Find it copes with weak signals\n- a\n- b"
+        val notes = UpdateCheck.notes(body)
+        assertEquals(listOf("Calmer nothing found screens", "Fixes for large text", "Find it copes with weak signals", "a"), notes)
+        assertEquals(emptyList<String>(), UpdateCheck.notes(null))
+    }
 }

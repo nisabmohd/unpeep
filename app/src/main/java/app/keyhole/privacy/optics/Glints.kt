@@ -12,7 +12,7 @@ import kotlin.math.min
  */
 
 /** One possible lens or infrared light: its centre and radius as a share of the frame (0..1), and how bright it is. */
-data class Spot(val x: Float, val y: Float, val radius: Float, val brightness: Int)
+data class Spot(val x: Float, val y: Float, val radius: Float, val brightness: Int, /** Stays the same while a spot is tracked (0 from the finder). */ val id: Int = 0)
 
 /**
  * What counts as a spot. [minLuma]: never dimmer than this (0..255). [aboveMean]: and this much brighter than the
@@ -144,11 +144,16 @@ class GlintFinder(private val gridWidth: Int = GRID_WIDTH) {
  * not. A spot is shown once it was seen in [need] of the last [window] frames, near the same place.
  */
 class SpotTracker(private val window: Int = WINDOW, private val need: Int = NEED, private val reach: Float = REACH) {
-    private class Track(var x: Float, var y: Float, var radius: Float, var brightness: Int, var hits: Int)
+    private class Track(val id: Int, var x: Float, var y: Float, var radius: Float, var brightness: Int, var hits: Int, var shown: Boolean = false)
 
     private val tracks = ArrayList<Track>()
+    private var nextId = 1
 
-    /** Adds one frame's spots; returns the steady ones, brightest first. */
+    /**
+     * Adds one frame's spots; returns the steady ones, the longest-seen first, so "Look here" stays on one spot.
+     * A spot shows once it was seen in [need] of the last [window] frames, and then stays until it is gone from the
+     * whole window: a ring doesn't blink when a frame or two miss it (hysteresis). Positions follow slowly.
+     */
     fun add(spots: List<Spot>): List<Spot> {
         val mask = (1 shl window) - 1
         val unmatched = spots.toMutableList()
@@ -157,7 +162,7 @@ class SpotTracker(private val window: Int = WINDOW, private val need: Int = NEED
             t.hits = (t.hits shl 1) and mask
             if (nearest != null && hypot(nearest.x - t.x, nearest.y - t.y) <= reach) {
                 unmatched -= nearest
-                // Follow it smoothly as the phone moves.
+                // Follow it smoothly as the phone moves, without jitter.
                 t.x += (nearest.x - t.x) * FOLLOW
                 t.y += (nearest.y - t.y) * FOLLOW
                 t.radius = nearest.radius
@@ -166,20 +171,23 @@ class SpotTracker(private val window: Int = WINDOW, private val need: Int = NEED
             }
         }
         tracks.removeAll { it.hits == 0 }
-        unmatched.forEach { tracks += Track(it.x, it.y, it.radius, it.brightness, 1) }
-        return tracks.filter { Integer.bitCount(it.hits) >= need }
-            .sortedByDescending { it.brightness }
+        unmatched.forEach { tracks += Track(nextId++, it.x, it.y, it.radius, it.brightness, 1) }
+        for (t in tracks) if (Integer.bitCount(t.hits) >= need) t.shown = true
+        // Oldest first (lowest id): new spots join the end; the first one keeps "Look here".
+        return tracks.filter { it.shown }
+            .sortedBy { it.id }
             .take(GlintFinder.MAX_SPOTS)
-            .map { Spot(it.x, it.y, it.radius, it.brightness) }
+            .map { Spot(it.x, it.y, it.radius, it.brightness, it.id) }
     }
 
     fun clear() = tracks.clear()
 
     companion object {
-        const val WINDOW = 5
-        const val NEED = 3
+        /** About a quarter of a second of frames: a spot shows after 4 of them, and leaves after 8 without it. */
+        const val WINDOW = 8
+        const val NEED = 4
         const val REACH = 0.06f
-        private const val FOLLOW = 0.5f
+        private const val FOLLOW = 0.3f
     }
 }
 

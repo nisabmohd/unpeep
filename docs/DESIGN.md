@@ -60,10 +60,21 @@ touch targets; every icon button has a TalkBack label.
   130 %; buttons stack, primary on top; tags drop under a row's text.
 - **Torch "on"**: primary (the one "on" look of a round button). **Theme**: the shared Segmented, full width.
 - **Find it**: word, pills and signal share one scale (Right here from −50 dBm, Close to −62, Near to −74).
-- **Loading**: none added; the mark on a blank page at app start, "Opening the camera", "Saving the PDF…".
+- **Loading**: none added; "Opening the camera", "Saving the PDF…". App start is Android's splash then the app,
+  as Burrow and Weft (02h's mark-on-a-blank-page made a second splash, so it isn't used).
 - **Tablets**: from 840 dp a navigation rail and two panes (Home, results, Reports, More); 600–840 dp one centred
   column; a phone on its side puts the sweep's lens beside its list; the lens finder on its side moves its controls
   to a rail on the trailing side.
 - **Sweeps**: closing one asks first (stop and see the report, or stop without one); leaving the app mid-scan
   stops the scan and shows "Paused at …" with Carry on (scans never run in the background).
 
+
+### Final v2 (2026-11-16)
+- Lens finder: picture from the top edge (behind status and top bar), every control on `FinderPanel` (288 dp, 28 dp top
+  corners; on its side 272 dp on the trailing edge, with the hint and photos line). Spot count top-left on the picture. Hint is one line; "save a photo" is a tip.
+- `LensProgress` has two sizes set by content: 220/124 for a count, 248/152 with an icon, value and line (Find it, Magnet).
+- Not checked: grey circle with the thing itself (skipped check's icon, memory card, antenna, shield, tag); report rows have a title and a line.
+- What Keyhole can't find: four limits only (memory card, other networks, guest Wi-Fi, quiet trackers).
+- PDF follows 10g: header with mark and "Page x of y", tags, Checks · Found · Photos · Marked as known · Couldn't check, grey dot for not checked.
+- Events are toasts, states are Notes: saved and not-saved PDF are both toasts (Open / Try again). The one exception is
+  "photo not saved" on the viewfinder, since toasts never cover the camera picture.

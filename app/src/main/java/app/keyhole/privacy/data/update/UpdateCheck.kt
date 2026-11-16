@@ -11,7 +11,7 @@ import kotlinx.serialization.json.Json
 /** What GitHub said about the latest release. */
 sealed interface UpdateResult {
     data class Latest(val version: String) : UpdateResult
-    data class Newer(val version: String, val page: String) : UpdateResult
+    data class Newer(val version: String, val page: String, /** What's new: the release notes' bullet lines, at most a few. */ val notes: List<String> = emptyList()) : UpdateResult
     data object Failed : UpdateResult
 }
 
@@ -26,14 +26,28 @@ class UpdateCheck(private val repo: String, private val current: String, private
         val body = fetch(api) ?: return@withContext UpdateResult.Failed
         val release = runCatching { json.decodeFromString<Release>(body) }.getOrNull() ?: return@withContext UpdateResult.Failed
         val latest = release.tag.removePrefix("v")
-        if (isNewer(latest, current)) UpdateResult.Newer(latest, release.page) else UpdateResult.Latest(plain(current))
+        if (isNewer(latest, current)) UpdateResult.Newer(latest, release.page, notes(release.body)) else UpdateResult.Latest(plain(current))
     }
 
     @Serializable
-    private data class Release(@kotlinx.serialization.SerialName("tag_name") val tag: String, @kotlinx.serialization.SerialName("html_url") val page: String)
+    private data class Release(
+        @kotlinx.serialization.SerialName("tag_name") val tag: String,
+        @kotlinx.serialization.SerialName("html_url") val page: String,
+        val body: String? = null,
+    )
 
     companion object {
         private val json = Json { ignoreUnknownKeys = true }
+
+        /** The release notes' list items ("- Calmer screens"), as plain lines; at most [MAX_NOTES]. */
+        fun notes(body: String?): List<String> = body.orEmpty().lines()
+            .map { it.trim() }
+            .filter { it.startsWith("- ") || it.startsWith("* ") }
+            .map { it.drop(2).trim().replace(Regex("""[*_`]"""), "") }
+            .filter { it.isNotBlank() }
+            .take(MAX_NOTES)
+
+        private const val MAX_NOTES = 4
 
         /** "0.1.0-github" → "0.1.0". */
         fun plain(version: String): String = version.substringBefore('-').removePrefix("v")

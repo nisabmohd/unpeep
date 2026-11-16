@@ -102,6 +102,10 @@ class CameraController(context: Context) {
         )
     }
 
+    @Volatile private var generation = 0
+    /** Counted down once the last opened camera has closed. */
+    @Volatile private var closing: java.util.concurrent.CountDownLatch? = null
+
     /**
      * Opens [spec] and starts the preview. [onRunning] or [onProblem] is called once, on the camera's thread.
      * The caller has the camera permission; a missing one is reported as [CameraProblem.FAILED].
@@ -109,6 +113,13 @@ class CameraController(context: Context) {
     @SuppressLint("MissingPermission")
     fun start(spec: CameraSpec, texture: SurfaceTexture, settings: CameraSettings, frames: FrameListener, onRunning: () -> Unit, onProblem: (CameraProblem) -> Unit) {
         stop()
+        // Each start has its own number: a late callback from a camera already closed (switching Lens ↔ Infrared,
+        // or back ↔ front) must never report a problem with the camera that replaced it.
+        val gen = ++generation
+        val running = { if (gen == generation) onRunning() }
+        val problem = { p: CameraProblem -> if (gen == generation) onProblem(p) }
+        // The camera being closed: the next one opens once it has (some phones can't open two at once).
+        val previous = closing
         this.spec = spec
         this.settings = settings
         val t = HandlerThread("keyhole-camera").also { it.start() }
@@ -142,29 +153,43 @@ class CameraController(context: Context) {
                 busy.set(false)
             }
         }, h)
-        try {
-            manager?.openCamera(spec.id, object : CameraDevice.StateCallback() {
-                override fun onOpened(camera: CameraDevice) {
-                    device = camera
-                    createSession(camera, surface, images.surface, onRunning, onProblem)
-                }
-                override fun onDisconnected(camera: CameraDevice) {
-                    camera.close()
-                    if (device == camera) device = null
-                    onProblem(CameraProblem.IN_USE)
-                }
-                override fun onError(camera: CameraDevice, error: Int) {
-                    camera.close()
-                    if (device == camera) device = null
-                    onProblem(if (error == ERROR_CAMERA_IN_USE || error == ERROR_MAX_CAMERAS_IN_USE) CameraProblem.IN_USE else CameraProblem.FAILED)
-                }
-            }, h) ?: onProblem(CameraProblem.NO_CAMERA)
-        } catch (e: CameraAccessException) {
-            onProblem(CameraProblem.IN_USE)
-        } catch (e: SecurityException) {
-            onProblem(CameraProblem.FAILED)
-        } catch (e: IllegalArgumentException) {
-            onProblem(CameraProblem.NO_CAMERA)
+        val closed = java.util.concurrent.CountDownLatch(1)
+        closing = closed
+        h.post {
+            runCatching { previous?.await(CLOSE_WAIT_MS, java.util.concurrent.TimeUnit.MILLISECONDS) }
+            if (gen != generation) {
+                closed.countDown()
+                return@post
+            }
+            try {
+                manager?.openCamera(spec.id, object : CameraDevice.StateCallback() {
+                    override fun onOpened(camera: CameraDevice) {
+                        if (gen != generation) {
+                            camera.close()
+                            return
+                        }
+                        device = camera
+                        createSession(camera, surface, images.surface, running, problem)
+                    }
+                    override fun onClosed(camera: CameraDevice) = closed.countDown()
+                    override fun onDisconnected(camera: CameraDevice) {
+                        camera.close()
+                        if (device == camera) device = null
+                        problem(CameraProblem.IN_USE)
+                    }
+                    override fun onError(camera: CameraDevice, error: Int) {
+                        camera.close()
+                        if (device == camera) device = null
+                        problem(if (error == ERROR_CAMERA_IN_USE || error == ERROR_MAX_CAMERAS_IN_USE) CameraProblem.IN_USE else CameraProblem.FAILED)
+                    }
+                }, h) ?: run { closed.countDown(); problem(CameraProblem.NO_CAMERA) }
+            } catch (e: CameraAccessException) {
+                closed.countDown(); problem(CameraProblem.IN_USE)
+            } catch (e: SecurityException) {
+                closed.countDown(); problem(CameraProblem.FAILED)
+            } catch (e: IllegalArgumentException) {
+                closed.countDown(); problem(CameraProblem.NO_CAMERA)
+            }
         }
     }
 
@@ -230,6 +255,7 @@ class CameraController(context: Context) {
 
     /** Closes everything; safe to call more than once and from any thread. */
     fun stop() {
+        generation++ // anything the closing camera still says is ignored
         val h = handler
         val t = thread
         val s = session
@@ -302,3 +328,6 @@ object CameraSizes {
     private const val FOUR_THREE = 4f / 3f
     private const val SHAPE_SLACK = 0.02f
 }
+
+/** How long a new camera waits for the old one to close before opening anyway. */
+private const val CLOSE_WAIT_MS = 1_500L

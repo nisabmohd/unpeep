@@ -1,5 +1,11 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.foundation.layout.height
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.stateDescription
 import kotlin.math.roundToInt
@@ -175,9 +181,12 @@ fun Tag(text: String, kind: TagKind, modifier: Modifier = Modifier, icon: Painte
     }
 }
 
-/** A chip: place chips, filters, choices. Picked = secondaryContainer with a ✓; else outlined. 36 dp, 48 dp touch. */
+/**
+ * A chip: place chips, filters, choices. Picked = secondaryContainer with a ✓; else outlined. 36 dp, 48 dp touch.
+ * [fill]: the pill takes the width it is given (the lens finder's side panel, two by two), as Segmented's fill.
+ */
 @Composable
-fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, fill: Boolean = false) {
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
     Box(
@@ -192,11 +201,13 @@ fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifie
     ) {
         Row(
             Modifier
+                .then(if (fill) Modifier.fillMaxWidth() else Modifier)
                 .heightIn(min = Size.chip)
                 .clip(Shapes.pill)
                 .then(if (selected) Modifier.background(c.secondaryContainer) else Modifier.border(Size.outline, c.outline, Shapes.pill))
                 .padding(horizontal = Space.card),
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Center,
         ) {
             if (selected) {
                 Icon(painterResource(R.drawable.ic_check), null, tint = c.onSecondaryContainer, modifier = Modifier.size(Size.iconSmall))
@@ -307,9 +318,10 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
                             onSelect(i)
                         }
                         .then(if (s.description != null) Modifier.semantics { contentDescription = s.description } else Modifier)
-                        .padding(horizontal = if (isLargeText()) Space.block else Space.heading)
-                        // Filling the width (Appearance), each segment takes an equal share.
-                        .weight(1f, fill = fill),
+                        .padding(horizontal = if (isLargeText()) Space.block else Space.card)
+                        // Filling the width (Appearance), each segment takes an equal share; otherwise each hugs its
+                        // label (a weight, even unfilled, would cap every segment at an equal share and cut "Infrared").
+                        .then(if (fill) Modifier.weight(1f) else Modifier),
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.Center,
                 ) {
@@ -317,11 +329,9 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
                         Icon(s.icon, null, tint = if (picked) c.surface else c.onSurface, modifier = Modifier.size(Size.buttonIcon))
                         Spacer(Modifier.width(Space.inline))
                     }
-                    val style = s.style ?: KeyholeType.cardTitle
-                    BasicText(
-                        s.label, style = style.copy(color = if (picked) c.surface else c.onSurface), maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
-                        autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = style.fontSize),
-                    )
+                    val style = s.style ?: KeyholeType.label
+                    // One size for every segment (never one shrunk beside the others); "…" only if a translation can't fit.
+                    Text(s.label, style = style, color = if (picked) c.surface else c.onSurface, maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis)
                 }
             }
         }
@@ -336,13 +346,16 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
 fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
+    // At most 48 dp, and smaller when the row is narrow (a large display size), so swatches never overlap.
     Box(
-        modifier.size(Size.swatch).focusRing(Shapes.pill).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
+        modifier.widthIn(max = Size.swatch).fillMaxWidth().aspectRatio(1f)
+            .focusRing(Shapes.pill).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
             .selectable(selected, role = Role.RadioButton) { if (!selected) haptics.buzz(Buzz.TICK); onClick() }
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
     ) {
-        Box(Modifier.size(if (selected) Size.iconCircle else Size.swatch).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
+        // The picked one: the colour a ring's width inside its ring.
+        Box(Modifier.fillMaxSize().padding(if (selected) Size.swatchInset else Size.none).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
             if (selected) Icon(painterResource(R.drawable.ic_check), null, tint = c.surface, modifier = Modifier.size(Size.swatchCheck))
         }
     }
@@ -353,7 +366,15 @@ fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> U
  * a slider under it that stops at each of [count] steps. A tick on each step; TalkBack reads the value.
  */
 @Composable
-fun StepSlider(title: String, value: String, index: Int, count: Int, onStep: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun StepSlider(
+    title: String, value: String, index: Int, count: Int, onStep: (Int) -> Unit, modifier: Modifier = Modifier,
+    /** The name of each step, under the slider; the picked one in medium weight (14a). */
+    stepNames: List<String> = emptyList(),
+    /** One quiet line under it ("On top of your phone's font size"). */
+    caption: String? = null,
+    /** A small and a large letter at the ends, for a size scale. */
+    sizeEnds: Boolean = false,
+) {
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
     Column(modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(horizontal = Space.card, vertical = Space.block)) {
@@ -361,6 +382,8 @@ fun StepSlider(title: String, value: String, index: Int, count: Int, onStep: (In
             Text(title, style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })
             Text(value, style = KeyholeType.supporting, color = c.onSurfaceVariant)
         }
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            if (sizeEnds) Text("A", style = KeyholeType.caption, color = c.onSurfaceVariant, modifier = Modifier.clearAndSetSemantics { }.padding(end = Space.inline))
         androidx.compose.material3.Slider(
             value = index.toFloat(),
             onValueChange = { v ->
@@ -376,7 +399,26 @@ fun StepSlider(title: String, value: String, index: Int, count: Int, onStep: (In
                 thumbColor = c.primary, activeTrackColor = c.primary, inactiveTrackColor = c.surfaceContainerHighest,
                 activeTickColor = c.onPrimary, inactiveTickColor = c.onSurfaceVariant,
             ),
-            modifier = Modifier.semantics { stateDescription = value },
+            modifier = Modifier.weight(1f).semantics { stateDescription = value },
         )
+            if (sizeEnds) Text("A", style = KeyholeType.title, color = c.onSurfaceVariant, modifier = Modifier.clearAndSetSemantics { }.padding(start = Space.inline))
+        }
+        if (stepNames.isNotEmpty()) {
+            // Each name sits under its own stop; the picked one is medium weight.
+            Row(Modifier.fillMaxWidth().padding(horizontal = if (sizeEnds) Space.heading else Size.none).clearAndSetSemantics { }) {
+                stepNames.forEachIndexed { i, n ->
+                    Text(
+                        n, style = if (i == index) KeyholeType.caption else KeyholeType.small,
+                        color = if (i == index) c.onSurface else c.onSurfaceVariant, maxLines = 1,
+                        textAlign = when (i) { 0 -> TextAlign.Start; stepNames.lastIndex -> TextAlign.End; else -> TextAlign.Center },
+                        modifier = Modifier.weight(1f),
+                    )
+                }
+            }
+        }
+        if (caption != null) {
+            Spacer(Modifier.height(Space.inline))
+            Text(caption, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+        }
     }
 }

@@ -1,5 +1,9 @@
 package app.keyhole.privacy.screens
 
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.wrapContentSize
+import app.keyhole.privacy.ui.components.ToastHost
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.requiredWidth
@@ -181,6 +185,20 @@ class DesignShots {
         LensContent(s, onBack = {}, onNext = {}, onMode = {}, onFilter = {}, onZoom = {}, onTorch = {}, onTips = {}, onShutter = {}, onAllow = {}, settingsOnly = settingsOnly, onRetry = {}, photoFailed = photoFailed)
     }
 
+    /** [content] as a 892 × 412 dp phone on its side, scaled down to fit the shot's width (T05). */
+    @Composable private fun sideways(content: @Composable () -> Unit) {
+        val cfg = android.content.res.Configuration(androidx.compose.ui.platform.LocalConfiguration.current).apply { screenWidthDp = 892; screenHeightDp = 412 }
+        val scale = 412f / 892f
+        androidx.compose.foundation.layout.Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.TopStart) {
+            androidx.compose.foundation.layout.Box(
+                Modifier.wrapContentSize(androidx.compose.ui.Alignment.TopStart, unbounded = true).requiredSize(892.dp, 412.dp)
+                    .graphicsLayer { scaleX = scale; scaleY = scale; transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0f) },
+            ) {
+                androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalConfiguration provides cfg) { content() }
+            }
+        }
+    }
+
     @Composable private fun magnet(s: MagnetState) = MagnetContent(s, onBack = {}, onNext = {}, onBeep = {}, onSetNormal = {}, onAdd = {})
 
     @Test fun findersAndSheets() {
@@ -196,6 +214,8 @@ class DesignShots {
 
         val spot = app.keyhole.privacy.optics.Spot(0.55f, 0.42f, 0.01f, 250)
         shot("08-lens-finder") { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 0)) }
+        shot("T05-lens-landscape") { sideways { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 1)) } }
+        shot("T05a-infrared-landscape-sweep") { sideways { lens(LensState(status = CameraStatus.RUNNING, mode = Check.INFRARED, sweep = true, spec = backCamera, spots = listOf(spot), photos = 0)) } }
         shot("08a-lens-permission") { lens(LensState(status = CameraStatus.NEEDS_PERMISSION)) }
         shot("08b-lens-camera-in-use") { lens(LensState(status = CameraStatus.IN_USE, spec = backCamera)) }
         shot("08c-lens-camera-failed") { lens(LensState(status = CameraStatus.FAILED, spec = backCamera)) }
@@ -216,8 +236,21 @@ class DesignShots {
         shot("08r-magnet-200", fontScale = 2f) { magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14))) }
     }
 
-    @Composable private fun reportScreen(r: app.keyhole.privacy.data.SavedReport = app.keyhole.privacy.ui.report.previewReport(), export: Boolean? = null) =
-        ReportContent(r, app.keyhole.privacy.ui.report.rememberReportWords(), {}, {}, {}, {}, {}, {}, {}, export)
+    /** The report with a toast over its dock, as the app shows an export's result. */
+    @Composable private fun reportWithToast(r: app.keyhole.privacy.data.SavedReport, text: Int, action: Int, icon: Int) {
+        val toasts = androidx.compose.runtime.remember { app.keyhole.privacy.ui.components.ToastState() }
+        val ctx = androidx.compose.ui.platform.LocalContext.current
+        androidx.compose.runtime.LaunchedEffect(Unit) { toasts.show(ctx.getString(text), action = ctx.getString(action), onAction = {}, icon = icon) }
+        androidx.compose.runtime.CompositionLocalProvider(app.keyhole.privacy.ui.components.LocalToasts provides toasts) {
+            androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) {
+                reportScreen(r)
+                ToastHost(toasts, overNav = false)
+            }
+        }
+    }
+
+    @Composable private fun reportScreen(r: app.keyhole.privacy.data.SavedReport = app.keyhole.privacy.ui.report.previewReport()) =
+        ReportContent(r, app.keyhole.privacy.ui.report.rememberReportWords(), {}, {}, {}, {}, {}, {}, {})
 
     @Test fun checklistReportsAndHelp() {
         val e = app.keyhole.privacy.domain.ChecklistEntry(app.keyhole.privacy.domain.ChecklistAnswer.LOOKS_FINE)
@@ -236,8 +269,8 @@ class DesignShots {
         shot("10c-report-rename-sheet") { reportScreen(r); app.keyhole.privacy.ui.report.RenameSheet(r.name, {}, {}) }
         shot("10d-report-undo-sheet") { reportScreen(r); app.keyhole.privacy.ui.report.UndoSheet("Living-room TV", {}, {}) }
         shot("10e-finding-detail") { app.keyhole.privacy.ui.report.FindingContent(r.findings.first().finding, {}) }
-        shot("10h-report-export-saved") { reportScreen(r, export = true) }
-        shot("10i-report-export-failed") { reportScreen(r, export = false) }
+        shot("10h-report-export-saved") { reportWithToast(r, R.string.export_done, R.string.open, R.drawable.ic_check_circle) }
+        shot("10i-report-export-failed") { reportWithToast(r, R.string.export_failed, R.string.try_again, R.drawable.ic_info) }
         shot("10k-report-200", fontScale = 2f) { reportScreen(r) }
         shot("E12-no-checks-ran") { reportScreen(r.copy(findings = emptyList(), toLookAt = 0, ran = emptyList())) }
 
@@ -269,6 +302,8 @@ class DesignShots {
             app.keyhole.privacy.ui.more.AppearanceContent(app.keyhole.privacy.data.Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> })
         }
         shot("14-appearance") { appearance() }
+        val large = app.keyhole.privacy.data.Settings().let { it.copy(theme = it.theme.copy(textSize = app.keyhole.privacy.ui.theme.TextSize.LARGE, font = app.keyhole.privacy.ui.theme.BodyFont.OUTFIT)) }
+        shot("14a-text-size-large") { app.keyhole.privacy.ui.more.AppearanceContent(large, {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) }
         shot("13c-language-sheet") { app.keyhole.privacy.ui.more.LanguageSheet {} }
         val marks = listOf(
             app.keyhole.privacy.data.Mark("a", KnownAs.ROOM, "Living-room TV", Check.WIFI, 0),
@@ -278,11 +313,11 @@ class DesignShots {
         shot("13d-marked-as-known") { app.keyhole.privacy.ui.more.MarkedKnownContent(marks, {}, {}) }
         shot("13e-marked-empty") { app.keyhole.privacy.ui.more.MarkedKnownContent(emptyList(), {}, {}) }
         shot("13f-how-it-works") { app.keyhole.privacy.ui.more.HowItWorksScreen {} }
-        shot("13g-cant-find") { app.keyhole.privacy.ui.more.LimitsScreen({}, {}) }
+        shot("13g-cant-find") { app.keyhole.privacy.ui.more.LimitsScreen({}) }
         shot("17-about") { app.keyhole.privacy.ui.more.AboutScreen({}, {}, {}) }
         shot("18-licences") { app.keyhole.privacy.ui.more.LicencesScreen({}, {}) }
         shot("18a-licence-text") { app.keyhole.privacy.ui.more.LicenceTextScreen("GNU GPL v3", "gpl-3.0.txt", {}) }
-        shot("10j-report-exporting") { ReportContent(app.keyhole.privacy.ui.report.previewReport(), app.keyhole.privacy.ui.report.rememberReportWords(), {}, {}, {}, {}, {}, {}, {}, null, exporting = true) }
+        shot("10j-report-exporting") { ReportContent(app.keyhole.privacy.ui.report.previewReport(), app.keyhole.privacy.ui.report.rememberReportWords(), {}, {}, {}, {}, {}, {}, {}, exporting = true) }
     }
 
     /** A narrow phone (360 dp) with larger text: every screen whose words could overflow. */
@@ -309,6 +344,17 @@ class DesignShots {
             shot("A-$tag-appearance", fontScale = scale) { narrow { app.keyhole.privacy.ui.more.AppearanceContent(app.keyhole.privacy.data.Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) } }
             shot("A-$tag-about", fontScale = scale) { narrow { app.keyhole.privacy.ui.more.AboutScreen({}, {}, {}) } }
             shot("A-$tag-stop-sheet", fontScale = scale) { narrow { SweepContent(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH, nearby = nearby(Check.BLUETOOTH, status = NearbyStatus.RUNNING)), {}, {}, {}); app.keyhole.privacy.ui.sweep.StopSweepSheet(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH), {}, {}, {}) } }
+        }
+    }
+
+    /** The PDF of the sample report (10g), written beside the shots. */
+    @Test fun reportPdf() {
+        val ctx = InstrumentationRegistry.getInstrumentation().targetContext
+        val out = InstrumentationRegistry.getArguments().getString("additionalTestOutputDir")
+        val dir = (if (out != null) File(out) else File(ctx.getExternalFilesDir(null), "shots")).apply { mkdirs() }
+        val font = androidx.core.content.res.ResourcesCompat.getFont(ctx, R.font.lexend)
+        File(dir, "10g-report-pdf.pdf").outputStream().use {
+            app.keyhole.privacy.report.PdfReport(app.keyhole.privacy.ui.report.ReportWords(ctx.resources), ctx.resources, font).write(app.keyhole.privacy.ui.report.previewReport(), it)
         }
     }
 

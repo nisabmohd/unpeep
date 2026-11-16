@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.wifi
 
+import app.keyhole.privacy.ui.components.LocalToasts
 import android.content.Context
 import android.content.Intent
 import android.text.format.DateFormat
@@ -83,11 +84,19 @@ fun DeviceScreen(vm: DeviceViewModel, onBack: () -> Unit, onFoundIt: () -> Unit,
     val context = LocalContext.current
     val shareText = shareText(device)
     DeviceContent(device, onBack, onShare = { share(context, shareText) }, onNotACamera = { asking = true }, onFoundIt, onFindLens)
+    val toasts = LocalToasts.current
+    val markedText = stringResource(R.string.marked_toast)
     if (asking) {
         NotACameraSheet(
             device.knownAs,
             onDismiss = { asking = false },
-            onMark = { haptics.buzz(Buzz.CONFIRM); vm.mark(it); asking = false },
+            onMark = { k ->
+                val before = device.knownAs
+                haptics.buzz(Buzz.CONFIRM)
+                vm.mark(k)
+                asking = false // the sheet closes first; the toast never sits over it
+                if (k != null) toasts.show(markedText, undo = { vm.mark(before) })
+            },
             onReport = { reportWrongResult(context) },
         )
     }
@@ -153,15 +162,10 @@ fun DeviceContent(device: WifiDevice, onBack: () -> Unit, onShare: () -> Unit, o
                 )
             }
             if (!device.evidence.isSelf) row { shape ->
+                // Marked (E15b): the row says so and is the way to change or undo it.
                 ListRow(
-                    stringResource(R.string.not_a_camera), shape = shape,
-                    line = stringResource(
-                        when (device.knownAs) {
-                            KnownAs.MINE -> R.string.marked_mine_line
-                            KnownAs.ROOM -> R.string.marked_room_line
-                            null -> R.string.not_a_camera_line
-                        },
-                    ),
+                    stringResource(if (device.knownAs == null) R.string.not_a_camera else R.string.marked_as_known), shape = shape,
+                    line = stringResource(if (device.knownAs == null) R.string.not_a_camera_line else R.string.marked_change_line),
                     leading = { IconCircle(painterResource(R.drawable.ic_shield), CircleTone.Accent) }, onClick = onNotACamera,
                 )
             }

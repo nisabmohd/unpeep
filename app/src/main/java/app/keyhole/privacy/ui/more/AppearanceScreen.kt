@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.more
 
+import app.keyhole.privacy.ui.theme.family
 import app.keyhole.privacy.ui.components.StepSlider
 import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.KeyholeType
@@ -140,9 +141,12 @@ fun AppearanceContent(
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
                 SwitchRow(stringResource(R.string.colour_wallpaper_title), s.theme.dynamicColor, onDynamic, line = stringResource(R.string.colour_wallpaper_line))
             }
-            Row(Modifier.fillMaxWidth().padding(horizontal = Space.card).selectableGroup(), horizontalArrangement = Arrangement.SpaceBetween) {
+            // Each swatch has an equal share of the row, centred in it: they fit any width without touching.
+            Row(Modifier.fillMaxWidth().padding(horizontal = Space.card).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
                 AccentHues.forEachIndexed { i, hue ->
-                    ColorSwatch(seedColorScheme(hue, dark).primary, stringResource(ACCENT_NAMES[i]), !s.theme.dynamicColor && s.theme.accentHue == hue, { onAccent(hue) })
+                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
+                        ColorSwatch(seedColorScheme(hue, dark).primary, stringResource(ACCENT_NAMES[i]), !s.theme.dynamicColor && s.theme.accentHue == hue, { onAccent(hue) })
+                    }
                 }
             }
         }
@@ -154,9 +158,10 @@ fun AppearanceContent(
                 row { shape ->
                     val on = s.theme.font == f
                     ListRow(
-                        fontLabel(f), shape = shape, line = stringResource(f.line),
+                        fontLabel(f), shape = shape, line = stringResource(f.line), titleFont = f.family(),
                         leading = {
-                            Box(Modifier.size(Size.iconCircle).clip(Shapes.pill).background(MaterialTheme.colorScheme.surfaceContainerHigh), contentAlignment = Alignment.Center) {
+                            // The picked font's circle takes the accent's container (14).
+                            Box(Modifier.size(Size.iconCircle).clip(Shapes.pill).background(if (on) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh), contentAlignment = Alignment.Center) {
                                 Text(stringResource(R.string.font_sample), style = fontSample(f, KeyholeType.cardTitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
                             }
                         },
@@ -172,8 +177,9 @@ fun AppearanceContent(
         StepSlider(
             stringResource(R.string.text_size), textSizeLabel(s.theme.textSize), sizes.indexOf(s.theme.textSize), sizes.size,
             onStep = { onTextSize(sizes[it]) },
+            stepNames = sizes.map { textSizeLabel(it) }, caption = stringResource(R.string.text_size_caption), sizeEnds = true,
         )
-        SweepStepsSection(s, onMove, onStep)
+        // Sweep steps live on their own screen only (More › Sweep steps, 14b).
     }
 }
 
@@ -227,4 +233,5 @@ private val BodyFont.line: Int
         BodyFont.OUTFIT -> R.string.font_outfit_line
         BodyFont.ATKINSON -> R.string.font_atkinson_line
         BodyFont.SPACE_GROTESK -> R.string.font_space_grotesk_line
+        BodyFont.SYSTEM -> R.string.font_system_line
     }

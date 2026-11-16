@@ -293,6 +293,17 @@ class ComponentsTest {
         rule.onNodeWithText("Saved as a PDF", useUnmergedTree = true).assertIsDisplayed()
     }
 
+    @Test fun aFailedExportToastOffersTryAgain() {
+        val ctx = androidx.test.platform.app.InstrumentationRegistry.getInstrumentation().targetContext
+        val toasts = ToastState()
+        var tries = 0
+        rule.setKeyholeContent { androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) { ToastHost(toasts, overNav = false) } }
+        rule.runOnIdle { toasts.show(ctx.getString(app.keyhole.privacy.R.string.export_failed), action = ctx.getString(app.keyhole.privacy.R.string.try_again), onAction = { tries++ }, icon = app.keyhole.privacy.R.drawable.ic_info) }
+        rule.onNodeWithText(ctx.getString(app.keyhole.privacy.R.string.export_failed), useUnmergedTree = true).assertIsDisplayed()
+        rule.onNodeWithText(ctx.getString(app.keyhole.privacy.R.string.try_again)).performClick()
+        assertEquals(1, tries)
+    }
+
     @Test fun aToastShowsWithUndoAndUndoRunsOnce() {
         val toasts = ToastState()
         var undone = 0

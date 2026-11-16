@@ -12,9 +12,9 @@
         <intent android:action="app.keyhole.privacy.action.LENS"
             android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
     </shortcut>
-    <shortcut android:shortcutId="infrared" android:enabled="true" android:icon="@drawable/shortcut_infrared"
-        android:shortcutShortLabel="@string/infrared_finder" android:shortcutLongLabel="@string/infrared_finder">
-        <intent android:action="app.keyhole.privacy.action.INFRARED"
+    <shortcut android:shortcutId="magnet" android:enabled="true" android:icon="@drawable/shortcut_magnet"
+        android:shortcutShortLabel="@string/check_magnet" android:shortcutLongLabel="@string/check_magnet">
+        <intent android:action="app.keyhole.privacy.action.MAGNET"
             android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
     </shortcut>
     <shortcut android:shortcutId="reports" android:enabled="true" android:icon="@drawable/shortcut_reports"

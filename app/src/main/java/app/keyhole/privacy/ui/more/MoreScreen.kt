@@ -70,6 +70,7 @@ fun fontLabel(font: BodyFont): String = stringResource(
         BodyFont.OUTFIT -> R.string.font_outfit
         BodyFont.ATKINSON -> R.string.font_atkinson
         BodyFont.SPACE_GROTESK -> R.string.font_space_grotesk
+        BodyFont.SYSTEM -> R.string.font_system
     },
 )
 

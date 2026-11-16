@@ -18,6 +18,8 @@ ICONS = {
     # The seven checks (domain/Check.kt)
     "ic_wifi": "wi-fi-router-minimalistic", "ic_hotspot": "routing-2", "ic_bluetooth": "bluetooth-wave",
     "ic_lens": "flashlight", "ic_infrared": "eye", "ic_magnet": "magnet", "ic_checklist": "checklist-minimalistic",
+    # What no scan can see (final v2): the thing itself, in a grey circle
+    "ic_memory_card": "sd-card", "ic_antenna": "station",
     # Nav bar
     "ic_radar": "radar-2", "ic_reports": "document-text", "ic_more": "tuning-2",
     # App chrome
@@ -39,7 +41,7 @@ ICONS = {
     "ic_box": "box", "ic_book": "book", "ic_leaf": "leaf", "ic_fire": "fire-minimalistic", "ic_socket": "socket", "ic_usb": "usb",
     "ic_chair": "armchair", "ic_monitor": "monitor", "ic_call": "phone-calling", "ic_camera_add": "camera-add",
     "ic_notes": "notes", "ic_alarm": "alarm", "ic_bulb": "lightbulb-minimalistic", "ic_wheel": "wheel",
-    "ic_check_circle": "check-circle", "ic_bluetooth_off": "bluetooth-off", "ic_link": "link", "ic_skip": "minus-circle", "ic_car": "car",
+    "ic_check_circle": "check-circle", "ic_bluetooth_off": "bluetooth-off", "ic_flip_camera": "camera-rotate", "ic_link": "link", "ic_skip": "minus-circle", "ic_car": "car",
     # Places
     "ic_place_stay": "suitcase", "ic_place_trial_room": "hanger", "ic_place_washroom": "bath",
     "ic_place_office": "buildings", "ic_place_car": "bus",
@@ -164,7 +166,7 @@ def main(pkg, names):
 
 
 # Launcher shortcuts (res/xml/shortcuts.xml): shortcut name → the drawn icon whose glyph it shows.
-SHORTCUTS = {"sweep": "ic_radar", "lens": "ic_lens", "infrared": "ic_infrared", "reports": "ic_reports"}
+SHORTCUTS = {"sweep": "ic_radar", "lens": "ic_lens", "magnet": "ic_magnet", "reports": "ic_reports"}
 
 
 def shortcuts():

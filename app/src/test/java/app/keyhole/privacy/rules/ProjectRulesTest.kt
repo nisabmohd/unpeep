@@ -127,6 +127,18 @@ class ProjectRulesTest {
     @Test fun shapesOnlyInDimensKt() = assertNone("RoundedCornerShape / CircleShape outside Dimens.kt: use Shapes.*",
         violations { f, _, l -> !inTheme(f) && Regex("""\b(RoundedCornerShape|CutCornerShape|AbsoluteRoundedCornerShape)\(|\bCircleShape\b""").containsMatchIn(code(l)) })
 
+    /**
+     * Type roles, as a Google app keeps them (docs/DESIGN.md § 9): a screen picks from titles (title), box titles
+     * (cardTitle) and lines (supporting). Bigger or other styles live in the shared components, so the same role
+     * never shows at two sizes. Welcome is the one screen with its own display title and paragraph.
+     */
+    @Test fun screensUseTheTypeRoles() = assertNone("a screen using a text style outside its roles: use a component, or title / cardTitle / supporting",
+        violations { f, _, l ->
+            val path = f.path
+            val screen = "/ui/" in path && "/components/" !in path && "/theme/" !in path && !path.endsWith("WelcomeScreen.kt")
+            screen && Regex("""KeyholeType\.(display|headline|body|label|caption)\b""").containsMatchIn(code(l))
+        })
+
     /** A row's leading icon is the 44 dp IconCircle; CheckIcon (a 62 dp slot) belongs to the check row only. */
     @Test fun rowsLeadWithTheIconCircle() = assertNone("a row led by CheckIcon: use IconCircle so it lines up with every other row",
         violations { _, _, l -> Regex("""leading\s*=\s*\{\s*CheckIcon\(""").containsMatchIn(code(l)) })

@@ -127,6 +127,26 @@ class GlintsTest {
         assertEquals(2, shown.size)
     }
 
+    @Test fun aShownSpotDoesNotBlinkWhenAFrameMissesIt() {
+        val t = SpotTracker(window = 8, need = 4)
+        repeat(4) { t.add(listOf(spot(0.5f))) }
+        assertEquals(1, t.add(listOf(spot(0.5f))).size)
+        // Two frames without it, then back: it stayed on screen the whole time.
+        assertEquals(1, t.add(emptyList()).size)
+        assertEquals(1, t.add(emptyList()).size)
+        assertEquals(1, t.add(listOf(spot(0.5f))).size)
+    }
+
+    @Test fun lookHereStaysOnTheFirstSpotWhenABrighterOneAppears() {
+        val t = SpotTracker(window = 8, need = 4)
+        repeat(5) { t.add(listOf(spot(0.2f).copy(brightness = 200))) }
+        var shown = emptyList<app.keyhole.privacy.optics.Spot>()
+        repeat(5) { shown = t.add(listOf(spot(0.2f).copy(brightness = 200), spot(0.8f).copy(brightness = 255))) }
+        assertEquals(2, shown.size)
+        assertTrue("the first spot keeps the label", shown[0].x < 0.5f)
+        assertTrue("ids stay put", shown[0].id < shown[1].id)
+    }
+
     @Test fun clearForgetsEverything() {
         val t = SpotTracker()
         repeat(4) { t.add(listOf(spot(0.2f))) }

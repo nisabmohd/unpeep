@@ -26,13 +26,13 @@ object Space {
     val lensTop = 24.dp       // above a lens (header, progress, Start)
     val lensBottom = 20.dp    // a lens → its title
     val navBarEnd = 8.dp      // at each end of the bottom nav
-    val empty = 40.dp         // above an empty state
+    val empty = 16.dp         // above an empty state (its lens header adds its own top space)
     val tileGap = 12.dp       // between More tiles
     val welcomeTop = 72.dp    // above Welcome's mark
     val welcomeTitleTop = 36.dp   // Welcome's picture → its title
     val welcomeTitleInset = 48.dp // each side of Welcome's title, so it breaks as 01 does
     val barGap = 3.dp         // between waiting dots
-    val meterGap = 4.dp       // between the magnet's bars
+    val meterGap = 6.dp       // between the magnet's bars
 }
 
 object Size {
@@ -59,6 +59,8 @@ object Size {
     val badgeIcon = 12.dp
     val checkSlot = 62.dp      // one check in the check row
     val checkRing = 54.dp      // the ring around the current check
+    val checkCircleMin = 36.dp // the smallest a progress row's circle gets before the row scrolls (10l)
+    val checkGap = 6.dp        // the least space between two circles of a progress row
     val lineIcon = 24.dp       // a sign's icon in a one-line row (Why)
     /** Lines drawn around things: an outlined chip (1), a ring (radio, current check: 2). */
     val outline = 1.dp
@@ -68,11 +70,15 @@ object Size {
     val emptyLine = 330.dp     // an empty state's or header's line never runs wider
     val logo = 96.dp           // the mark on Welcome and About
     val railMark = 40.dp       // the mark at the top of the navigation rail (T01)
-    val startMark = 72.dp      // the mark alone on a blank page while the app starts (02h)
-    val swatch = 48.dp         // an accent swatch (Appearance)
+    val swatch = 48.dp
+    val swatchInset = 4.dp     // a picked swatch's colour inside its ring
+    val none = 0.dp         // an accent swatch (Appearance)
     val meter = 48.dp          // the magnet's bars at their tallest (08n, 08o)
     val meterBar = 4.dp        // a bar at normal: a flat dash
     val shutter = 72.dp        // the viewfinder's shutter
+    val finderPanel = 288.dp   // the lens finder's control panel under the picture (final v2)
+    val panelCorner = 28.dp    // its top corners (the sheets' corners)
+    val finderPanelSide = 272.dp // the same panel on the trailing side, on its side (T05)
     val shutterInner = 58.dp
     val glintRing = 40.dp      // the ring around a possible lens
     val glintGlow = 72.dp      // the soft glow behind that ring
@@ -111,6 +117,8 @@ object LensSize {
     val startCore = 136.dp
     val progress = 220.dp
     val progressCore = 124.dp
+    val progressLarge = 248.dp     // when the core holds an icon, a value and a line (Find it, Magnet)
+    val progressLargeCore = 152.dp
     val header = 100.dp          // as the PNGs draw it (05, 10, 16)
     val headerCore = 64.dp
     val ringStroke = 1.5.dp
@@ -127,6 +135,7 @@ object LensSize {
 object Shapes {
     val surface = RoundedCornerShape(24.dp)
     val sheet = RoundedCornerShape(topStart = 28.dp, topEnd = 28.dp)
+    val sidePanel = RoundedCornerShape(topStart = 28.dp, bottomStart = 28.dp) // the lens finder's panel on its side (T05)
     val pill = CircleShape
     /** The mark's tile (About, Welcome): the app icon's corner, 112/512 of its side. */
     fun logo(side: androidx.compose.ui.unit.Dp) = RoundedCornerShape(side * 112f / 512f)

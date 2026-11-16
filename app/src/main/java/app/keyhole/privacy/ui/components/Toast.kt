@@ -68,10 +68,11 @@ import kotlin.math.roundToInt
 
 /** One toast: what happened, its icon, and Undo when the action can be taken back. */
 @Immutable
-data class ToastData(val text: String, @DrawableRes val icon: Int, val undo: (() -> Unit)?, val id: Long)
+data class ToastData(val text: String, @DrawableRes val icon: Int, val action: String?, val onAction: (() -> Unit)?, val id: Long)
 
 /**
- * The app's one toast (00-decisions › Confirmation feedback): only where an action can be undone (a report deleted,
+ * The app's one toast (review 2 › Events and states): something that just happened, with at most one action (a report
+ * deleted, marked as known, saved as a PDF, everything deleted). Something still true is a Note. Earlier wording:
  * a device marked as known, removed from a report) or where something went away (results cleared, a report gone).
  * Everything else stays a Note or a changed line. One at a time; a new one replaces the old.
  */
@@ -84,8 +85,12 @@ class ToastState {
     internal var dock by mutableStateOf(0.dp)
     private var next = 0L
 
-    fun show(text: String, undo: (() -> Unit)? = null, @DrawableRes icon: Int = if (undo != null) R.drawable.ic_check_circle else R.drawable.ic_info) {
-        current = ToastData(text, icon, undo, next++)
+    /** [undo]: the action is Undo (the usual one); [action] + [onAction] for another one ("Open"). */
+    fun show(
+        text: String, undo: (() -> Unit)? = null, action: String? = null, onAction: (() -> Unit)? = null,
+        @DrawableRes icon: Int = if (undo != null || onAction != null) R.drawable.ic_check_circle else R.drawable.ic_info,
+    ) {
+        current = ToastData(text, icon, action, onAction ?: undo, next++)
     }
 
     fun dismiss(id: Long) {
@@ -114,7 +119,7 @@ fun BoxScope.ToastHost(state: ToastState, overNav: Boolean) {
     val a11y = LocalAccessibilityManager.current
     LaunchedEffect(toast?.id) {
         if (toast != null) {
-            val ms = a11y?.calculateRecommendedTimeoutMillis(TOAST_MS, containsIcons = true, containsText = true, containsControls = toast.undo != null) ?: TOAST_MS
+            val ms = a11y?.calculateRecommendedTimeoutMillis(TOAST_MS, containsIcons = true, containsText = true, containsControls = toast.onAction != null) ?: TOAST_MS
             delay(ms)
             state.dismiss(toast.id)
         }
@@ -170,20 +175,20 @@ private fun Toast(toast: ToastData, onDismiss: () -> Unit) {
             }
             .heightIn(min = Size.toast).clip(Shapes.pill).background(c.inverseSurface)
             .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite }
-            .padding(start = Space.card + Space.small, end = if (toast.undo != null) Space.headingInset else Space.heading),
+            .padding(start = Space.card + Space.small, end = if (toast.onAction != null) Space.headingInset else Space.heading),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(painterResource(toast.icon), null, tint = c.inverseOnSurface, modifier = Modifier.size(Size.buttonIcon))
         Spacer(Modifier.width(Space.block))
         Text(toast.text, style = KeyholeType.label, color = c.inverseOnSurface, modifier = Modifier.weight(1f).padding(vertical = Space.block))
-        val undo = toast.undo
-        if (undo != null) {
+        val act = toast.onAction
+        if (act != null) {
             Box(
                 Modifier.focusRing(Shapes.pill).heightIn(min = Size.iconButton).clip(Shapes.pill)
-                    .clickable(role = Role.Button) { haptics.buzz(Buzz.CONFIRM); undo(); onDismiss() }
+                    .clickable(role = Role.Button) { haptics.buzz(Buzz.CONFIRM); act(); onDismiss() }
                     .padding(horizontal = Space.card),
                 contentAlignment = Alignment.Center,
-            ) { Text(stringResource(R.string.undo), style = KeyholeType.label, color = c.inversePrimary) }
+            ) { Text(toast.action ?: stringResource(R.string.undo), style = KeyholeType.label, color = c.inversePrimary) }
         }
     }
 }

@@ -58,10 +58,16 @@ data class LensState(
     val next: Check? = null,
     /** Bumped by Try again, so the camera opens afresh. */
     val attempt: Int = 0,
+    /** Switch camera: the other camera than the mode's usual one. */
+    val flipped: Boolean = false,
 ) {
     val torchOn: Boolean get() = torch && mode == Check.LENS && spec?.hasTorch == true
     val camera: CameraSettings get() = CameraSettings(torch = torchOn, zoom2x = zoom2x && spec?.canZoom2x == true, brighter = mode == Check.INFRARED)
-    val facing: Facing get() = if (mode == Check.INFRARED) Facing.FRONT else Facing.BACK
+    /** Back for Lens, front for Infrared (many back cameras block infrared), or the other one after Switch camera. */
+    val facing: Facing get() {
+        val usual = if (mode == Check.INFRARED) Facing.FRONT else Facing.BACK
+        return if (!flipped) usual else if (usual == Facing.BACK) Facing.FRONT else Facing.BACK
+    }
 }
 
 /**
@@ -99,12 +105,18 @@ class LensViewModel(
      */
     fun setMode(mode: Check) {
         tracker.clear()
-        inner.update { if (it.mode == mode) it else it.copy(mode = mode, spots = emptyList()) }
+        inner.update { if (it.mode == mode) it else it.copy(mode = mode, spots = emptyList(), flipped = false) }
         if (inner.value.status == CameraStatus.RUNNING) notes.markRan(mode)
     }
     fun setFilter(filter: LensFilter) = inner.update { it.copy(filter = filter) }
     fun toggleZoom() = inner.update { it.copy(zoom2x = !it.zoom2x) }
     fun toggleTorch() = inner.update { it.copy(torch = !it.torch) }
+
+    /** Switch camera: back ↔ front, in either mode. */
+    fun flip() {
+        tracker.clear()
+        inner.update { it.copy(flipped = !it.flipped, spots = emptyList()) }
+    }
     fun retry() = inner.update { it.copy(status = CameraStatus.STARTING, attempt = it.attempt + 1) }
 
     fun setGranted(granted: Boolean) = inner.update {
@@ -128,13 +140,27 @@ class LensViewModel(
         }
     }
 
+    /** One quiet retry right after a switch (some phones need a moment between cameras) before any error shows. */
+    private var retried = false
+
     fun onRunning() {
+        retried = false
         inner.update { if (it.status == CameraStatus.NEEDS_PERMISSION) it else it.copy(status = CameraStatus.RUNNING) }
         notes.markRan(inner.value.mode)
     }
 
     fun onProblem(problem: CameraProblem) {
+        if (problem != CameraProblem.NO_CAMERA && !retried && inner.value.status == CameraStatus.STARTING) {
+            retried = true
+            viewModelScope.launch {
+                kotlinx.coroutines.delay(RETRY_MS)
+                retry()
+            }
+            return
+        }
         inner.update {
+            // Waiting for the permission: a late camera error from before can't cover the question.
+            if (it.status == CameraStatus.NEEDS_PERMISSION) return@update it
             it.copy(
                 spots = emptyList(),
                 status = when (problem) {
@@ -193,3 +219,6 @@ class LensViewModel(
         }
     }
 }
+
+/** The quiet retry waits this long. */
+private const val RETRY_MS = 400L
