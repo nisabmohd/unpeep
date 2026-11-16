@@ -1,6 +1,13 @@
 package app.keyhole.privacy.ui.welcome
 
 import androidx.compose.foundation.Image
+import app.keyhole.privacy.ui.theme.checkColors
+import app.keyhole.privacy.domain.Check
+import app.keyhole.privacy.ui.hue
+import app.keyhole.privacy.ui.icon
+import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -82,11 +89,21 @@ fun WelcomeScreen(onStart: () -> Unit) {
             Spacer(Modifier.height(Space.heading))
             // The picture: the lens, a likely camera and a count of devices. Silent for TalkBack: the words say it.
             Box(Modifier.fillMaxWidth().height(Size.art).clip(Shapes.surface).background(c.primaryContainer).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
+                // Two wider rings run off the picture's edges, as the room goes on past what the phone sees.
+                val ring = c.outlineVariant
+                Canvas(Modifier.size(Size.artLens)) {
+                    val stroke = Stroke(LensSize.ringStroke.toPx())
+                    for (k in ART_OUTER_RINGS) drawCircle(ring, radius = size.minDimension / 2 * k, style = stroke)
+                }
                 LensRings(Size.artLens, Size.artCore, middleRing = true, glint = true) {
                     Box(Modifier.size(Size.artCore).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
                         Icon(painterResource(R.drawable.ic_radar), null, tint = c.onPrimary, modifier = Modifier.size(LensSize.startIcon))
                     }
                 }
+                // Three of the checks, sitting on the rings.
+                ArtCheck(Check.LENS, Modifier.offset(Size.artCheckLens.first, Size.artCheckLens.second))
+                ArtCheck(Check.BLUETOOTH, Modifier.offset(Size.artCheckBluetooth.first, Size.artCheckBluetooth.second))
+                ArtCheck(Check.MAGNET, Modifier.offset(Size.artCheckMagnet.first, Size.artCheckMagnet.second))
                 FloatingCard(
                     painterResource(R.drawable.ic_camera_device), CircleTone.Alert, stringResource(R.string.welcome_art_camera), stringResource(R.string.risk_likely_camera), TILT,
                     Modifier.align(Alignment.TopStart).padding(Space.card),
@@ -96,8 +113,8 @@ fun WelcomeScreen(onStart: () -> Unit) {
                     Modifier.align(Alignment.BottomEnd).padding(Space.card),
                 )
             }
-            Spacer(Modifier.height(Space.heading))
-            Text(stringResource(R.string.welcome_title), style = KeyholeType.display, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.height(Space.welcomeTitleTop))
+            Text(stringResource(R.string.welcome_title), style = KeyholeType.display, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.welcomeTitleInset).semantics { heading() })
             Spacer(Modifier.height(Space.block))
             Text(stringResource(R.string.welcome_line), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset))
             Spacer(Modifier.height(Space.heading))
@@ -110,6 +127,18 @@ fun WelcomeScreen(onStart: () -> Unit) {
 }
 
 private const val ART_DEVICES = 18
+
+/** The wider rings, as a share of the lens's own outer ring. */
+private val ART_OUTER_RINGS = listOf(1.5f, 1.85f)
+
+/** A check's circle in the picture: its hue, its icon, smaller than in a row. */
+@Composable
+private fun ArtCheck(check: Check, modifier: Modifier = Modifier) {
+    val colors = checkColors(check.hue)
+    Box(modifier.size(Size.artCheck).clip(Shapes.pill).background(colors.container), contentAlignment = Alignment.Center) {
+        Icon(painterResource(check.icon), null, tint = colors.onContainer, modifier = Modifier.size(Size.iconSmall))
+    }
+}
 
 @Preview
 @Composable

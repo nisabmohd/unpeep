@@ -1,5 +1,16 @@
 package app.keyhole.privacy.ui.more
 
+import app.keyhole.privacy.ui.hue
+import androidx.compose.material3.Icon
+import app.keyhole.privacy.ui.theme.Shapes
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.Image
+import app.keyhole.privacy.ui.theme.WeftBrand
+import app.keyhole.privacy.ui.theme.BurrowBrand
 import android.content.Context
 import android.content.Intent
 import androidx.compose.foundation.layout.Column
@@ -52,6 +63,7 @@ import app.keyhole.privacy.ui.components.LensHeader
 import app.keyhole.privacy.ui.components.ListRow
 import app.keyhole.privacy.ui.components.NeutralCircle
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.SecondaryButton
 import app.keyhole.privacy.ui.components.SectionLabel
@@ -148,11 +160,11 @@ fun HowItWorksScreen(onBack: () -> Unit) {
         Spacer(Modifier.height(Space.block))
         Grouped {
             Check.entries.forEach { check ->
-                row { shape -> ListRow(stringResource(check.label), shape = shape, line = stringResource(check.how), leading = { CheckIcon(check, Modifier.height(Size.iconCircle)) }) }
+                row { shape -> ListRow(stringResource(check.label), shape = shape, line = stringResource(check.how), leading = { IconCircle(painterResource(check.icon), CircleTone.Hue(check.hue)) }) }
             }
         }
         Spacer(Modifier.height(Space.block))
-        Note(stringResource(R.string.how_note), icon = painterResource(R.drawable.ic_lock))
+        Note(stringResource(R.string.how_note), tone = NoteTone.HONESTY, icon = painterResource(R.drawable.ic_lock))
     }
 }
 
@@ -166,12 +178,12 @@ fun LimitsScreen(onBack: () -> Unit, onChecklist: () -> Unit) {
             listOf(
                 R.string.limit_memory_card, R.string.limit_other_network, R.string.limit_isolation, R.string.limit_mac, R.string.limit_trackers,
                 R.string.limit_infrared, R.string.limit_hotspot_scans, R.string.limit_magnet, R.string.limit_lens,
-            ).forEach { line -> row { shape -> SignRow(painterResource(R.drawable.ic_not_checked), stringResource(line), shape = shape) } }
+            ).forEach { line -> row { shape -> SignRow(null, stringResource(line), shape = shape) } }
         }
         Spacer(Modifier.height(Space.block))
         ListRow(
             stringResource(R.string.check_checklist), line = stringResource(R.string.limits_by_hand),
-            leading = { CheckIcon(Check.CHECKLIST, Modifier.height(Size.iconCircle)) }, onClick = onChecklist,
+            leading = { IconCircle(painterResource(Check.CHECKLIST.icon), CircleTone.Hue(Check.CHECKLIST.hue)) }, onClick = onChecklist,
         )
     }
 }
@@ -196,8 +208,8 @@ fun PrivacyScreen(vm: PrivacyViewModel, onBack: () -> Unit) {
     val haptics = rememberHaptics()
     var deleting by rememberSaveable { mutableStateOf(false) }
     var deleted by rememberSaveable { mutableStateOf(false) }
-    DetailScreen(onBack) {
-        if (deleted) Note(stringResource(R.string.deleted_all))
+    DetailScreen(onBack, title = stringResource(R.string.privacy)) {
+        if (deleted) Note(stringResource(R.string.deleted_all), tone = NoteTone.GOOD)
         LensHeader(painterResource(R.drawable.ic_lock), stringResource(R.string.privacy_line), line = stringResource(R.string.privacy_header_line))
         SectionLabel(stringResource(R.string.why_keyhole_asks))
         Grouped {
@@ -294,6 +306,34 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
             }
             row { shape -> ListRow(stringResource(R.string.licences), shape = shape, line = stringResource(R.string.licences_line), leading = { NeutralCircle(painterResource(R.drawable.ic_reports)) }, onClick = onLicences) }
         }
+        // The maker's other apps (17), each to its own releases page: the same link in every build.
+        SectionLabel(stringResource(R.string.more_from_mid_apps))
+        Grouped {
+            row { shape ->
+                ListRow(
+                    stringResource(R.string.app_burrow), shape = shape, line = stringResource(R.string.app_burrow_line),
+                    leading = { AppTile(R.drawable.app_burrow_mark, BurrowBrand) }, trailing = { OpenIcon() }, onClick = { openInBrowser(context, BURROW_URL) },
+                )
+            }
+            row { shape ->
+                ListRow(
+                    stringResource(R.string.app_weft), shape = shape, line = stringResource(R.string.app_weft_line),
+                    leading = { AppTile(R.drawable.app_weft_mark, WeftBrand) }, trailing = { OpenIcon() }, onClick = { openInBrowser(context, WEFT_URL) },
+                )
+            }
+        }
+        // The maker, mid apps, with the contact address; a tap writes an email (as in Burrow and Weft).
+        Spacer(Modifier.height(Space.block))
+        ListRow(
+            stringResource(R.string.mid_apps), line = stringResource(R.string.about_contact, BuildConfig.CONTACT_EMAIL),
+            leading = { Image(painterResource(R.drawable.app_mid_apps_mark), null, Modifier.size(Size.iconCircle).clip(Shapes.pill)) },
+            trailing = { Icon(painterResource(R.drawable.ic_mail), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.iconSmall)) },
+            onClick = { send(context, Intent(Intent.ACTION_SENDTO, ("mailto:" + BuildConfig.CONTACT_EMAIL).toUri()).putExtra(Intent.EXTRA_SUBJECT, context.getString(R.string.app_name))) },
+        )
+        Text(
+            stringResource(R.string.made_by), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(vertical = Space.heading),
+        )
     }
     if (checking || update != null) {
         val u = update
@@ -370,3 +410,18 @@ fun LicenceTextScreen(title: String, file: String?, onBack: () -> Unit) {
         Text(text, style = KeyholeType.supporting, color = c.onSurface, modifier = Modifier.padding(horizontal = Space.headingInset))
     }
 }
+
+private const val BURROW_URL = "https://github.com/nisabmohd/burrow"
+private const val WEFT_URL = "https://github.com/nisabmohd/weft"
+
+/** Another app's icon in a row: its mark on its own colour, in the same 44 dp circle as every row's icon. */
+@Composable
+private fun AppTile(@androidx.annotation.DrawableRes mark: Int, color: androidx.compose.ui.graphics.Color) {
+    Box(Modifier.size(Size.iconCircle).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
+        // Launcher foregrounds are 108 units with the mark in the middle: at the circle's own size the mark sits
+        // well inside it, smaller than on the launcher.
+        Image(painterResource(mark), null, modifier = Modifier.requiredSize(Size.iconCircle * APP_MARK_SCALE))
+    }
+}
+
+private const val APP_MARK_SCALE = 1.15f

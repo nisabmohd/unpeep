@@ -102,9 +102,9 @@
     <string name="of_total">/ %1$d 台</string>
     <string name="found_line">台を検出</string>
     <string name="found_so_far">これまでの検出</string>
-    <string name="nothing_answered_yet">まだ応答がありません。</string>
+    <string name="nothing_answered_yet">まだ応答はありません</string>
     <string name="not_on_wifi_title">Wi-Fi に未接続</string>
-    <string name="not_on_wifi_line">部屋の Wi-Fi に接続してから、もう一度スキャンしてください。Keyhole はこのスマートフォンが接続中の Wi-Fi だけを調べます。</string>
+    <string name="not_on_wifi_line">この部屋のWi-Fiにつないでから、もう一度スキャンしてください。Keyholeは接続中のネットワークだけを確認します。</string>
     <string name="next_wifi">次へ: Wi-Fi</string>
     <string name="next_hotspots">次へ: スポット</string>
     <string name="next_bluetooth">次へ: Bluetooth</string>
@@ -118,7 +118,7 @@
     <string name="risk_not_recognised">不明</string>
     <string name="isolation_title">応答したのはルーターだけです</string>
     <string name="isolation_text">この Wi-Fi は端末どうしを分離している可能性があり、接続中のカメラはここからは見えません。ほかのチェックは使えます。</string>
-    <string name="wifi_none_title">カメラらしいものは見つかりませんでした</string>
+    <string name="wifi_none_title">このWi-Fiでカメラは見つかりませんでした</string>
     <string name="wifi_none_text">別のネットワークやモバイル回線を使うカメラ、メモリーカードに録画するカメラは、このスキャンには表示されません。</string>
     <string name="other_devices_line">応答はありますが、種類が分かりません</string>
     <string name="other_devices_title">その他のデバイス</string>
@@ -198,29 +198,29 @@
     <!-- Hotspots, Bluetooth and 07 Find it -->
     <string name="checking_hotspots">カメラのスポットを検索中</string>
     <string name="checking_bluetooth">Bluetooth を検索中</string>
-    <string name="nothing_flagged_yet">要確認のものはまだありません。</string>
+    <string name="nothing_flagged_yet">まだ確認が必要なものはありません</string>
     <string name="allow">許可</string>
     <string name="open_settings">設定を開く</string>
-    <string name="perm_hotspots_title">周囲の Wi-Fi 名を表示</string>
-    <string name="perm_hotspots_line">Android は、正確な位置情報の権限を持つアプリにだけ Wi-Fi 名を表示します。そのため許可が必要ですが、Keyhole が現在地を読み取ることはありません。</string>
-    <string name="perm_bluetooth_title">近くの Bluetooth デバイスを表示</string>
-    <string name="perm_bluetooth_line">トラッカーや Bluetooth カメラを見つけるためです。Keyhole が現在地を読み取ることはありません。</string>
-    <string name="perm_denied_line">Android はもう確認しません。設定の「権限」で許可してください。</string>
+    <string name="perm_hotspots_title">位置情報を許可</string>
+    <string name="perm_hotspots_line">周りのカメラのホットスポットを一覧にするためです。AndroidはこれがないとWi-Fi名を表示しません。Keyholeが居場所を読むことはありません。</string>
+    <string name="perm_bluetooth_title">付近のデバイスを許可</string>
+    <string name="perm_bluetooth_line">トラッカーとBluetoothカメラを見つけるためです。</string>
+    <string name="perm_denied_line">Androidはもう尋ねません。設定で許可してから戻ってください。</string>
     <string name="block_wifi_off_title">Wi-Fi がオフです</string>
-    <string name="block_wifi_off_line">周囲のスポットを検出するには Wi-Fi をオンにしてください。接続する必要はありません。</string>
+    <string name="block_wifi_off_line">オンにしてから、もう一度スキャンしてください。ネットワークにつなぐ必要はありません。</string>
     <string name="block_bluetooth_off_title">Bluetooth がオフです</string>
-    <string name="block_bluetooth_off_line">近くのトラッカーを検出するには Bluetooth をオンにしてください。</string>
+    <string name="block_bluetooth_off_line">オンにしてから、もう一度スキャンしてください。</string>
     <string name="block_location_off_title">位置情報がオフです</string>
-    <string name="block_location_off_line">Android は、位置情報がオンのときだけ周囲の機器を一覧表示します。Keyhole が現在地を読み取ることはありません。</string>
+    <string name="block_location_off_line">Androidが周りのWi-Fi名を一覧にできるよう位置情報をオンにしてから、もう一度スキャンしてください。</string>
     <string name="block_no_bluetooth_title">この端末には Bluetooth がありません</string>
-    <string name="block_no_bluetooth_line">この端末ではこのチェックを実行できないため、レポートには未チェックと記載されます。</string>
-    <string name="hotspots_none_title">カメラのスポットらしいものは近くにありません</string>
+    <string name="block_no_bluetooth_line">このステップはスキップしてください。レポートの「確認できなかったこと」に載ります。</string>
+    <string name="hotspots_none_title">カメラのホットスポットは見つかりませんでした</string>
     <string name="hotspots_none_text">すでに Wi-Fi に設定済みのカメラは、独自の名前を発信しません。それらは Wi-Fi チェックで探します。</string>
-    <string name="bluetooth_none_title">トラッカーやカメラらしいものは近くにありません</string>
-    <string name="bluetooth_none_text">信号を発信しないトラッカーや、Keyhole がまだ対応していない方式のトラッカーは表示されません。</string>
+    <string name="bluetooth_none_title">トラッカーやBluetoothカメラは見つかりませんでした</string>
+    <string name="bluetooth_none_text">電波を出さないデバイスや電源が入っていないデバイスはここに表示されません。</string>
     <string name="other_networks_line">近くのルーターやスマートフォンです。何かの兆候ではありません。</string>
     <string name="other_networks_title">その他の Wi-Fi</string>
-    <string name="other_bluetooth_line">イヤホン、時計、テレビなど</string>
+    <string name="other_bluetooth_line">イヤホン、時計、スマートフォン</string>
     <string name="other_bluetooth_title">その他の Bluetooth デバイス</string>
     <string name="kind_camera_hotspot">カメラのスポット</string>
     <string name="kind_network">Wi-Fi ネットワーク</string>
@@ -259,7 +259,7 @@
     <string name="remove_from_report">レポートから削除</string>
     <string name="added_to_report">レポートに追加済み</string>
     <plurals name="networks_nearby">
-        <item quantity="other">%1$d 件の Wi-Fi が近くにあります</item>
+        <item quantity="other">付近のネットワーク%1$d件</item>
     </plurals>
     <plurals name="bluetooth_nearby">
         <item quantity="other">%1$d 台の Bluetooth デバイスが近くにあります</item>
@@ -435,11 +435,11 @@
     <string name="undo_title">マークを外しますか？</string>
     <string name="undo_line">要確認のリストに戻ります。</string>
     <string name="undo">元に戻す</string>
-    <string name="gap_not_run">%1$s: 未チェック</string>
+    <string name="gap_not_run">%1$s：スキップ</string>
     <string name="gap_isolated">Wi-Fi のほかの機器: 端末どうしが分離されているため、応答したのはルーターだけです</string>
     <string name="gap_no_infrared">赤外線: この端末のカメラが遮っている可能性があります</string>
     <string name="gap_memory_card">メモリーカードに録画して何も送信しないカメラ: どのスキャンでも見つけられません</string>
-    <string name="gap_other_network">別のネットワークやモバイル回線のカメラ: この Wi-Fi にはいません</string>
+    <string name="gap_other_network">別のネットワークやモバイルデータにつながったカメラ</string>
     <string name="report_not_safe_note">このレポートは何をチェックしたかを示します。部屋が安全という意味ではありません。</string>
     <string name="found_something">何か見つけた？</string>
     <string name="export">書き出す</string>
@@ -533,30 +533,30 @@
     <string name="marked_mine">自分のものとしてマーク</string>
     <string name="marked_room">部屋の備品としてマーク</string>
     <string name="marked_known_empty_line">「カメラではない？」でマークしたデバイスがここに表示されます。</string>
-    <string name="how_wifi">接続中の Wi-Fi の機器に種類を問い合わせ、カメラのように応答するものを示します。</string>
-    <string name="how_hotspots">周囲の Wi-Fi 名を一覧にし、安価なカメラが設定時に使う名前を示します。</string>
-    <string name="how_bluetooth">AirTag や Tile などのトラッカーと、カメラのような Bluetooth 名を検出します。</string>
-    <string name="how_lens">ライトと背面カメラで、レンズかもしれない小さく明るい点を囲みます。</string>
-    <string name="how_infrared">暗い場所で前面カメラを使い、多くの暗視カメラにある赤外線を表示します。</string>
-    <string name="how_magnet">部屋の通常の磁場を測り、電子機器の近くで上がるとお知らせします。</string>
-    <string name="how_checklist">目で確かめたい場所を、写真やメモと一緒に案内します。</string>
+    <string name="how_wifi">このWi-Fiでカメラのように応答するデバイスを探します。</string>
+    <string name="how_hotspots">安いカメラが設定時に使うWi-Fi名を見つけます。</string>
+    <string name="how_bluetooth">トラッカーとカメラらしいBluetooth名を見つけます。</string>
+    <string name="how_lens">ライトとカメラで小さく光る点に印をつけます。</string>
+    <string name="how_infrared">前面カメラで暗い所の赤外線ライトを映します。</string>
+    <string name="how_magnet">電子機器の近くで磁場が跳ねると知らせます。</string>
+    <string name="how_checklist">手で確かめたい場所です。</string>
     <string name="how_note">チェックは開始したときだけ実行され、データは端末の外に出ません。</string>
     <string name="limits_intro">どのチェックも部屋が安全だとは約束できません。Keyhole に見えないものと、目で確かめる方法です。</string>
-    <string name="limit_memory_card">メモリーカードに録画して何も送信しないカメラ: レンズ、赤外線、磁気、リストだけが役立ちます。</string>
-    <string name="limit_other_network">別のネットワーク、モバイル回線、端末から見えない Wi-Fi 上のカメラ。</string>
-    <string name="limit_isolation">端末どうしを分離するホテルやゲストの Wi-Fi: ほかの機器は応答しません。</string>
-    <string name="limit_mac">Android はほかの機器のハードウェアアドレスを隠すため、そこからメーカーは調べられません。</string>
-    <string name="limit_trackers">信号を発信しない、または Keyhole がまだ対応していない方式のトラッカー。</string>
-    <string name="limit_infrared">カメラが赤外線を遮る端末では赤外線が見えません。テレビのリモコンのテストで分かります。</string>
-    <string name="limit_hotspot_scans">Android は Wi-Fi スキャンを 2 分に 4 回までに制限しているため、スポットの更新はゆっくりです。</string>
-    <string name="limit_magnet">磁気はカメラだけでなく、あらゆる電子機器、磁石、配線に反応します。</string>
-    <string name="limit_lens">レンズファインダーはレンズのように光るものを囲みます。ガラス、ネジ、アクセサリーも含みます。</string>
+    <string name="limit_memory_card">メモリーカードに記録するだけのカメラ。レンズ・赤外線・チェックリストで探してください。</string>
+    <string name="limit_other_network">別のネットワークやモバイルデータのカメラ。</string>
+    <string name="limit_isolation">デバイス同士を分けるゲストWi-Fi。</string>
+    <string name="limit_mac">ほとんどのメーカー名。Androidが手がかりのアドレスを隠します。</string>
+    <string name="limit_trackers">電波を出さないトラッカー。</string>
+    <string name="limit_infrared">カメラが赤外線を遮る機種での赤外線。</string>
+    <string name="limit_hotspot_scans">ホットスポットの更新は遅め。2分に4回まで。</string>
+    <string name="limit_magnet">磁気はカメラ以外の電子機器にも反応します。</string>
+    <string name="limit_lens">レンズファインダーはガラスやネジにも反応します。</string>
     <string name="limits_by_hand">リストが場所ごとに目で確かめる手順を案内します。</string>
     <string name="privacy_header_line">アカウントなし、広告なし、追跡なし。スキャンは接続中の Wi-Fi の機器とだけ通信します。</string>
     <string name="why_keyhole_asks">Keyhole が許可を求める理由</string>
     <string name="perm_row_wifi_line">接続中の Wi-Fi の機器を一覧にするため。許可は不要です。</string>
     <string name="perm_row_location">位置情報（スポット用）</string>
-    <string name="perm_row_location_line">Android は位置情報の権限がないと周囲の Wi-Fi 名を表示しません。Keyhole が現在地を読み取ることはありません。</string>
+    <string name="perm_row_location_line">AndroidはこれがないとWi-Fi名を表示しません。Keyholeが居場所を読むことはありません。</string>
     <string name="perm_row_bluetooth_line">トラッカーや Bluetooth カメラを見つけるため</string>
     <string name="perm_row_camera">カメラ</string>
     <string name="perm_row_camera_line">レンズと赤外線のファインダー用。録画はしません。</string>
@@ -590,4 +590,82 @@
     <plurals name="welcome_art_devices">
         <item quantity="other">%1$d 台</item>
     </plurals>
+    <string name="nothing_answered_line">応答したデバイスから順にここに表示されます</string>
+    <plurals name="asked_of">
+        <item quantity="other">約%2$d件中%1$d件に問い合わせ</item>
+    </plurals>
+    <plurals name="networks_so_far">
+        <item quantity="other">これまでに%d件のネットワーク、カメラらしいものはなし</item>
+    </plurals>
+    <plurals name="bluetooth_so_far">
+        <item quantity="other">これまでに%d台のデバイス、トラッカーらしいものはなし</item>
+    </plurals>
+    <plurals name="networks_count">
+        <item quantity="other">%d件のネットワーク</item>
+    </plurals>
+    <plurals name="bluetooth_count">
+        <item quantity="other">%d台のデバイス</item>
+    </plurals>
+    <string name="summary_nothing">このスキャンでは何も見つかりませんでした</string>
+    <string name="all_known_kinds">すべて既知の種類です。</string>
+    <string name="none_like_camera">カメラらしいものはありません。</string>
+    <plurals name="devices_answered">
+        <item quantity="other">%d台のデバイスが応答しました。</item>
+    </plurals>
+    <plurals name="networks_heard">
+        <item quantity="other">付近のネットワーク%d件。</item>
+    </plurals>
+    <plurals name="bluetooth_heard">
+        <item quantity="other">付近のBluetoothデバイス%d台。</item>
+    </plurals>
+    <string name="maker_hidden">Androidにより非表示</string>
+    <string name="risk_likely_lower">カメラの可能性大</string>
+    <string name="risk_look_lower">確認が必要</string>
+    <string name="report_deleted">レポートを削除しました</string>
+    <string name="removed_from_report">レポートから削除しました</string>
+    <plurals name="you_saved_photos">
+        <item quantity="other">写真を%d枚保存しました</item>
+    </plurals>
+    <string name="saving_pdf">PDFを保存しています…</string>
+    <string name="open">開く</string>
+    <string name="more_from_mid_apps">mid apps のほかのアプリ</string>
+    <string name="app_burrow_line">自動で記録される家計簿</string>
+    <string name="app_weft_line">小さな習慣を、正直に続ける</string>
+    <string name="results_cleared">Keyholeを閉じたときにその結果は消去されました</string>
+    <string name="report_gone">そのレポートは削除されています</string>
+    <string name="stop_sweep_title">このチェックを止めますか？</string>
+    <string name="stop_sweep_line">%2$d件中%1$d件目のチェックです。</string>
+    <string name="stop_and_report">止めてレポートを見る</string>
+    <plurals name="stop_and_report_line">
+        <item quantity="other">%2$d件中%1$d件のチェックが終わりました。残りは未確認として載ります。</item>
+    </plurals>
+    <string name="stop_no_report">レポートを作らずに止める</string>
+    <string name="stop_no_report_line">見つかったものは破棄されます</string>
+    <string name="keep_going">続ける</string>
+    <string name="carry_on">続ける</string>
+    <string name="paused_at">%1$sで一時停止中</string>
+    <plurals name="paused_line">
+        <item quantity="other">%2$d件中%1$d件のチェックが完了。バックグラウンドの間に失われたものはありません。</item>
+    </plurals>
+    <string name="aeroplane_title">機内モードがオンです</string>
+    <string name="aeroplane_line">Wi-Fi、ホットスポット、Bluetoothは動きません。オフにするか、電波のいらないチェックに進んでください。</string>
+    <string name="skip_to_lens">レンズファインダーへ</string>
+    <string name="skip_to_infrared">赤外線ファインダーへ</string>
+    <string name="skip_to_magnet">磁気チェックへ</string>
+    <string name="skip_to_checklist">チェックリストへ</string>
+    <string name="magnet_stopped_title">センサーが応答しなくなりました</string>
+    <string name="magnet_stopped_text">スピーカーや磁石から離れてから、通常値を設定し直してください。</string>
+    <string name="magnet_no_reading_unit">測定値なし</string>
+    <string name="magnet_no_reading_title">測定値なし</string>
+    <string name="magnet_last_line">通常 %1$d µT · 最後 %2$d µT</string>
+    <plurals name="scan_again_in">
+        <item quantity="other">あと%d秒</item>
+    </plurals>
+    <string name="scan_paused_title">スキャンは一時停止中です</string>
+    <string name="scan_paused_text">AndroidのWi-Fiスキャンは2分に4回までです。これは最後の結果です。</string>
+    <string name="font_lexend_line">読みやすさのための書体</string>
+    <string name="font_outfit_line">丸くてやさしい</string>
+    <string name="font_atkinson_line">ロービジョン向けの明瞭な文字</string>
+    <string name="font_space_grotesk_line">シャープで技術的</string>
+    <string name="about_contact">連絡先：%1$s</string>
 </resources>

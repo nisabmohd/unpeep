@@ -112,7 +112,8 @@ class ReportRepository(private val db: KeyholeDatabase, private val photos: Phot
         marksByKey = markList.map { list -> list.associate { it.key to it.knownAs } }.stateIn(scope, SharingStarted.Eagerly, emptyMap())
     }
 
-    private val writes = scope
+    /** The app's scope, for writes that must finish after the screen that asked is gone (a toast's Undo). */
+    val writes = scope
 
     fun report(id: Long): Flow<SavedReport?> = combine(reports.report(id), reports.findings(id), reports.photos(id)) { r, f, p ->
         r?.let { e -> saved(e).copy(findings = f.map(ReportCodes::finding), photos = p.map { it.path }, toLookAt = f.count { it.knownAs == null }) }
@@ -147,6 +148,11 @@ class ReportRepository(private val db: KeyholeDatabase, private val photos: Phot
     fun markLater(key: String, knownAs: KnownAs?, label: String, check: Check) {
         writes.launch { mark(key, knownAs, label, check) }
     }
+
+    /** Finding detail › Remove from report. Returns what was removed, so the toast's Undo can put it back. */
+    suspend fun removeFinding(id: Long): FindingEntity? = reports.finding(id)?.also { reports.deleteFinding(id) }
+
+    suspend fun restoreFinding(finding: FindingEntity) = reports.insertFinding(finding)
 
     suspend fun delete(id: Long) {
         val paths = reports.photoPaths(id)

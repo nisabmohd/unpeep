@@ -104,18 +104,22 @@ Everything ran on emulators only (Pixel API 35 headless, Medium Phone API 36.1).
 - [ ] Checklist content per place: read by someone who has checked rooms by hand
 - [ ] Database: version 1, schema exported to `app/schemas`; any change from here needs a migration and a test
 
-### Design (send `~/Downloads/keyhole-design-brief.zip` to the designer; build the PNGs that come back)
-- [ ] Responsiveness: tablets / landscape (one centred column today), the lens finder on large screens, 200 % text
-      (SummaryBox, Find it and Magnet lenses, Report header, sheets), 360 dp phones, right-to-left
-- [ ] Loading states (none today), empty states (each list's "nothing here")
-- [ ] Every screen and state without a PNG: `build/design-brief/TO-DESIGN.md` § D (sweep states, Hotspot / Bluetooth
-      results, Other devices, Find it notes, lens states and sheets, magnet learning, checklist answer sheet, report
-      rename / Undo / Couldn't check / finding detail / photo / PDF, help rows, Reports search and delete, Home's visit
-      and last-report rows, Language sheet, Marked as known, How it works, Limits, Privacy's new rows and delete sheet,
-      About's update sheet, Licence text, Text size sheet, Sweep steps screen)
-- [ ] Decisions marked **Decide** in the brief (torch colour, Find it meter vs words, Appearance theme pills vs
-      segmented, confirmations)
-- [ ] Components that exist only in code go on the design-system board (00)
+### Design (delivered 16 Nov 2026: `design/screens/`, 145 PNGs; built against them)
+- [x] Shared: Note (five tones), Toast, focus ring, pressed states, checklist icons and hues, WaitingDots, QuietLine,
+      StepSlider (text size, as Weft), AddPhotoTile, KeyholeNavRail
+- [x] Screens 01–18 and their states (sweep, results, device, find it, lens, magnet, checklist, report, finding
+      detail, found camera, reports, more, appearance, privacy, about with More from mid apps)
+- [x] Error states: scan limit (E01), Wi-Fi dropped (E03), magnet stopped (E05), results / report gone toasts
+      (E06, E13), stop sheet (E07), paused (E08), aeroplane mode (E09)
+- [x] Tablet / landscape: rail and two panes from 840 dp (T01–T04), sweep (T06) and lens finder (T05) on their side
+- [x] Large text and 360 dp: audited with `DesignShots#overflowAudit`
+- [ ] Not built yet: 10f full-screen photo and 10g PDF restyle, 12b/12c search states, 15a no-match, 17a–d update
+      sheet states, E10 long names, E14 notes in dark, E16 right-to-left, E17 German check, 02i–k pressed shots
+- [ ] Checklist content: the design's item lists differ from the app's in places (e.g. "Key fob and tags", "Wall
+      clock"); icons and hues follow the board, items stay as written until someone decides
+- [ ] Photos per finding: finding detail can't show its own photos (photos belong to the report, not a finding;
+      linking them needs a database change)
+- [ ] Run `DesignShots` on a real tablet and in landscape on a phone
 
 ## Later
 - Quick Settings tile "Start sweep", home-screen widget

@@ -1,5 +1,10 @@
 package app.keyhole.privacy.components
 
+import androidx.compose.ui.test.onAllNodesWithText
+import app.keyhole.privacy.ui.components.ToastHost
+import app.keyhole.privacy.ui.components.ToastState
+import app.keyhole.privacy.ui.components.NoteTone
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.ui.Modifier
@@ -159,7 +164,10 @@ class ComponentsTest {
                 SummaryBox("No number here", "7", emptyList())
             }
         }
-        rule.onNodeWithText("0 likely cameras", useUnmergedTree = true).assertIsDisplayed()
+        // Nothing counted: the legend is one quiet line, not a row of zeros.
+        // Both boxes count nothing, so both say so.
+        rule.onAllNodesWithText(text(R.string.summary_nothing), useUnmergedTree = true).assertCountEquals(2)
+        rule.onAllNodesWithText("0 likely cameras", useUnmergedTree = true).assertCountEquals(0)
         rule.onNodeWithText("No number here", useUnmergedTree = true).assertIsDisplayed()
     }
 
@@ -272,9 +280,44 @@ class ComponentsTest {
     }
 
     @Test fun aNoteReadsItsTitleAndTextTogether() {
-        rule.setKeyholeContent { Note("This Wi-Fi may keep devices apart.", title = "Only the router answered", warning = true) }
+        rule.setKeyholeContent { Note("This Wi-Fi may keep devices apart.", title = "Only the router answered", tone = NoteTone.WARNING) }
         rule.onNodeWithText("Only the router answered", useUnmergedTree = true).assertIsDisplayed()
         rule.onNodeWithText("This Wi-Fi may keep devices apart.", useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test fun aNoteActionIsItsOwnButton() {
+        var tapped = 0
+        rule.setKeyholeContent { Note("It's in your Downloads folder.", title = "Saved as a PDF", tone = NoteTone.GOOD, action = "Open", onAction = { tapped++ }) }
+        rule.onNodeWithText("Open").assertHasClickAction().performClick()
+        assertEquals(1, tapped)
+        rule.onNodeWithText("Saved as a PDF", useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test fun aToastShowsWithUndoAndUndoRunsOnce() {
+        val toasts = ToastState()
+        var undone = 0
+        rule.setKeyholeContent {
+            androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) { ToastHost(toasts, overNav = true) }
+        }
+        rule.runOnIdle { toasts.show("Report deleted", undo = { undone++ }) }
+        rule.onNodeWithText("Report deleted").assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.undo)).performClick()
+        rule.waitForIdle()
+        assertEquals(1, undone)
+        rule.onNodeWithText("Report deleted").assertDoesNotExist()
+    }
+
+    @Test fun aToastWithoutUndoGoesAwayByItself() {
+        val toasts = ToastState()
+        rule.mainClock.autoAdvance = false
+        rule.setKeyholeContent { androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) { ToastHost(toasts, overNav = false) } }
+        rule.runOnIdle { toasts.show("Those results were cleared when Keyhole closed") }
+        rule.mainClock.advanceTimeBy(1_000)
+        rule.onNodeWithText("Those results were cleared when Keyhole closed").assertExists()
+        rule.mainClock.advanceTimeBy(12_000)
+        rule.mainClock.autoAdvance = true
+        rule.waitForIdle()
+        rule.onNodeWithText("Those results were cleared when Keyhole closed").assertDoesNotExist()
     }
 
     @Test fun anEmptyStateSaysWhatIsMissing() {

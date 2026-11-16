@@ -76,6 +76,6 @@ fun NotACameraSheet(current: KnownAs?, onDismiss: () -> Unit, onMark: (KnownAs?)
                 leading = { IconCircle(painterResource(R.drawable.ic_help), CircleTone.Warning) },
             )
         }
-        SheetLine(stringResource(R.string.report_wrong), icon = painterResource(R.drawable.ic_chat), onClick = onReport)
+        SheetLine(stringResource(R.string.report_wrong), icon = painterResource(R.drawable.ic_chat), onClick = onReport, leaves = true)
     }
 }

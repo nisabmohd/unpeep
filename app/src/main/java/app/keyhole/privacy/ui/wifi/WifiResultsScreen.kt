@@ -1,5 +1,14 @@
 package app.keyhole.privacy.ui.wifi
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ColumnScope
+import app.keyhole.privacy.ui.isWide
+import app.keyhole.privacy.ui.components.keepTogether
+import app.keyhole.privacy.ui.components.LocalToasts
+import app.keyhole.privacy.ui.components.QuietLine
+import app.keyhole.privacy.ui.components.LensHeader
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -34,6 +43,7 @@ import app.keyhole.privacy.ui.components.Grouped
 import app.keyhole.privacy.ui.components.IconCircle
 import app.keyhole.privacy.ui.components.ListRow
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.SectionLabel
 import app.keyhole.privacy.ui.components.SummaryBox
@@ -77,7 +87,15 @@ fun WifiResultsScreen(vm: WifiResultsViewModel, onBack: () -> Unit, onScanAgain:
     val s by vm.state.collectAsStateWithLifecycle()
     // The results live in memory: after the app was closed there is nothing to show, so go back.
     val gone = s.loaded && s.wifi.status != WifiStatus.DONE
-    LaunchedEffect(gone) { if (gone) onBack() }
+    val toasts = LocalToasts.current
+    val cleared = stringResource(R.string.results_cleared)
+    LaunchedEffect(gone) {
+        if (gone) {
+            // Nothing ran since the app started (E06): say why the results went, on the screen it goes back to.
+            if (s.wifi.status == WifiStatus.IDLE) toasts.show(cleared)
+            onBack()
+        }
+    }
     WifiResultsContent(s, onBack, onScanAgain, onDevice, onOthers, onNext)
 }
 
@@ -88,8 +106,10 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
     val look = w.devices.filter { it.risk == Risk.CHECK_THIS }
     val known = w.devices.filter { it.risk == Risk.KNOWN }
     val other = w.devices.filter { it.risk == Risk.UNKNOWN }
+    val wide = isWide()
     DetailScreen(
         onBack,
+        panes = wide,
         title = stringResource(R.string.check_wifi),
         actions = { TopBarAction(stringResource(R.string.scan_again), onScanAgain) },
         dock = {
@@ -100,17 +120,24 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
             }
         },
     ) {
-        // Notes go first.
+        val count = w.devices.size
+        // Nothing found (00-decisions): the plain result in a lens header, one row for what was seen, one quiet line for
+        // what the scan can't see. No count box, no second Note.
+        val nothing = !w.isolated && likely.isEmpty() && look.isEmpty()
         if (w.isolated) {
-            Note(stringResource(R.string.isolation_text), title = stringResource(R.string.isolation_title), icon = painterResource(R.drawable.ic_warning), warning = true)
-            Spacer(Modifier.height(Space.block))
-        } else if (likely.isEmpty() && look.isEmpty()) {
-            Note(stringResource(R.string.wifi_none_text), title = stringResource(R.string.wifi_none_title))
+            Note(stringResource(R.string.isolation_text), title = stringResource(R.string.isolation_title), tone = NoteTone.WARNING)
             Spacer(Modifier.height(Space.block))
         }
-        val count = w.devices.size
-        SummaryBox(
-            w.ssid?.let { pluralStringResource(R.plurals.devices_on_wifi, count, count, it) } ?: pluralStringResource(R.plurals.devices_on_this_wifi, count, count),
+        if (nothing) {
+            LensHeader(
+                painterResource(R.drawable.ic_check_circle), stringResource(R.string.wifi_none_title),
+                line = pluralStringResource(R.plurals.devices_answered, count, count) + " " + stringResource(if (other.isEmpty()) R.string.all_known_kinds else R.string.none_like_camera),
+            )
+            Spacer(Modifier.height(Space.lensBottom))
+        }
+        val summaryBox: @Composable () -> Unit = {
+            if (!nothing) SummaryBox(
+            w.ssid?.let { pluralStringResource(R.plurals.devices_on_wifi, count, count, it.keepTogether()) } ?: pluralStringResource(R.plurals.devices_on_this_wifi, count, count),
             count.toString(),
             buildList {
                 add(SummaryPart(likely.size, pluralStringResource(R.plurals.likely_cameras_count, likely.size, likely.size), SummaryTone.ALERT))
@@ -119,31 +146,51 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
                 if (other.isNotEmpty()) add(SummaryPart(other.size, pluralStringResource(R.plurals.not_recognised_count, other.size, other.size), SummaryTone.NEUTRAL))
             },
         )
-        if (likely.isNotEmpty()) {
-            SectionLabel(stringResource(R.string.risk_likely_camera), meta = likely.size.toString())
-            Grouped { likely.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
         }
-        if (look.isNotEmpty()) {
-            SectionLabel(stringResource(R.string.risk_worth_a_look), meta = look.size.toString())
-            Grouped { look.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+        val groupsBlock: @Composable ColumnScope.() -> Unit = {
+            if (likely.isNotEmpty()) {
+                SectionLabel(stringResource(R.string.risk_likely_camera), meta = likely.size.toString())
+                Grouped { likely.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+            }
+            if (look.isNotEmpty()) {
+                SectionLabel(stringResource(R.string.risk_worth_a_look), meta = look.size.toString())
+                Grouped { look.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+            }
         }
-        if (known.isNotEmpty() || other.isNotEmpty()) {
-            Spacer(Modifier.height(Space.block))
-            Grouped {
-                if (known.isNotEmpty()) row { shape ->
-                    ListRow(
-                        pluralStringResource(R.plurals.known_devices, known.size, known.size), shape = shape, line = kindsLine(known),
-                        leading = { IconCircle(painterResource(R.drawable.ic_smartphone), CircleTone.Neutral) }, onClick = onOthers,
-                    )
-                }
-                if (other.isNotEmpty()) row { shape ->
-                    ListRow(
-                        pluralStringResource(R.plurals.other_devices, other.size, other.size), shape = shape, line = stringResource(R.string.other_devices_line),
-                        leading = { IconCircle(painterResource(R.drawable.ic_help), CircleTone.Neutral) }, onClick = onOthers,
-                    )
+        val othersBlock: @Composable ColumnScope.() -> Unit = {
+            if (known.isNotEmpty() || other.isNotEmpty()) {
+                if (!nothing) Spacer(Modifier.height(Space.block))
+                Grouped {
+                    if (known.isNotEmpty()) row { shape ->
+                        ListRow(
+                            pluralStringResource(R.plurals.known_devices, known.size, known.size), shape = shape, line = kindsLine(known),
+                            leading = { IconCircle(painterResource(R.drawable.ic_smartphone), CircleTone.Neutral) }, onClick = onOthers,
+                        )
+                    }
+                    if (other.isNotEmpty()) row { shape ->
+                        ListRow(
+                            pluralStringResource(R.plurals.other_devices, other.size, other.size), shape = shape, line = stringResource(R.string.other_devices_line),
+                            leading = { IconCircle(painterResource(R.drawable.ic_help), CircleTone.Neutral) }, onClick = onOthers,
+                        )
+                    }
                 }
             }
         }
+        if (wide && !nothing) {
+            // T03: the count and everything known on the left, what to look at on the right.
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.screen)) {
+                Column(Modifier.weight(1f)) {
+                    summaryBox()
+                    othersBlock()
+                }
+                Column(Modifier.weight(1f)) { groupsBlock() }
+            }
+        } else {
+            summaryBox()
+            groupsBlock()
+            othersBlock()
+        }
+        if (nothing) QuietLine(stringResource(R.string.wifi_none_text))
     }
 }
 

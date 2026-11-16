@@ -1,5 +1,7 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.ui.text.style.TextOverflow
+import app.keyhole.privacy.ui.theme.checkColors
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
@@ -59,6 +61,8 @@ import kotlin.math.sin
 /** Where the glint sits on the outer ring, and where a progress arc starts (12 o'clock). */
 private const val GLINT_ANGLE = -50f
 private const val ARC_START = -90f
+/** The lens core's line never shrinks below this share of a caption. */
+private const val MIN_LINE = 0.85f
 
 /**
  * The lens drawing: rings around a [core]-wide middle, in a [size] box. [middleRing] adds the third ring of the
@@ -85,7 +89,8 @@ fun LensRings(
             val middle = (outer + inner) / 2
             drawCircle(c.outline.copy(alpha = Alpha.ringFaint), outer, style = Stroke(stroke))
             if (middleRing || progress != null) drawCircle(c.outline.copy(alpha = Alpha.ringOuter), middle, style = Stroke(stroke))
-            drawCircle(c.outline.copy(alpha = Alpha.ringMiddle), inner, style = Stroke(stroke))
+            // The progress lens has a white core of its own (with a shadow), so no ring hugs it.
+            if (progress == null) drawCircle(c.outline.copy(alpha = Alpha.ringMiddle), inner, style = Stroke(stroke))
             if (glint) drawCircle(c.primary, LensSize.glint.toPx() / 2, onRing(outer, GLINT_ANGLE))
             if (progress != null) {
                 val arc = LensSize.arcStroke.toPx()
@@ -114,6 +119,7 @@ fun LensStartButton(label: String, onClick: () -> Unit, modifier: Modifier = Mod
         Column(
             Modifier
                 .size(LensSize.startCore)
+                .focusRing(Shapes.pill)
                 .shadow(LensSize.shadow, Shapes.pill, ambientColor = c.primary, spotColor = c.primary)
                 .clip(Shapes.pill)
                 .background(c.primary)
@@ -138,7 +144,8 @@ fun LensProgress(progress: Float, value: String, line: String, modifier: Modifie
     val c = MaterialTheme.colorScheme
     LensRings(LensSize.progress, LensSize.progressCore, modifier.clearAndSetSemantics { contentDescription = description }, progress = progress) {
         Column(
-            Modifier.size(LensSize.progressCore).clip(Shapes.pill).background(c.background).padding(Space.inline),
+            Modifier.size(LensSize.progressCore).shadow(LensSize.coreShadow, Shapes.pill, ambientColor = c.primary, spotColor = c.primary)
+                .clip(Shapes.pill).background(c.surfaceContainerLowest).padding(Space.inline),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -154,7 +161,12 @@ fun LensProgress(progress: Float, value: String, line: String, modifier: Modifie
                         value, style = style.copy(color = c.onSurface, textAlign = TextAlign.Center), maxLines = 1, softWrap = false,
                         autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = style.fontSize),
                     )
-                    Text(line, style = if (icon != null) KeyholeType.caption else KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 2, textAlign = TextAlign.Center)
+                    val lineStyle = if (icon != null) KeyholeType.caption else KeyholeType.supporting
+                    BasicText(
+                        line, style = lineStyle.copy(color = c.onSurfaceVariant, textAlign = TextAlign.Center), maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
+                        autoSize = TextAutoSize.StepBased(minFontSize = KeyholeType.caption.fontSize * MIN_LINE, maxFontSize = lineStyle.fontSize),
+                        modifier = Modifier.widthIn(max = LensSize.progressCore - Space.card * 2),
+                    )
                 }
             }
         }
@@ -185,7 +197,7 @@ fun LensHeader(
             }
         }
         Spacer(Modifier.height(Space.lensBottom))
-        Text(title, style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading).semantics { heading() })
+        Text(title, style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
         if (line != null) {
             Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading).widthIn(max = Size.emptyLine))
         }
@@ -200,8 +212,12 @@ fun LensHeader(
     }
 }
 
-/** Every empty list: the lens header and one line, a little lower on the page. */
+/**
+ * Every empty list and every state a check can't run in: the lens header and one line, a little lower on the page.
+ * [hue]: the check it belongs to, which colours the core (Bluetooth is off → Bluetooth's purple).
+ */
 @Composable
-fun EmptyState(icon: Painter, title: String, line: String, modifier: Modifier = Modifier) {
-    LensHeader(icon, title, modifier.padding(top = Space.empty), line = line)
+fun EmptyState(icon: Painter, title: String, line: String, modifier: Modifier = Modifier, hue: Float? = null) {
+    val colors = hue?.let { checkColors(it) }
+    LensHeader(icon, title, modifier.padding(top = Space.empty), line = line, container = colors?.container, onContainer = colors?.onContainer)
 }

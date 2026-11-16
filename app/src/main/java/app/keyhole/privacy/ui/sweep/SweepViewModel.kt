@@ -38,7 +38,12 @@ data class SweepState(
     val done: Check? = null,
     /** The last step was skipped or left: the sweep is over. */
     val finished: Boolean = false,
-)
+    /** Keyhole went to the background mid-scan: the scan stopped (scans never run in the background), Carry on restarts it (E08). */
+    val paused: Boolean = false,
+) {
+    /** Steps before the one on screen: done or skipped. */
+    val stepsDone: Int get() = steps.indexOf(current).coerceAtLeast(0)
+}
 
 /**
  * 03 Sweep in progress. The user started it (Home's Start, or one check); it runs each step once and never by
@@ -53,7 +58,7 @@ class SweepViewModel(
         notes.begin(place)
     }
 
-    private data class Inner(val steps: List<Check> = emptyList(), val current: Check? = null, val run: Int = -1, val finished: Boolean = false)
+    private data class Inner(val steps: List<Check> = emptyList(), val current: Check? = null, val run: Int = -1, val finished: Boolean = false, val paused: Boolean = false)
 
     private val inner = MutableStateFlow(Inner())
 
@@ -72,7 +77,7 @@ class SweepViewModel(
             myNearby?.status == NearbyStatus.DONE -> i.current
             else -> null
         }
-        SweepState(place, i.steps, i.current, only != null, myWifi, myNearby, done, i.finished)
+        SweepState(place, i.steps, i.current, only != null, myWifi, myNearby, if (i.paused) null else done, i.finished, i.paused)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), SweepState(place, single = only != null))
 
     init {
@@ -111,6 +116,32 @@ class SweepViewModel(
 
     /** Scan again: from "Not on Wi-Fi", after Allow, or after the radio was switched on. */
     fun retry() = begin(inner.value.current)
+
+    /** Keyhole left the screen (another app, the phone locked): a running scan stops now and waits for Carry on. */
+    fun stopped() {
+        val s = state.value
+        val running = (s.current == Check.WIFI && s.wifi.status == WifiStatus.RUNNING) || s.nearby?.status == NearbyStatus.RUNNING
+        if (!running || inner.value.paused || inner.value.run < 0) return
+        if (s.current == Check.WIFI) wifi.cancel()
+        nearby(s.current)?.cancel()
+        inner.update { it.copy(paused = true, run = -1) }
+    }
+
+    /** Carry on: the paused step starts again from the beginning. */
+    fun carryOn() {
+        inner.update { it.copy(paused = false) }
+        begin(inner.value.current)
+    }
+
+    /** Aeroplane mode (E09): straight to the first step that needs no signal; the radio steps show as not checked. */
+    fun skipToHandsOn() {
+        val i = inner.value
+        if (i.current == Check.WIFI) wifi.cancel()
+        nearby(i.current)?.cancel()
+        val next = i.steps.drop(i.steps.indexOf(i.current) + 1).firstOrNull { it in HANDS_ON }
+        inner.value = i.copy(current = next, run = -1, finished = next == null, paused = false)
+        begin(next)
+    }
 
     /**
      * Back on screen (from Android's permission question or Settings): if the step was waiting for a permission

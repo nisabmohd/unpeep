@@ -1,5 +1,8 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.stateDescription
+import kotlin.math.roundToInt
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -66,7 +69,7 @@ private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, c
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.heightIn(min = Size.button),
+        modifier = modifier.focusRing(Shapes.pill).heightIn(min = Size.button),
         shape = Shapes.pill,
         colors = ButtonDefaults.buttonColors(
             containerColor = container, contentColor = content,
@@ -125,7 +128,7 @@ fun ButtonPair(secondary: @Composable (Modifier) -> Unit, primary: @Composable (
 fun Dock(modifier: Modifier = Modifier, content: @Composable ColumnScope.() -> Unit) {
     val nav = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
     Column(
-        modifier.fillMaxWidth().background(MaterialTheme.colorScheme.background)
+        modifier.reportDockHeight().fillMaxWidth().background(MaterialTheme.colorScheme.background)
             .padding(start = Space.screen, end = Space.screen, top = Space.block, bottom = maxOf(Space.dock, nav + Space.block)),
         verticalArrangement = Arrangement.spacedBy(Space.inline),
         content = content,
@@ -138,10 +141,11 @@ fun RoundIconButton(icon: Painter, label: String, onClick: () -> Unit, modifier:
     val c = MaterialTheme.colorScheme
     FilledTonalIconButton(
         onClick = onClick,
-        modifier = modifier.size(Size.iconButton),
+        modifier = modifier.focusRing(Shapes.pill).size(Size.iconButton),
         colors = IconButtonDefaults.filledTonalIconButtonColors(
-            containerColor = if (active) c.primaryContainer else c.surfaceContainer,
-            contentColor = if (active) c.onPrimaryContainer else c.onSurface,
+            // One "on" look (00-decisions › Torch): primary, so it reads as on at a glance, even on the viewfinder.
+            containerColor = if (active) c.primary else c.surfaceContainer,
+            contentColor = if (active) c.onPrimary else c.onSurface,
         ),
     ) { Icon(icon, contentDescription = label, modifier = Modifier.size(Size.icon)) }
 }
@@ -179,6 +183,7 @@ fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifie
     Box(
         modifier
             .heightIn(min = Size.iconButton)
+            .focusRing(Shapes.pill)
             .selectable(selected, role = Role.RadioButton, indication = null, interactionSource = null) {
                 if (!selected) haptics.buzz(Buzz.TICK)
                 onClick()
@@ -266,39 +271,58 @@ fun SwitchRow(title: String, checked: Boolean, onToggle: (Boolean) -> Unit, modi
 
 /** One choice of a [Segmented] picker: its words and an optional icon. */
 @Immutable
-data class Segment(val label: String, val icon: Painter? = null)
+data class Segment(
+    val label: String,
+    val icon: Painter? = null,
+    /** The label's own style, for a sample ("Aa" at three sizes); null for the usual label. */
+    val style: androidx.compose.ui.text.TextStyle? = null,
+    /** What TalkBack says when the label is a sample ("Small"). */
+    val description: String? = null,
+)
 
 /**
  * Two or three ways of doing one thing, side by side in one pill (Lens · Infrared): the picked one is a filled pill.
  * Each is 48 dp tall and reads as a radio button.
  */
 @Composable
-fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier, fill: Boolean = false) {
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
-    Row(
-        modifier.clip(Shapes.pill).background(c.surfaceContainerHigh).padding(Space.small).selectableGroup(),
-        horizontalArrangement = Arrangement.spacedBy(Space.small),
-    ) {
-        segments.forEachIndexed { i, s ->
-            val picked = i == selected
-            Row(
-                Modifier
-                    .heightIn(min = Size.iconButton)
-                    .clip(Shapes.pill)
-                    .background(if (picked) c.onSurface else Color.Transparent)
-                    .selectable(picked, role = Role.RadioButton) {
-                        if (!picked) haptics.buzz(Buzz.TICK)
-                        onSelect(i)
+    // A fixed pill of two or three: its words stop growing at 130 %, as the nav bar's do (00-decisions).
+    CappedFontScale {
+        Row(
+            modifier.then(if (fill) Modifier.fillMaxWidth() else Modifier).clip(Shapes.pill).background(c.surfaceContainerHigh).padding(Space.small).selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(Space.small),
+        ) {
+            segments.forEachIndexed { i, s ->
+                val picked = i == selected
+                Row(
+                    Modifier
+                        .heightIn(min = Size.iconButton)
+                        .focusRing(Shapes.pill)
+                        .clip(Shapes.pill)
+                        .background(if (picked) c.onSurface else Color.Transparent)
+                        .selectable(picked, role = Role.RadioButton) {
+                            if (!picked) haptics.buzz(Buzz.TICK)
+                            onSelect(i)
+                        }
+                        .then(if (s.description != null) Modifier.semantics { contentDescription = s.description } else Modifier)
+                        .padding(horizontal = if (isLargeText()) Space.block else Space.heading)
+                        // Filling the width (Appearance), each segment takes an equal share.
+                        .weight(1f, fill = fill),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.Center,
+                ) {
+                    if (s.icon != null) {
+                        Icon(s.icon, null, tint = if (picked) c.surface else c.onSurface, modifier = Modifier.size(Size.buttonIcon))
+                        Spacer(Modifier.width(Space.inline))
                     }
-                    .padding(horizontal = Space.heading),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                if (s.icon != null) {
-                    Icon(s.icon, null, tint = if (picked) c.surface else c.onSurface, modifier = Modifier.size(Size.buttonIcon))
-                    Spacer(Modifier.width(Space.inline))
+                    val style = s.style ?: KeyholeType.cardTitle
+                    BasicText(
+                        s.label, style = style.copy(color = if (picked) c.surface else c.onSurface), maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
+                        autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = style.fontSize),
+                    )
                 }
-                Text(s.label, style = KeyholeType.cardTitle, color = if (picked) c.surface else c.onSurface, maxLines = 1, softWrap = false)
             }
         }
     }
@@ -313,7 +337,7 @@ fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> U
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
     Box(
-        modifier.size(Size.swatch).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
+        modifier.size(Size.swatch).focusRing(Shapes.pill).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
             .selectable(selected, role = Role.RadioButton) { if (!selected) haptics.buzz(Buzz.TICK); onClick() }
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
@@ -321,5 +345,38 @@ fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> U
         Box(Modifier.size(if (selected) Size.iconCircle else Size.swatch).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
             if (selected) Icon(painterResource(R.drawable.ic_check), null, tint = c.surface, modifier = Modifier.size(Size.swatchCheck))
         }
+    }
+}
+
+/**
+ * A choice of a few steps on one scale (Appearance › Text size, as Weft): [title] and the [value] now on one line,
+ * a slider under it that stops at each of [count] steps. A tick on each step; TalkBack reads the value.
+ */
+@Composable
+fun StepSlider(title: String, value: String, index: Int, count: Int, onStep: (Int) -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val haptics = rememberHaptics()
+    Column(modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(horizontal = Space.card, vertical = Space.block)) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Text(title, style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })
+            Text(value, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+        }
+        androidx.compose.material3.Slider(
+            value = index.toFloat(),
+            onValueChange = { v ->
+                val i = v.roundToInt().coerceIn(0, count - 1)
+                if (i != index) {
+                    haptics.buzz(Buzz.TICK)
+                    onStep(i)
+                }
+            },
+            valueRange = 0f..(count - 1).toFloat(),
+            steps = (count - 2).coerceAtLeast(0),
+            colors = androidx.compose.material3.SliderDefaults.colors(
+                thumbColor = c.primary, activeTrackColor = c.primary, inactiveTrackColor = c.surfaceContainerHighest,
+                activeTickColor = c.onPrimary, inactiveTickColor = c.onSurfaceVariant,
+            ),
+            modifier = Modifier.semantics { stateDescription = value },
+        )
     }
 }

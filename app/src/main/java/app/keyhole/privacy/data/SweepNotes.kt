@@ -68,6 +68,12 @@ class SweepNotes(private val now: () -> Long = System::currentTimeMillis) {
         startedAt = 0L
     }
 
+    /** "Stop without a report" (E07): what this visit kept is dropped, its photo files too. */
+    fun drop() {
+        (_photos.value.map { it.path } + _checklist.value.values.mapNotNull { it.photoPath }).forEach { runCatching { java.io.File(it).delete() } }
+        clear()
+    }
+
     fun addPhoto(photo: ProofPhoto) = _photos.update { it + photo }
 
     fun addMagnet(note: MagnetNote) = _magnet.update { it + note }

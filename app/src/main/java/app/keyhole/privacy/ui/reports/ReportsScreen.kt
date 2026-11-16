@@ -1,5 +1,7 @@
 package app.keyhole.privacy.ui.reports
 
+import androidx.compose.runtime.remember
+import app.keyhole.privacy.ui.components.LocalToasts
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -67,12 +69,41 @@ import kotlinx.coroutines.launch
 @Immutable
 data class ReportsState(val reports: List<SavedReport> = emptyList(), val loaded: Boolean = false)
 
-class ReportsViewModel(private val repo: ReportRepository) : ViewModel() {
-    val state: StateFlow<ReportsState> = repo.all.map { ReportsState(it, loaded = true) }
+/**
+ * A deleted report leaves the list at once but is only deleted for good once its toast is gone (E15), so Undo can
+ * bring it back with its photos. Leaving the screen deletes it straight away.
+ */
+class ReportsViewModel(private val repo: ReportRepository, private val scope: kotlinx.coroutines.CoroutineScope) : ViewModel() {
+    private val hidden = kotlinx.coroutines.flow.MutableStateFlow<Set<Long>>(emptySet())
+    private val waiting = mutableMapOf<Long, kotlinx.coroutines.Job>()
+
+    val state: StateFlow<ReportsState> = kotlinx.coroutines.flow.combine(repo.all, hidden) { all, gone -> ReportsState(all.filter { it.id !in gone }, loaded = true) }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ReportsState())
 
     fun delete(id: Long) {
-        viewModelScope.launch { repo.delete(id) }
+        hidden.value += id
+        waiting[id] = scope.launch {
+            kotlinx.coroutines.delay(UNDO_MS)
+            repo.delete(id)
+            waiting.remove(id)
+        }
+    }
+
+    fun undoDelete(id: Long) {
+        waiting.remove(id)?.cancel()
+        hidden.value -= id
+    }
+
+    override fun onCleared() {
+        // Gone from the screen: what was waiting is deleted now, in the app's scope.
+        val ids = waiting.keys.toList()
+        waiting.values.forEach { it.cancel() }
+        if (ids.isNotEmpty()) scope.launch { ids.forEach { repo.delete(it) } }
+    }
+
+    private companion object {
+        /** A little longer than a toast stays, even with TalkBack's longer time. */
+        const val UNDO_MS = 12_000L
     }
 }
 
@@ -96,11 +127,19 @@ fun groupByWhen(reports: List<SavedReport>, now: Long, thisWeek: String, monthNa
     return reports.sortedByDescending { it.savedAt }.groupBy { if (it.savedAt >= week) thisWeek else monthName(it.savedAt) }.toList()
 }
 
-/** "Yesterday · stay": when, and where. */
+/** "Yesterday · stay", "Mon · trial room", "18 Oct · car" (12): when, and where. */
 private fun line(words: ReportWords, r: SavedReport, now: Long, res: android.content.res.Resources): String {
-    val day = android.text.format.DateUtils.getRelativeTimeSpanString(r.savedAt, now, android.text.format.DateUtils.DAY_IN_MILLIS, android.text.format.DateUtils.FORMAT_ABBREV_RELATIVE).toString()
+    val locale = res.configuration.locales[0]
+    val ago = now - r.savedAt
+    val day = when {
+        ago < 2 * DAY_MS -> android.text.format.DateUtils.getRelativeTimeSpanString(r.savedAt, now, android.text.format.DateUtils.DAY_IN_MILLIS, android.text.format.DateUtils.FORMAT_ABBREV_RELATIVE).toString()
+        ago < 7 * DAY_MS -> SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(locale, "EEE"), locale).format(Date(r.savedAt))
+        else -> SimpleDateFormat(android.text.format.DateFormat.getBestDateTimePattern(locale, "dMMM"), locale).format(Date(r.savedAt))
+    }
     return res.getString(R.string.two_parts, day, res.getString(ReportWords.placeLower(r.place)))
 }
+
+private const val DAY_MS = 24L * 60 * 60 * 1000
 
 /** 12 Reports: by date, each with what is still to look at; search; a long press deletes (with its photos). */
 @Composable
@@ -108,9 +147,16 @@ fun ReportsScreen(vm: ReportsViewModel, onOpen: (Long) -> Unit, now: () -> Long 
     val s by vm.state.collectAsStateWithLifecycle()
     var deleting by rememberSaveable { mutableStateOf<Long?>(null) }
     val haptics = rememberHaptics()
+    val toasts = LocalToasts.current
+    val deleted = stringResource(R.string.report_deleted)
     ReportsContent(s, onOpen, onDelete = { haptics.buzz(Buzz.TICK); deleting = it }, now = now())
     deleting?.let { id ->
-        DeleteSheet(onDismiss = { deleting = null }, onDelete = { haptics.buzz(Buzz.CONFIRM); vm.delete(id); deleting = null })
+        DeleteSheet(onDismiss = { deleting = null }, onDelete = {
+            haptics.buzz(Buzz.CONFIRM)
+            vm.delete(id)
+            deleting = null
+            toasts.show(deleted, undo = { vm.undoDelete(id) })
+        })
     }
 }
 
@@ -143,8 +189,15 @@ fun ReportsContent(s: ReportsState, onOpen: (Long) -> Unit, onDelete: (Long) -> 
             if (shown.isEmpty() && q.isNotEmpty()) {
                 EmptyState(painterResource(R.drawable.ic_search), stringResource(R.string.no_reports_match), q)
             }
-            val month = SimpleDateFormat("LLLL yyyy", Locale.getDefault())
-            groupByWhen(shown, now, stringResource(R.string.this_week)) { month.format(Date(it)) }.forEach { (title, group) ->
+            // "October" this year, "October 2025" before it.
+            val thisYear = remember(now) { java.util.Calendar.getInstance().apply { timeInMillis = now }.get(java.util.Calendar.YEAR) }
+            val month = SimpleDateFormat("LLLL", Locale.getDefault())
+            val monthYear = SimpleDateFormat("LLLL yyyy", Locale.getDefault())
+            val monthOf = { at: Long ->
+                val year = java.util.Calendar.getInstance().apply { timeInMillis = at }.get(java.util.Calendar.YEAR)
+                (if (year == thisYear) month else monthYear).format(Date(at))
+            }
+            groupByWhen(shown, now, stringResource(R.string.this_week), monthOf).forEach { (title, group) ->
                 SectionLabel(title, meta = group.size.toString())
                 Grouped {
                     group.forEach { r ->
@@ -152,7 +205,7 @@ fun ReportsContent(s: ReportsState, onOpen: (Long) -> Unit, onDelete: (Long) -> 
                             ListRow(
                                 words.name(r), shape = shape, line = line(words, r, now, res),
                                 leading = { IconCircle(painterResource(r.place.icon), CircleTone.Hue(r.place.hue)) },
-                                trailing = { if (r.toLookAt > 0) Tag(words.toLookAt(r), TagKind.WORTH_A_LOOK) else Tag(stringResource(R.string.nothing_found), TagKind.GOOD) },
+                                tag = { if (r.toLookAt > 0) Tag(words.toLookAt(r), TagKind.WORTH_A_LOOK) else Tag(stringResource(R.string.nothing_found), TagKind.GOOD) },
                                 onClick = { onOpen(r.id) }, onLongClick = { onDelete(r.id) }, longClickLabel = stringResource(R.string.delete),
                             )
                         }

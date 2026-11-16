@@ -98,7 +98,8 @@ fun DeviceContent(device: WifiDevice, onBack: () -> Unit, onShare: () -> Unit, o
     val context = LocalContext.current
     val seen = stringResource(R.string.seen_at, DateFormat.getTimeFormat(context).format(Date(device.seenAt)))
     val (container, onContainer) = device.risk.tone.colors()
-    val mayBeCamera = device.risk == Risk.LIKELY_CAMERA || device.risk == Risk.CHECK_THIS
+    // Anything not known can be looked for (05, 05a); known devices and this phone have no dock (05b, 05c).
+    val mayBeCamera = device.risk != Risk.KNOWN
     DetailScreen(
         onBack,
         actions = { RoundIconButton(painterResource(R.drawable.ic_share), stringResource(R.string.share), onShare) },
@@ -139,8 +140,17 @@ fun DeviceContent(device: WifiDevice, onBack: () -> Unit, onShare: () -> Unit, o
         val maker = device.verdict.maker ?: device.evidence.upnpManufacturer
         Grouped {
             row { shape -> ValueRow(stringResource(R.string.open_ports), if (ports.isEmpty()) stringResource(R.string.none_found) else ports.joinToString(" · "), shape = shape) }
-            if (maker != null) row { shape ->
-                ValueRow(stringResource(R.string.maker), if (device.verdict.maker != null) stringResource(R.string.maker_likely, maker) else maker, shape = shape)
+            // Android hides other devices' hardware addresses, so most makers can't be read at all: say so (05a).
+            if (maker != null || device.risk != Risk.KNOWN) row { shape ->
+                ValueRow(
+                    stringResource(R.string.maker),
+                    when {
+                        maker == null -> stringResource(R.string.maker_hidden)
+                        device.verdict.maker != null -> stringResource(R.string.maker_likely, maker)
+                        else -> maker
+                    },
+                    shape = shape,
+                )
             }
             if (!device.evidence.isSelf) row { shape ->
                 ListRow(

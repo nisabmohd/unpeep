@@ -11,7 +11,10 @@ data class WifiDevice(val evidence: DeviceEvidence, val verdict: Verdict, val se
     val risk: Risk get() = verdict.risk
 }
 
-enum class WifiStatus { IDLE, RUNNING, NOT_ON_WIFI, DONE }
+enum class WifiStatus { IDLE, RUNNING, NOT_ON_WIFI, DONE,
+    /** The Wi-Fi went away during the scan: what answered is kept, the scan didn't finish (E03). */
+    DROPPED,
+}
 
 /** The Wi-Fi check as the screens see it. */
 data class WifiSnapshot(

@@ -1,5 +1,13 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.ui.res.stringResource
+import androidx.compose.runtime.getValue
+import app.keyhole.privacy.ui.theme.Alpha
+import app.keyhole.privacy.ui.theme.stepSpec
+import androidx.compose.animation.core.rememberInfiniteTransition
+import androidx.compose.animation.core.infiniteRepeatable
+import androidx.compose.animation.core.animateFloat
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -116,6 +124,10 @@ fun ListRow(
     line: String? = null,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,
+    /** A pick-one row (Appearance › Font): TalkBack reads it as a choice, picked or not. */
+    selected: Boolean? = null,
+    /** A result tag ("Likely camera"): at the end of the row, or under the line once text is large (00-decisions). */
+    tag: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     chevron: Boolean = onClick != null && trailing == null,
     onLongClick: (() -> Unit)? = null,
@@ -127,10 +139,12 @@ fun ListRow(
     Row(
         modifier
             .fillMaxWidth()
+            .then(if (onClick != null || onLongClick != null) Modifier.focusRing(shape, inside = true) else Modifier)
             .clip(shape)
             .background(c.surfaceContainerLow)
             .then(
                 when {
+                    selected != null && onClick != null -> Modifier.selectable(selected, role = Role.RadioButton, onClick = onClick)
                     onLongClick != null -> Modifier.combinedClickable(role = Role.Button, onLongClickLabel = longClickLabel, onLongClick = onLongClick, onClick = onClick ?: {})
                     onClick != null -> Modifier.clickable(role = Role.Button, onClick = onClick)
                     else -> Modifier
@@ -144,9 +158,18 @@ fun ListRow(
             leading()
             Spacer(Modifier.width(Space.card))
         }
+        val tagBelow = tag != null && isLargeText()
         Column(Modifier.weight(1f)) {
             Text(title, style = KeyholeType.cardTitle, color = if (alert) c.error else c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
             if (line != null) Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 3, overflow = TextOverflow.Ellipsis)
+            if (tagBelow) {
+                Spacer(Modifier.height(Space.small))
+                tag?.invoke()
+            }
+        }
+        if (tag != null && !tagBelow) {
+            Spacer(Modifier.width(Space.inline))
+            tag()
         }
         if (trailing != null) {
             Spacer(Modifier.width(Space.inline))
@@ -183,14 +206,17 @@ fun ValueRow(label: String, value: String, modifier: Modifier = Modifier, shape:
 
 /** A reason or a step: a 24 dp icon with no circle and one sentence ("Answers as a network camera"). */
 @Composable
-fun SignRow(icon: Painter, text: String, modifier: Modifier = Modifier, shape: Shape = Shapes.surface, alert: Boolean = false) {
+fun SignRow(icon: Painter?, text: String, modifier: Modifier = Modifier, shape: Shape = Shapes.surface, alert: Boolean = false) {
     val c = MaterialTheme.colorScheme
     Row(
         modifier.fillMaxWidth().clip(shape).background(c.surfaceContainerLow).heightIn(min = Size.rowOneLine).padding(horizontal = Space.card, vertical = Space.block),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(icon, null, tint = if (alert) c.error else c.onSurfaceVariant, modifier = Modifier.size(Size.lineIcon))
-        Spacer(Modifier.width(Space.card))
+        // No icon: a plain line (What Keyhole can't find), the text from the row's edge.
+        if (icon != null) {
+            Icon(icon, null, tint = if (alert) c.error else c.onSurfaceVariant, modifier = Modifier.size(Size.lineIcon))
+            Spacer(Modifier.width(Space.card))
+        }
         Text(text, style = KeyholeType.body, color = c.onSurface, modifier = Modifier.weight(1f))
     }
 }
@@ -212,30 +238,118 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = nu
 
 /** A tinted box that is not a list ("Or run one check", the Find it meter): 24 dp corners, 16 dp inside. */
 @Composable
-fun Box24(modifier: Modifier = Modifier, title: String? = null, content: @Composable ColumnScope.() -> Unit) {
+fun Box24(modifier: Modifier = Modifier, title: String? = null, action: String? = null, onAction: () -> Unit = {}, content: @Composable ColumnScope.() -> Unit) {
     val c = MaterialTheme.colorScheme
     Column(modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(vertical = Space.card)) {
         if (title != null) {
-            Text(title, style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.padding(horizontal = Space.card).semantics { heading() })
-            Spacer(Modifier.heightIn(min = Space.block))
+            // The title, and at its end one text action (Appearance › Font: "Text size · Default").
+            FlowRow(
+                Modifier.fillMaxWidth().padding(start = Space.card, end = if (action != null) Space.small else Space.card),
+                horizontalArrangement = Arrangement.SpaceBetween, itemVerticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(title, style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.semantics { heading() })
+                if (action != null) TopBarAction(action, onAction)
+            }
+            Spacer(Modifier.heightIn(min = if (action != null) Space.small else Space.block))
         }
         content()
     }
 }
 
-/** The one note. Notes go first on a screen. [warning] for "Worth a look" news (client isolation), else neutral. */
+/**
+ * A short phrase that must not break in the middle ("Updated 28 s ago", "SeaView_Guest"): its spaces become
+ * no-break spaces, so a line can only wrap between phrases, never inside one.
+ */
+fun String.keepTogether(): String = replace(' ', '\u00A0')
+
+/** A quiet centred line under a result: what the scan can't see (00-decisions › Nothing found). */
 @Composable
-fun Note(text: String, modifier: Modifier = Modifier, title: String? = null, icon: Painter = painterResource(R.drawable.ic_info), warning: Boolean = false) {
+fun QuietLine(text: String, modifier: Modifier = Modifier) {
+    Text(
+        text, style = KeyholeType.supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        modifier = modifier.fillMaxWidth().padding(top = Space.heading, start = Space.heading, end = Space.heading),
+    )
+}
+
+/**
+ * While a scan runs and nothing is listed yet: three dots that light one after another (00-design-system-additions).
+ * Silent for TalkBack: the row's words say it.
+ */
+@Composable
+fun WaitingDots(modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val step by rememberInfiniteTransition(label = "waiting").animateFloat(0f, 3f, infiniteRepeatable(stepSpec(WAITING_STEP_MS * 3)), label = "dot")
+    Row(modifier.clearAndSetSemantics { }, horizontalArrangement = Arrangement.spacedBy(Space.barGap)) {
+        repeat(3) { i ->
+            val lit = i == step.toInt().coerceIn(0, 2)
+            Box(Modifier.size(Size.waitingDot).clip(Shapes.pill).background(if (lit) c.primary else c.primary.copy(alpha = Alpha.dotDim)))
+        }
+    }
+}
+
+private const val WAITING_STEP_MS = 400
+
+/**
+ * What a [Note] says (00-design-system-additions): plain information, good news, something to look at, something
+ * that didn't work, or the honesty line (what a check can't promise). The tone sets the colours and the icon.
+ */
+enum class NoteTone { INFO, GOOD, WARNING, ERROR, HONESTY }
+
+/**
+ * The one note. Notes go first on a screen. A 40 dp icon circle centred on the text, an optional title and one
+ * optional text [action] ("Open", "Try again", "Settings"). [icon] replaces the tone's icon where the note is
+ * about one thing (Find it's walking note).
+ */
+@Composable
+fun Note(
+    text: String,
+    modifier: Modifier = Modifier,
+    title: String? = null,
+    tone: NoteTone = NoteTone.INFO,
+    icon: Painter? = null,
+    action: String? = null,
+    onAction: () -> Unit = {},
+) {
     val c = MaterialTheme.colorScheme
     val w = warningColors()
-    val bg = if (warning) w.container else c.secondaryContainer
-    val fg = if (warning) w.onContainer else c.onSecondaryContainer
-    Row(modifier.fillMaxWidth().clip(Shapes.surface).background(bg).padding(Space.card).semantics(mergeDescendants = true) {}) {
-        Icon(icon, null, tint = fg, modifier = Modifier.size(Size.icon))
-        Spacer(Modifier.width(Space.block))
-        Column(Modifier.weight(1f)) {
-            if (title != null) Text(title, style = KeyholeType.cardTitle, color = fg)
-            Text(text, style = KeyholeType.supporting, color = fg)
+    // container, text, circle, icon in the circle
+    val (bg, fg, circle, glyph) = when (tone) {
+        NoteTone.INFO -> listOf(c.secondaryContainer, c.onSecondaryContainer, c.primary, c.onPrimary)
+        NoteTone.GOOD -> listOf(c.primaryContainer, c.onPrimaryContainer, c.primary, c.onPrimary)
+        NoteTone.WARNING -> listOf(w.container, w.onContainer, w.onContainer, w.container)
+        NoteTone.ERROR -> listOf(c.errorContainer, c.onErrorContainer, c.error, c.onError)
+        NoteTone.HONESTY -> listOf(c.surfaceContainer, c.onSurface, c.onSurfaceVariant, c.surfaceContainer)
+    }
+    val painter = icon ?: painterResource(
+        when (tone) {
+            NoteTone.INFO -> R.drawable.ic_info
+            NoteTone.GOOD -> R.drawable.ic_check_circle
+            NoteTone.WARNING -> R.drawable.ic_warning
+            NoteTone.ERROR -> R.drawable.ic_not_checked
+            NoteTone.HONESTY -> R.drawable.ic_shield_warning
+        },
+    )
+    Row(
+        modifier.fillMaxWidth().clip(Shapes.surface).background(bg).padding(start = Space.card, top = Space.card, bottom = Space.card, end = if (action != null) Space.headingInset else Space.card),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Row(Modifier.weight(1f).semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically) {
+            Box(Modifier.size(Size.noteCircle).clip(Shapes.pill).background(circle), contentAlignment = Alignment.Center) {
+                Icon(painter, null, tint = glyph, modifier = Modifier.size(Size.iconInCircle))
+            }
+            Spacer(Modifier.width(Space.block))
+            Column(Modifier.weight(1f)) {
+                if (title != null) Text(title, style = KeyholeType.cardTitle, color = fg)
+                Text(text, style = KeyholeType.supporting, color = fg)
+            }
+        }
+        if (action != null) {
+            Spacer(Modifier.width(Space.small))
+            Box(
+                Modifier.focusRing(Shapes.pill).heightIn(min = Size.iconButton).clip(Shapes.pill)
+                    .clickable(role = Role.Button, onClick = onAction).padding(horizontal = Space.block),
+                contentAlignment = Alignment.Center,
+            ) { Text(action, style = KeyholeType.label, color = fg) }
         }
     }
 }
@@ -248,7 +362,7 @@ fun Note(text: String, modifier: Modifier = Modifier, title: String? = null, ico
 fun Tile(icon: Painter, tone: CircleTone, title: String, line: String, onClick: () -> Unit, modifier: Modifier = Modifier, value: String? = null) {
     val c = MaterialTheme.colorScheme
     Column(
-        modifier.clip(Shapes.surface).background(c.surfaceContainerLow).clickable(role = Role.Button, onClick = onClick).heightIn(min = Size.tile).padding(Space.card),
+        modifier.focusRing(Shapes.surface, inside = true).clip(Shapes.surface).background(c.surfaceContainerLow).clickable(role = Role.Button, onClick = onClick).heightIn(min = Size.tile).padding(Space.card),
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.Top) {
             IconCircle(icon, tone)
@@ -303,8 +417,10 @@ fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: 
             if (shown.isEmpty()) Box(Modifier.weight(1f).height(Size.dot).clip(Shapes.pill).background(colour(SummaryTone.NEUTRAL)))
             shown.forEach { Box(Modifier.weight(it.count.toFloat()).height(Size.dot).clip(Shapes.pill).background(colour(it.tone))) }
         }
+        // The legend names only what is there; when nothing is, one quiet line says so.
+        val legend = parts.filter { it.count > 0 }.ifEmpty { listOf(SummaryPart(0, stringResource(R.string.summary_nothing), SummaryTone.NEUTRAL)) }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.card), verticalArrangement = Arrangement.spacedBy(Space.small)) {
-            parts.forEach { part ->
+            legend.forEach { part ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(Size.dot).clip(Shapes.pill).background(colour(part.tone)))
                     Spacer(Modifier.width(Space.inline))

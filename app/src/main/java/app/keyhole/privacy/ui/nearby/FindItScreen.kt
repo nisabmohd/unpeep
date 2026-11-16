@@ -49,6 +49,7 @@ import app.keyhole.privacy.ui.components.CheckIcon
 import app.keyhole.privacy.ui.components.DetailScreen
 import app.keyhole.privacy.ui.components.LensProgress
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.SecondaryButton
 import app.keyhole.privacy.ui.components.SegmentMeter
@@ -165,7 +166,7 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
     ) {
         // Notes go first.
         if (s.lost) {
-            Note(stringResource(R.string.find_lost_text), title = stringResource(R.string.find_lost_title), icon = painterResource(R.drawable.ic_warning), warning = true)
+            Note(stringResource(R.string.find_lost_text), title = stringResource(R.string.find_lost_title), tone = NoteTone.WARNING)
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
             Spacer(Modifier.height(Space.lensTop))
@@ -173,7 +174,7 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
             Spacer(Modifier.height(Space.lensBottom))
             Text(device.title(), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
             Text(
-                stringResource(R.string.two_parts, stringResource(device.kind.label), stringResource(R.string.signal_dbm, s.rssi)),
+                stringResource(R.string.two_parts, stringResource(device.kind.label), stringResource(R.string.signal_dbm, s.rssi).replace("-", "\u2212")),
                 style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset),
             )
         }
@@ -191,7 +192,7 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
             SegmentMeter(s.level, METER_SEGMENTS, stringResource(R.string.nearness_far), stringResource(R.string.nearness_very_close), description = stringResource(R.string.two_parts, near, distance))
         }
         Spacer(Modifier.height(Space.block))
-        Note(stringResource(device.check.nearbyWords.findNote), icon = painterResource(R.drawable.ic_walking))
+        Note(stringResource(device.check.nearbyWords.findNote), tone = NoteTone.HONESTY, icon = painterResource(R.drawable.ic_walking))
     }
 }
 

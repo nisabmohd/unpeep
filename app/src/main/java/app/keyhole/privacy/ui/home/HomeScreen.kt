@@ -1,5 +1,7 @@
 package app.keyhole.privacy.ui.home
 
+import androidx.compose.foundation.layout.fillMaxHeight
+import app.keyhole.privacy.ui.isWide
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -68,26 +70,51 @@ fun HomeContent(s: HomeState, onPlace: (Place) -> Unit, onStart: (Place) -> Unit
         stringResource(R.string.app_name),
         actions = { RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.how_keyhole_works), onHelp) },
     ) {
-        Column(Modifier.weight(1f).widthIn(max = Size.contentMax).fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+        val places: @Composable () -> Unit = {
             Row(
                 Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = Space.screen).selectableGroup(),
                 horizontalArrangement = Arrangement.spacedBy(Space.inline),
             ) {
                 Place.entries.forEach { place -> Chip(stringResource(place.label), place == s.place, { onPlace(place) }) }
             }
-            Spacer(Modifier.height(Space.lensTop))
-            LensStartButton(stringResource(R.string.start), { onStart(s.place) })
-            Spacer(Modifier.height(Space.lensBottom))
-            Text(stringResource(R.string.check_this_room), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading).semantics { heading() })
-            Text(
-                stringResource(R.string.home_line, pluralStringResource(s.place.checksPlural, s.steps.size, s.steps.size), pluralStringResource(R.plurals.about_minutes, s.minutes, s.minutes)),
-                style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading),
-            )
-            Spacer(Modifier.height(Space.heading))
+        }
+        val hero: @Composable () -> Unit = {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(Modifier.height(Space.lensTop))
+                LensStartButton(stringResource(R.string.start), { onStart(s.place) })
+                Spacer(Modifier.height(Space.lensBottom))
+                Text(stringResource(R.string.check_this_room), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading).semantics { heading() })
+                Text(
+                    stringResource(R.string.home_line, pluralStringResource(s.place.checksPlural, s.steps.size, s.steps.size), pluralStringResource(R.plurals.about_minutes, s.minutes, s.minutes)),
+                    style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading),
+                )
+            }
+        }
+        val rest: @Composable () -> Unit = {
             Column(Modifier.padding(horizontal = Space.screen), verticalArrangement = Arrangement.spacedBy(Space.block)) {
                 Box24(title = stringResource(R.string.or_run_one_check)) { CheckRow(s.checks, onRun = { onCheck(it, s.place) }) }
                 lastReport()
             }
+        }
+        if (isWide()) {
+            // T01: the place and the Start lens on the left; one check and the visit's rows on the right.
+            Row(Modifier.weight(1f).fillMaxWidth()) {
+                Column(Modifier.weight(1f).fillMaxHeight().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                    places()
+                    hero()
+                }
+                Column(Modifier.weight(1f).verticalScroll(rememberScrollState())) {
+                    rest()
+                    Spacer(Modifier.height(Space.screen))
+                }
+            }
+            return@TabScreen
+        }
+        Column(Modifier.weight(1f).widthIn(max = Size.contentMax).fillMaxWidth().verticalScroll(rememberScrollState()), horizontalAlignment = Alignment.CenterHorizontally) {
+            places()
+            hero()
+            Spacer(Modifier.height(Space.heading))
+            rest()
             Spacer(Modifier.height(Space.screen))
         }
     }

@@ -1,5 +1,8 @@
 package app.keyhole.privacy.ui.components
 
+import app.keyhole.privacy.R
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.draw.drawBehind
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -97,7 +100,7 @@ fun PhotoThumb(path: String, description: String, onClick: () -> Unit, modifier:
     var bitmap by remember(path) { mutableStateOf<ImageBitmap?>(null) }
     LaunchedEffect(path, px) { bitmap = withContext(Dispatchers.IO) { decodeScaled(path, px)?.asImageBitmap() } }
     Box(
-        modifier.size(size).clip(Shapes.photo).background(c.surfaceContainerHigh).clickable(role = Role.Image, onClickLabel = description, onClick = onClick)
+        modifier.size(size).focusRing(Shapes.photo).clip(Shapes.photo).background(c.surfaceContainerHigh).clickable(role = Role.Image, onClickLabel = description, onClick = onClick)
             .semantics { contentDescription = description },
         contentAlignment = Alignment.Center,
     ) {
@@ -118,3 +121,32 @@ fun decodeScaled(path: String, target: Int): android.graphics.Bitmap? = runCatch
 
 private const val MAX_TEXT = 500
 private const val NOTE_LINES = 3
+
+/**
+ * Takes a photo (the checklist's Not sure, 09c): a dashed square with a camera-add icon and [label] beside it.
+ * The whole row is the target; TalkBack reads the label.
+ */
+@Composable
+fun AddPhotoTile(label: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    Row(
+        modifier.focusRing(Shapes.photo, inside = true).clip(Shapes.photo).clickable(role = Role.Button, onClick = onClick).padding(end = Space.card),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        val dash = c.outline
+        Box(
+            Modifier.size(Size.photoSmall).drawBehind {
+                val w = Size.outline.toPx()
+                val r = Shapes.photoCorner.toPx()
+                drawRoundRect(
+                    dash, topLeft = androidx.compose.ui.geometry.Offset(w / 2, w / 2), size = androidx.compose.ui.geometry.Size(size.width - w, size.height - w),
+                    cornerRadius = androidx.compose.ui.geometry.CornerRadius(r, r),
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(w, pathEffect = androidx.compose.ui.graphics.PathEffect.dashPathEffect(floatArrayOf(Size.dash.toPx(), Size.dash.toPx()))),
+                )
+            },
+            contentAlignment = Alignment.Center,
+        ) { Icon(painterResource(R.drawable.ic_camera_add), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.icon)) }
+        Spacer(Modifier.width(Space.card))
+        Text(label, style = KeyholeType.body, color = c.onSurfaceVariant)
+    }
+}

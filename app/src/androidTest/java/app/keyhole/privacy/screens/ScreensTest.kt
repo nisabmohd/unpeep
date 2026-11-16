@@ -1,7 +1,9 @@
 package app.keyhole.privacy.screens
 
+import androidx.compose.ui.test.performSemanticsAction
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
@@ -277,6 +279,9 @@ class ScreensTest {
         rule.setKeyholeContent { DeviceContent(quiet, {}, {}, {}, {}, {}) }
         rule.onNodeWithText(text(R.string.sign_none)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.risk_not_recognised)).assertIsDisplayed()
+        // Not recognised can still be looked for (05a), and it says why its maker isn't shown.
+        rule.onNodeWithText(text(R.string.find_its_lens)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.maker_hidden), useUnmergedTree = true).assertExists()
     }
 
     @Test fun aMarkedDeviceKeepsItsSignsAndSaysItWasMarked() {
@@ -330,7 +335,8 @@ class ScreensTest {
         val found = mutableListOf<String>()
         var others = 0
         rule.setKeyholeContent { NearbyResultsContent(NearbyResultsState(nearby(Check.HOTSPOTS, v380, smartLife.copy(added = true), cafe), Check.BLUETOOTH, 12, true), {}, {}, { found += it }, { others++ }, {}) }
-        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.networks_nearby, 3, 3), plural(R.plurals.updated_ago, 12, 12)), useUnmergedTree = true).assertIsDisplayed()
+        // "Updated 12 s ago" never breaks inside itself (no-break spaces).
+        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.networks_nearby, 3, 3), plural(R.plurals.updated_ago, 12, 12).replace(' ', '\u00A0')), useUnmergedTree = true).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.reason_hotspot, "V380")).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.two_parts, text(R.string.reason_hotspot_weak), text(R.string.added_to_report))).assertIsDisplayed()
         rule.onAllNodesWithText("Cafe").assertCountEquals(0)
@@ -345,7 +351,7 @@ class ScreensTest {
         rule.setKeyholeContent { NearbyResultsContent(NearbyResultsState(nearby(Check.BLUETOOTH, tile, buds), null, 0, true), {}, {}, {}, {}, {}) }
         rule.onNodeWithText("Tile").assertIsDisplayed()
         rule.onNodeWithText(text(R.string.reason_tracker, "Tile")).assertIsDisplayed()
-        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.bluetooth_nearby, 2, 2), text(R.string.updated_now)), useUnmergedTree = true).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.bluetooth_nearby, 2, 2), text(R.string.updated_now).replace(' ', '\u00A0')), useUnmergedTree = true).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.done)).assertIsDisplayed()
     }
 
@@ -356,8 +362,10 @@ class ScreensTest {
 
     @Test fun nearbyResultsWithNothingAtAllStillDraw() {
         rule.setKeyholeContent { NearbyResultsContent(NearbyResultsState(nearby(Check.BLUETOOTH), null, 0, true), {}, {}, {}, {}, {}) }
-        rule.onNodeWithText(text(R.string.bluetooth_none_title), useUnmergedTree = true).assertIsDisplayed()
-        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.bluetooth_nearby, 0, 0), text(R.string.updated_now)), useUnmergedTree = true).assertIsDisplayed()
+        // Nothing heard at all (04h): the count box at 0 with its quiet line, and the check's own empty state.
+        rule.onNodeWithText(text(R.string.summary_nothing), useUnmergedTree = true).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.nothing_flagged_yet), useUnmergedTree = true).assertExists()
+        rule.onNodeWithText(text(R.string.two_parts, plural(R.plurals.bluetooth_nearby, 0, 0), text(R.string.updated_now).replace(' ', '\u00A0')), useUnmergedTree = true).assertIsDisplayed()
     }
 
     @Test fun aMarkedHotspotIsListedUnderMarkedAsKnown() {
@@ -383,7 +391,7 @@ class ScreensTest {
         rule.onNodeWithText(plural(R.plurals.updated_ago, 12, 12)).assertIsDisplayed()
         rule.onNodeWithContentDescription("${text(R.string.nearness_close)} ${text(R.string.nearness_close_line)}").assertIsDisplayed()
         rule.onNodeWithText("V380-8A12F0").assertIsDisplayed()
-        rule.onNodeWithText(text(R.string.two_parts, text(R.string.kind_camera_hotspot), text(R.string.signal_dbm, -48))).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.two_parts, text(R.string.kind_camera_hotspot), text(R.string.signal_dbm, -48).replace("-", "\u2212"))).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.getting_warmer)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.trend_stronger)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.find_note_hotspots), useUnmergedTree = true).assertExists()
@@ -583,12 +591,17 @@ class ScreensTest {
         assertEquals(1, next)
     }
 
-    @Test fun answeringLooksFineAndSkipAnswerAtOnce() {
+    @Test fun anAnswerIsPickedThenSaved() {
         val got = mutableListOf<app.keyhole.privacy.domain.ChecklistEntry?>()
         rule.setKeyholeContent { AnswerSheet(app.keyhole.privacy.domain.ChecklistItem.HOOKS, null, {}, { got += it }) }
+        // Nothing picked yet: Save waits, Cancel is offered (nothing to undo).
+        rule.onNodeWithText(text(R.string.save)).assertIsNotEnabled()
+        rule.onNodeWithText(text(R.string.cancel)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.looks_fine)).performClick()
         rule.onNodeWithText(text(R.string.skip)).performClick()
-        assertEquals(listOf(app.keyhole.privacy.domain.ChecklistAnswer.LOOKS_FINE, app.keyhole.privacy.domain.ChecklistAnswer.SKIPPED), got.map { it?.answer })
+        assertEquals(emptyList<Any>(), got)
+        rule.onNodeWithText(text(R.string.save)).performClick()
+        assertEquals(listOf(app.keyhole.privacy.domain.ChecklistAnswer.SKIPPED), got.map { it?.answer })
     }
 
     @Test fun notSureOpensANoteAndSavesIt() {
@@ -758,7 +771,9 @@ class ScreensTest {
         rule.onNodeWithText(text(R.string.theme_dark)).performClick()
         rule.onNodeWithContentDescription(text(R.string.accent_green)).performClick()
         rule.onNodeWithText(text(R.string.font_outfit)).performClick()
-        rule.onNodeWithText(text(R.string.two_parts, text(R.string.text_size), text(R.string.text_size_default))).performClick()
+        // Text size is a slider (as Weft): one step up.
+        rule.onNode(androidx.compose.ui.test.SemanticsMatcher.keyIsDefined(androidx.compose.ui.semantics.SemanticsActions.SetProgress))
+            .performSemanticsAction(androidx.compose.ui.semantics.SemanticsActions.SetProgress) { it(2f) }
         rule.onNodeWithText(text(R.string.check_hotspots)).performScrollTo().performClick()
         assertTrue(taps.containsAll(listOf("mode:DARK", "accent", "font:OUTFIT", "size", "step:HOTSPOTS:false")))
     }

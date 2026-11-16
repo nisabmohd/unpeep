@@ -1,5 +1,7 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.foundation.layout.fillMaxHeight
+import app.keyhole.privacy.ui.theme.ButtonMinText
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -64,7 +66,7 @@ fun TabTopBar(title: String, modifier: Modifier = Modifier, actions: @Composable
             title, style = KeyholeType.headline, color = MaterialTheme.colorScheme.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis,
             modifier = Modifier.weight(1f).semantics { heading() },
         )
-        actions()
+        CappedFontScale { Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.inline)) { actions() } }
     }
 }
 
@@ -89,18 +91,26 @@ fun BackTopBar(onBack: () -> Unit, modifier: Modifier = Modifier, title: String?
                 )
             }
         }
-        actions()
+        // Actions stop growing at 130 % and never take more than their share, so the title always shows.
+        CappedFontScale {
+            Row(Modifier.widthIn(max = Size.topBarActions), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.inline)) { actions() }
+        }
     }
 }
 
 /** A text action at the end of a top bar ("Skip step", "Scan again"): the accent colour, one line, a 48 dp pill to tap. */
 @Composable
-fun TopBarAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+fun TopBarAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     Box(
-        modifier.heightIn(min = Size.iconButton).clip(Shapes.pill).clickable(role = Role.Button, onClick = onClick).padding(horizontal = Space.block),
+        modifier.heightIn(min = Size.iconButton).focusRing(Shapes.pill).clip(Shapes.pill).clickable(enabled = enabled, role = Role.Button, onClick = onClick).padding(horizontal = Space.block),
         contentAlignment = Alignment.Center,
     ) {
-        Text(text, style = KeyholeType.cardTitle, color = MaterialTheme.colorScheme.primary, maxLines = 1, softWrap = false)
+        // Waiting (E01: "Scan again in 48 s"): muted, and not a target.
+        BasicText(
+            text, style = KeyholeType.cardTitle.copy(color = if (enabled) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant),
+            maxLines = 1, overflow = TextOverflow.Ellipsis, softWrap = false,
+            autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.cardTitle.fontSize),
+        )
     }
 }
 
@@ -108,7 +118,8 @@ fun TopBarAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifie
 @Composable
 fun TabScreen(title: String, modifier: Modifier = Modifier, actions: @Composable RowScope.() -> Unit = {}, content: @Composable ColumnScope.() -> Unit) {
     Column(modifier.fillMaxSize().statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
-        TabTopBar(title, Modifier.widthIn(max = Size.contentMax), actions = actions)
+        // Beside the rail (wide) the title runs the whole width, as T01 draws it; else one centred column.
+        TabTopBar(title, if (app.keyhole.privacy.ui.isWide()) Modifier else Modifier.widthIn(max = Size.contentMax), actions = actions)
         content()
     }
 }
@@ -126,17 +137,21 @@ fun DetailScreen(
     actions: @Composable RowScope.() -> Unit = {},
     dock: (@Composable ColumnScope.() -> Unit)? = null,
     scroll: Boolean = true,
+    /** Two panes on a wide window (T03): the body uses the whole width instead of one 640 dp column. */
+    panes: Boolean = false,
     content: @Composable ColumnScope.() -> Unit,
 ) {
+    val max = if (panes) androidx.compose.ui.unit.Dp.Unspecified else Size.contentMax
     Column(modifier.fillMaxSize().statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
-        BackTopBar(onBack, Modifier.widthIn(max = Size.contentMax), title, close, actions)
+        BackTopBar(onBack, Modifier.widthIn(max = max), title, close, actions)
         Column(
-            Modifier.weight(1f).widthIn(max = Size.contentMax).fillMaxWidth()
+            Modifier.weight(1f).widthIn(max = max).fillMaxWidth()
                 .then(if (scroll) Modifier.verticalScroll(rememberScrollState()) else Modifier)
                 .padding(start = Space.screen, end = Space.screen, bottom = Space.screen),
             content = content,
         )
         if (dock != null) Dock(Modifier.widthIn(max = Size.contentMax), dock) else NavBarSpacer()
+        // (With panes the dock stays one column wide, under the left pane, as T03 draws it.)
     }
 }
 
@@ -182,5 +197,43 @@ fun KeyholeNavBar(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit, 
             )
         }
         Spacer(Modifier.width(Space.navBarEnd))
+    }
+}
+
+/**
+ * The navigation rail of a wide window (T01–T04): the mark on top, then Check · Reports · More down the side,
+ * the selected one in a primaryContainer pill, as the bottom nav draws it.
+ */
+@Composable
+fun KeyholeNavRail(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val haptics = rememberHaptics()
+    androidx.compose.material3.NavigationRail(
+        modifier.fillMaxHeight(), containerColor = c.surfaceContainerLow,
+        header = { app.keyhole.privacy.ui.welcome.MarkTile(Size.railMark, Modifier.padding(vertical = Space.heading)) },
+    ) {
+        items.forEachIndexed { i, item ->
+            val isSelected = i == selected
+            androidx.compose.material3.NavigationRailItem(
+                selected = isSelected,
+                onClick = {
+                    if (!isSelected) haptics.buzz(Buzz.TICK)
+                    onSelect(i)
+                },
+                icon = { Icon(painterResource(item.icon), contentDescription = null, modifier = Modifier.size(Size.icon)) },
+                label = {
+                    CappedFontScale {
+                        BasicText(
+                            item.label, style = KeyholeType.caption.copy(color = LocalContentColor.current, textAlign = TextAlign.Center), maxLines = 1,
+                            autoSize = TextAutoSize.StepBased(minFontSize = NavLabelMinSize, maxFontSize = KeyholeType.caption.fontSize),
+                        )
+                    }
+                },
+                colors = androidx.compose.material3.NavigationRailItemDefaults.colors(
+                    selectedIconColor = c.onPrimaryContainer, selectedTextColor = c.onSurface, indicatorColor = c.primaryContainer,
+                    unselectedIconColor = c.onSurfaceVariant, unselectedTextColor = c.onSurfaceVariant,
+                ),
+            )
+        }
     }
 }

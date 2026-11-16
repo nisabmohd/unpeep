@@ -1,5 +1,10 @@
 package app.keyhole.privacy.ui.nearby
 
+import app.keyhole.privacy.ui.components.keepTogether
+import app.keyhole.privacy.ui.components.LocalToasts
+import app.keyhole.privacy.ui.hue
+import app.keyhole.privacy.ui.components.QuietLine
+import app.keyhole.privacy.ui.components.LensHeader
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -33,6 +38,7 @@ import app.keyhole.privacy.ui.components.Grouped
 import app.keyhole.privacy.ui.components.IconCircle
 import app.keyhole.privacy.ui.components.ListRow
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.SectionLabel
 import app.keyhole.privacy.ui.components.SummaryBox
@@ -63,6 +69,8 @@ data class NearbyResultsState(
     val loaded: Boolean = false,
     /** Part of a sweep: the last step ends on "See report". */
     val sweep: Boolean = false,
+    /** Seconds until Android allows another Wi-Fi scan (4 every 2 minutes, E01); 0 when Scan again works now. */
+    val scanWait: Int = 0,
 )
 
 /** Ticks once a second while a screen shows an age ("Updated 12 s ago"). */
@@ -78,7 +86,10 @@ internal fun secondsSince(at: Long, now: Long): Int = if (at <= 0) 0 else ((now 
 class NearbyResultsViewModel(place: Place, sweep: Boolean, settings: SettingsRepository, session: NearbySession<*>, now: () -> Long = System::currentTimeMillis) : ViewModel() {
     val state: StateFlow<NearbyResultsState> = combine(session.state, settings.settings, everySecond(now)) { n, s, t ->
         val steps = sweepSteps(place, s.stepOrder, s.stepsOff)
-        NearbyResultsState(n, if (sweep) steps.getOrNull(steps.indexOf(n.check) + 1) else null, secondsSince(n.updatedAt, t), loaded = true, sweep = sweep)
+        NearbyResultsState(
+            n, if (sweep) steps.getOrNull(steps.indexOf(n.check) + 1) else null, secondsSince(n.updatedAt, t), loaded = true, sweep = sweep,
+            scanWait = ((session.waitMs() + 999) / 1000).toInt(),
+        )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), NearbyResultsState(session.state.value))
 }
 
@@ -92,7 +103,14 @@ fun NearbyResultsScreen(vm: NearbyResultsViewModel, onBack: () -> Unit, onScanAg
     val s by vm.state.collectAsStateWithLifecycle()
     // The results live in memory: after the app was closed there is nothing to show, so go back.
     val gone = s.loaded && s.nearby.status != NearbyStatus.DONE
-    LaunchedEffect(gone) { if (gone) onBack() }
+    val toasts = LocalToasts.current
+    val cleared = stringResource(R.string.results_cleared)
+    LaunchedEffect(gone) {
+        if (gone) {
+            if (s.nearby.status == NearbyStatus.IDLE) toasts.show(cleared)
+            onBack()
+        }
+    }
     NearbyResultsContent(s, onBack, onScanAgain, onFind, onOthers, onNext)
 }
 
@@ -107,7 +125,10 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
     DetailScreen(
         onBack,
         title = stringResource(n.check.label),
-        actions = { TopBarAction(stringResource(R.string.scan_again), onScanAgain) },
+        actions = {
+            if (s.scanWait > 0) TopBarAction(pluralStringResource(R.plurals.scan_again_in, s.scanWait, s.scanWait), onScanAgain, enabled = false)
+            else TopBarAction(stringResource(R.string.scan_again), onScanAgain)
+        },
         dock = {
             if (s.next != null) {
                 PrimaryButton(stringResource(s.next.next), { onNext(s.next) }, Modifier.fillMaxWidth(), trailing = painterResource(R.drawable.ic_arrow_right))
@@ -116,14 +137,30 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
             }
         },
     ) {
-        // Notes go first.
-        if (likely.isEmpty() && look.isEmpty()) {
-            Note(stringResource(words.noneText), title = stringResource(words.noneTitle))
+        // Notes go first: Android's ration of Wi-Fi scans is used up, so these are the last results (E01).
+        if (s.scanWait > 0) {
+            Note(stringResource(R.string.scan_paused_text), title = stringResource(R.string.scan_paused_title), tone = NoteTone.WARNING)
             Spacer(Modifier.height(Space.block))
         }
         val count = n.devices.size
+        // Nothing found (00-decisions): the plain result, one row for what was heard, one quiet line. Nothing heard at
+        // all: the count box at 0 and the check's own empty state.
+        val nothing = likely.isEmpty() && look.isEmpty() && known.isEmpty()
+        if (nothing && count > 0) {
+            LensHeader(
+                painterResource(R.drawable.ic_check_circle), stringResource(words.noneTitle),
+                line = pluralStringResource(if (n.check == Check.BLUETOOTH) R.plurals.bluetooth_heard else R.plurals.networks_heard, count, count) + " " + stringResource(R.string.none_like_camera),
+            )
+            Spacer(Modifier.height(Space.lensBottom))
+            ListRow(
+                pluralStringResource(words.others, other.size, other.size), line = stringResource(words.othersLine),
+                leading = { IconCircle(painterResource(n.check.icon), CircleTone.Neutral) }, onClick = onOthers,
+            )
+            QuietLine(stringResource(words.noneText))
+            return@DetailScreen
+        }
         SummaryBox(
-            stringResource(R.string.two_parts, pluralStringResource(words.nearby, count, count), updatedText(s.updatedSecondsAgo)),
+            stringResource(R.string.two_parts, pluralStringResource(words.nearby, count, count), updatedText(s.updatedSecondsAgo).keepTogether()),
             count.toString(),
             listOf(
                 SummaryPart(likely.size, pluralStringResource(R.plurals.likely_cameras_count, likely.size, likely.size), SummaryTone.ALERT),
@@ -134,6 +171,9 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
         NearbySection(stringResource(R.string.risk_likely_camera), likely, onFind)
         NearbySection(stringResource(R.string.risk_worth_a_look), look, onFind)
         NearbySection(stringResource(R.string.marked_as_known), known, onFind)
+        if (count == 0) {
+            EmptyState(painterResource(n.check.icon), stringResource(R.string.nothing_flagged_yet), stringResource(words.noneText), hue = n.check.hue)
+        }
         if (other.isNotEmpty()) {
             Spacer(Modifier.height(Space.block))
             ListRow(

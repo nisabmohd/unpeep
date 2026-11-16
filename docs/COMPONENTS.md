@@ -18,12 +18,17 @@ per-screen look options. Two things that look alike are one component.
 | `IconCircle` / `NeutralCircle` | Rows.kt | 44 dp circle with a 22 dp icon |
 | `SectionLabel` | Rows.kt | label above a group, optional count or text action (Change) |
 | `Box24` | Rows.kt | a tinted box that is not a list ("Or run one check", Find it meter) |
-| `Note` | Rows.kt | the one note (goes first) |
+| `Note` (`NoteTone`) | Rows.kt | the one note, five tones (info · good · warning · error · honesty): 40 dp icon circle centred on the text, optional title, one optional text action; still goes first |
+| `QuietLine` | Rows.kt | one quiet centred line under a result: what the scan can't see |
+| `WaitingDots` | Rows.kt | three dots lighting in turn, at the end of the one row a scan shows while nothing is listed yet |
+| `Toast` / `ToastHost` / `ToastState` (`LocalToasts`) | Toast.kt | a short confirmation, only where an action can be undone or something went away; 4 s (longer with TalkBack), 12 dp above the dock or nav, swipe left or right to dismiss, optional Undo |
+| `focusRing` | Focus.kt | the one keyboard-focus look: 3 dp primary ring, outside small shapes with a 2 dp gap, inside rows and tiles |
 | `ChecklistRow` / `AnswerMarkCircle` | Rows.kt | a checklist item: hued circle, title, line, its answer mark (✓ · ? · − · empty) |
 | `NumberCircle` | Rows.kt | a numbered step's circle (If you find a camera) |
 | `ProgressLine` | Meter.kt | how far along a list is (checklist) |
 | `KeyholeTextField` | Inputs.kt | the one text field: search pill or note box |
 | `PhotoThumb` | Inputs.kt | a proof photo's thumbnail, read off the main thread |
+| `AddPhotoTile` | Inputs.kt | takes a photo: a dashed square with a camera-add icon, its label beside it (checklist Not sure) |
 | `SummaryBox` | Rows.kt | the count on top of a result list: big number + line, one bar split by result, the legend in words |
 | `PrimaryButton` / `SecondaryButton` / `ButtonPair` | Controls.kt | one main action (an arrow after its label when it moves on); pair = secondary left, primary right |
 | `RoundIconButton` | Controls.kt | round tonal header buttons |
@@ -34,6 +39,7 @@ per-screen look options. Two things that look alike are one component.
 | `Dock` | Controls.kt | docked bottom action area |
 | `SegmentMeter` | Meter.kt | the Find it meter: five pills lit by signal strength, Far · Right here underneath |
 | `BarMeter` | Meter.kt | the magnet's bars: one per reading, the newest on the right, accent from the jump up |
+| `StepSlider` | Controls.kt | a few steps on one scale: title and the value now, a slider that stops at each (Appearance › Text size, as Weft) |
 | `Segmented` / `Segment` | Controls.kt | two or three ways of one thing in one pill (Lens · Infrared) |
 | `CameraPreview` | Viewfinder.kt | the camera picture, centre-cropped, in the viewfinder |
 | `SpotRings` / `SpotMark` | Viewfinder.kt | rings around possible lenses, "Look here" beside the first |
@@ -42,6 +48,7 @@ per-screen look options. Two things that look alike are one component.
 | `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
 | `KeyholeNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
+| `KeyholeNavRail` | Bars.kt | the same three, down the side of a wide window (from 840 dp), the mark on top |
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |
 | `ReorderList` / `ReorderItem` | Reorder.kt | Sweep steps: grip to drag, circle, title, switch; Move up / down for TalkBack |
 | `ColorSwatch` | Controls.kt | an accent to pick: colour circle, ring and ✓ when picked |

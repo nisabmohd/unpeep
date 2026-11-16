@@ -118,6 +118,15 @@ interface ReportDao {
     @Query("UPDATE reports SET name = :name WHERE id = :id")
     suspend fun rename(id: Long, name: String)
 
+    @Query("SELECT * FROM findings WHERE id = :id")
+    suspend fun finding(id: Long): FindingEntity?
+
+    @Query("DELETE FROM findings WHERE id = :id")
+    suspend fun deleteFinding(id: Long)
+
+    @Insert
+    suspend fun insertFinding(finding: FindingEntity)
+
     @Query("UPDATE findings SET known_as = :knownAs WHERE id = :id")
     suspend fun setKnownAs(id: Long, knownAs: String?)
 

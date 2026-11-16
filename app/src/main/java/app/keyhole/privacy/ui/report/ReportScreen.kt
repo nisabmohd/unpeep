@@ -1,5 +1,7 @@
 package app.keyhole.privacy.ui.report
 
+import app.keyhole.privacy.ui.components.LocalToasts
+import androidx.compose.runtime.remember
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -58,6 +60,7 @@ import app.keyhole.privacy.ui.components.KeyholeTextField
 import app.keyhole.privacy.ui.components.LensHeader
 import app.keyhole.privacy.ui.components.ListRow
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PhotoThumb
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.RoundIconButton
@@ -95,6 +98,14 @@ class ReportViewModel(private val id: Long, private val repo: ReportRepository) 
         viewModelScope.launch { repo.undoMark(finding) }
     }
 
+    /** Finding detail › Remove from report; [onRemoved] gets the way back for the toast's Undo. */
+    fun removeFinding(findingId: Long, onRemoved: (undo: () -> Unit) -> Unit) {
+        viewModelScope.launch {
+            val gone = repo.removeFinding(findingId) ?: return@launch
+            onRemoved { repo.writes.launch { repo.restoreFinding(gone) } }
+        }
+    }
+
     /** Writes the PDF to [uri] (the place the user chose); true when it worked. */
     suspend fun export(context: Context, uri: Uri): Boolean = withContext(Dispatchers.IO) {
         val report = state.value.report ?: return@withContext false
@@ -116,7 +127,13 @@ private fun Finding.icon(): Int = when (source) {
 
 private fun Finding.circle(): CircleTone = if (knownAs != null) CircleTone.Neutral else risk.tone
 
-private fun share(context: Context, text: String) {
+/** Opens the saved PDF in whatever reads PDFs on the phone. */
+private fun openPdf(context: Context, uri: Uri) {
+    val view = Intent(Intent.ACTION_VIEW).setDataAndType(uri, PDF).addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+    runCatching { context.startActivity(view) }
+}
+
+internal fun share(context: Context, text: String) {
     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
     runCatching { context.startActivity(Intent.createChooser(send, null)) }
 }
@@ -129,7 +146,14 @@ private fun share(context: Context, text: String) {
 fun ReportScreen(vm: ReportViewModel, onBack: () -> Unit, onFinding: (Long) -> Unit, onPhoto: (String) -> Unit, onFoundSomething: () -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     val gone = s.loaded && s.report == null
-    LaunchedEffect(gone) { if (gone) onBack() }
+    val toasts = LocalToasts.current
+    val deleted = stringResource(R.string.report_gone)
+    LaunchedEffect(gone) {
+        if (gone) {
+            toasts.show(deleted) // E13: back on Reports, it says why
+            onBack()
+        }
+    }
     val report = s.report ?: return
     val context = LocalContext.current
     val words = rememberReportWords()
@@ -138,18 +162,24 @@ fun ReportScreen(vm: ReportViewModel, onBack: () -> Unit, onFinding: (Long) -> U
     var renaming by rememberSaveable { mutableStateOf(false) }
     var undoing by rememberSaveable { mutableStateOf<Long?>(null) }
     var exportResult by rememberSaveable { mutableStateOf<Boolean?>(null) }
+    var exporting by remember { mutableStateOf(false) }
+    var saved by rememberSaveable { mutableStateOf<Uri?>(null) }
     val export = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument(PDF)) { uri ->
         if (uri != null) scope.launch {
-            val ok = vm.export(context, uri)
+            exporting = true
+            val ok = try { vm.export(context, uri) } finally { exporting = false }
             haptics.buzz(if (ok) Buzz.CONFIRM else Buzz.REJECT)
             exportResult = ok
+            saved = uri.takeIf { ok }
         }
     }
+    val pdfName = words.name(report).replace(Regex("[\\\\/:*?\"<>|]"), " ") + ".pdf"
     ReportContent(
         report, words, onBack, onShare = { share(context, words.text(report)) }, onRename = { renaming = true },
         onFinding = { f -> if (f.finding.toLookAt) onFinding(f.id) else undoing = f.id }, onPhoto = onPhoto,
-        onFoundSomething = onFoundSomething, onExport = { export.launch(words.name(report).replace(Regex("[\\\\/:*?\"<>|]"), " ") + ".pdf") },
-        exportResult = exportResult,
+        onFoundSomething = onFoundSomething, onExport = { export.launch(pdfName) },
+        exportResult = exportResult, exporting = exporting,
+        onOpenPdf = saved?.let { uri -> { openPdf(context, uri) } },
     )
     if (renaming) RenameSheet(report.name.ifBlank { "" }, onDismiss = { renaming = false }, onSave = { haptics.buzz(Buzz.CONFIRM); vm.rename(it); renaming = false })
     undoing?.let { id ->
@@ -162,6 +192,7 @@ fun ReportScreen(vm: ReportViewModel, onBack: () -> Unit, onFinding: (Long) -> U
 fun ReportContent(
     report: SavedReport, words: ReportWords, onBack: () -> Unit, onShare: () -> Unit, onRename: () -> Unit, onFinding: (SavedFinding) -> Unit,
     onPhoto: (String) -> Unit, onFoundSomething: () -> Unit, onExport: () -> Unit, exportResult: Boolean? = null,
+    exporting: Boolean = false, onOpenPdf: (() -> Unit)? = null,
 ) {
     val c = MaterialTheme.colorScheme
     val w = warningColors()
@@ -175,21 +206,25 @@ fun ReportContent(
         dock = {
             ButtonPair(
                 secondary = { m -> SecondaryButton(stringResource(R.string.found_something), onFoundSomething, m) },
-                primary = { m -> PrimaryButton(stringResource(R.string.export), onExport, m, icon = painterResource(R.drawable.ic_export)) },
+                // While the PDF is written the button says so (10j) and waits.
+                primary = { m ->
+                    PrimaryButton(stringResource(if (exporting) R.string.saving_pdf else R.string.export), onExport, m, icon = painterResource(R.drawable.ic_export), enabled = !exporting)
+                },
             )
         },
     ) {
         // Notes go first: how the export went.
         when (exportResult) {
-            true -> Note(stringResource(R.string.export_done))
-            false -> Note(stringResource(R.string.export_failed), icon = painterResource(R.drawable.ic_warning), warning = true)
+            true -> Note(stringResource(R.string.export_done), tone = NoteTone.GOOD, action = onOpenPdf?.let { stringResource(R.string.open) }, onAction = { onOpenPdf?.invoke() })
+            false -> Note(stringResource(R.string.export_failed), tone = NoteTone.ERROR, action = stringResource(R.string.try_again), onAction = onExport)
             null -> Unit
         }
         LensHeader(
-            painterResource(if (look) R.drawable.ic_shield_warning else R.drawable.ic_shield), words.name(report), line = words.whenLine(report),
+            painterResource(if (look) R.drawable.ic_shield_warning else R.drawable.ic_check_circle), words.name(report), line = words.whenLine(report),
             container = if (look) w.container else null, onContainer = if (look) w.onContainer else null,
             tags = {
-                if (look) Tag(words.toLookAt(report), TagKind.WORTH_A_LOOK, icon = painterResource(R.drawable.ic_shield_warning)) else Tag(stringResource(R.string.nothing_found), TagKind.GOOD)
+                if (look) Tag(words.toLookAt(report), TagKind.WORTH_A_LOOK, icon = painterResource(R.drawable.ic_danger))
+                else Tag(stringResource(R.string.nothing_found), TagKind.GOOD, icon = painterResource(R.drawable.ic_check_circle))
                 Tag(words.checksOf(report), TagKind.KNOWN)
             },
         )
@@ -241,7 +276,7 @@ fun ReportContent(
             report.gaps.forEach { g -> row { shape -> SignRow(painterResource(R.drawable.ic_not_checked), words.gap(g), shape = shape) } }
         }
         Spacer(Modifier.height(Space.block))
-        Note(stringResource(R.string.report_not_safe_note))
+        Note(stringResource(R.string.report_not_safe_note), tone = NoteTone.HONESTY)
     }
 }
 

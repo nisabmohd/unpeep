@@ -80,3 +80,12 @@ val Check.next: Int
         Check.MAGNET -> R.string.next_magnet
         Check.CHECKLIST -> R.string.next_checklist
     }
+
+/** "Skip to lens finder": a sweep jumping to a step that needs no signal (E09). */
+val Check.skipTo: Int
+    @StringRes get() = when (this) {
+        Check.INFRARED -> R.string.skip_to_infrared
+        Check.MAGNET -> R.string.skip_to_magnet
+        Check.CHECKLIST -> R.string.skip_to_checklist
+        else -> R.string.skip_to_lens
+    }

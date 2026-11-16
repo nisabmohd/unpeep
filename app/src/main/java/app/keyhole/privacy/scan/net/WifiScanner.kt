@@ -29,7 +29,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withTimeoutOrNull
 
 /** Where a scan is. */
-enum class ScanStatus { RUNNING, NOT_ON_WIFI, DONE }
+enum class ScanStatus { RUNNING, NOT_ON_WIFI, DONE, DROPPED }
 
 /** One step of a scan: how far it is, and everything the devices have answered so far. */
 data class ScanUpdate(
@@ -64,7 +64,10 @@ class WifiScanner(context: Context) {
         val run = Run(link, ports, this)
         // Whatever happens, the scan ends inside its budget with what it has.
         withTimeoutOrNull(BUDGET_MS) { run.all() }
-        send(ScanUpdate(ScanStatus.DONE, link.ssid, 1f, run.found.size, run.found.size, run.devices()))
+        // The phone left the Wi-Fi half-way (E03): what answered is kept, but the scan says it didn't finish.
+        val still = WifiNetwork.current(context)
+        val status = if (still == null || still.network != link.network) ScanStatus.DROPPED else ScanStatus.DONE
+        send(ScanUpdate(status, link.ssid, 1f, run.found.size, run.found.size, run.devices()))
     }.conflate().flowOn(Dispatchers.IO)
 
     private inner class Run(val link: WifiLink, val ports: Map<Int, PortKind>, val out: ProducerScope<ScanUpdate>) {

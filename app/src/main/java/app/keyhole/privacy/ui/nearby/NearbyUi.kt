@@ -76,7 +76,7 @@ fun NearbyListRow(device: NearbyDevice, modifier: Modifier = Modifier, shape: Sh
     ListRow(
         device.title(), modifier, shape, line = line,
         leading = { IconCircle(painterResource(device.kind.icon), device.risk.tone) },
-        trailing = if (onClick == null && device.risk != Risk.UNKNOWN) { { NearbyTag(device) } } else null,
+        tag = if (onClick == null && device.risk != Risk.UNKNOWN) { { NearbyTag(device) } } else null,
         onClick = onClick,
     )
 }
@@ -124,4 +124,12 @@ val NearbyBlock.line: Int
         NearbyBlock.BLUETOOTH_OFF -> R.string.block_bluetooth_off_line
         NearbyBlock.LOCATION_OFF -> R.string.block_location_off_line
         NearbyBlock.NO_BLUETOOTH -> R.string.block_no_bluetooth_line
+    }
+
+/** The icon of a state a check can't run in, when it isn't the check's own (Bluetooth is off, Location is off). */
+val NearbyBlock.icon: Int?
+    @DrawableRes get() = when (this) {
+        NearbyBlock.BLUETOOTH_OFF, NearbyBlock.NO_BLUETOOTH -> R.drawable.ic_bluetooth_off
+        NearbyBlock.LOCATION_OFF -> R.drawable.ic_map_point
+        NearbyBlock.WIFI_OFF -> null
     }

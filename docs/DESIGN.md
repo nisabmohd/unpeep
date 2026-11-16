@@ -46,3 +46,24 @@ Lexend (Outfit, Atkinson Hyperlegible, Space Grotesk in Appearance), weights 400
 No country assumed: help numbers come from the phone's region (sheet to change). Labels never squeeze or overlap:
 the check row keeps 62 dp per check and scrolls sideways; labels end in "…". Text grows with the font size; 48 dp
 touch targets; every icon button has a TalkBack label.
+
+## 8. Decisions from the design delivery (16 Nov 2026, `design/screens/00-decisions.png`)
+- **Note**: one component, five tones (info · good · warning · error · honesty), a 40 dp icon circle, an optional
+  title and one optional text action. Still goes first.
+- **Toast**: only where an action can be undone (report deleted, removed from a report) or something went away
+  (results cleared, report gone). 4 s (longer with TalkBack), 12 dp above the dock or nav, swipe to dismiss.
+- **Nothing found**: a lens header with the plain result, one row for what was seen, one quiet line for what the
+  scan can't see. No count box, no second Note.
+- **Touch and focus** (`00-focus-states.png`): focus is a 3 dp primary ring (outside small shapes with a 2 dp gap,
+  inside rows and tiles); pressed is a state layer; a check's feedback stays on its circle, never its label.
+- **Text at 200 %**: small text doubles; top-bar actions, nav labels, segmented controls and the lens core stop at
+  130 %; buttons stack, primary on top; tags drop under a row's text.
+- **Torch "on"**: primary (the one "on" look of a round button). **Theme**: the shared Segmented, full width.
+- **Find it**: word, pills and signal share one scale (Right here from −50 dBm, Close to −62, Near to −74).
+- **Loading**: none added; the mark on a blank page at app start, "Opening the camera", "Saving the PDF…".
+- **Tablets**: from 840 dp a navigation rail and two panes (Home, results, Reports, More); 600–840 dp one centred
+  column; a phone on its side puts the sweep's lens beside its list; the lens finder on its side moves its controls
+  to a rail on the trailing side.
+- **Sweeps**: closing one asks first (stop and see the report, or stop without one); leaving the app mid-scan
+  stops the scan and shows "Paused at …" with Carry on (scans never run in the background).
+

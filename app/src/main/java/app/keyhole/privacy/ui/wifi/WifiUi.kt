@@ -113,7 +113,7 @@ fun DeviceListRow(device: WifiDevice, modifier: Modifier = Modifier, shape: Shap
         device.title, modifier, shape,
         line = if (onClick == null) device.ip.takeIf { device.name != null } else device.reason(),
         leading = { IconCircle(painterResource(device.icon), device.risk.tone) },
-        trailing = if (onClick == null && device.risk != Risk.UNKNOWN) { { DeviceTag(device) } } else null,
+        tag = if (onClick == null && device.risk != Risk.UNKNOWN) { { DeviceTag(device) } } else null,
         onClick = onClick,
     )
 }

@@ -127,8 +127,12 @@ class ProjectRulesTest {
     @Test fun shapesOnlyInDimensKt() = assertNone("RoundedCornerShape / CircleShape outside Dimens.kt: use Shapes.*",
         violations { f, _, l -> !inTheme(f) && Regex("""\b(RoundedCornerShape|CutCornerShape|AbsoluteRoundedCornerShape)\(|\bCircleShape\b""").containsMatchIn(code(l)) })
 
+    /** A row's leading icon is the 44 dp IconCircle; CheckIcon (a 62 dp slot) belongs to the check row only. */
+    @Test fun rowsLeadWithTheIconCircle() = assertNone("a row led by CheckIcon: use IconCircle so it lines up with every other row",
+        violations { _, _, l -> Regex("""leading\s*=\s*\{\s*CheckIcon\(""").containsMatchIn(code(l)) })
+
     @Test fun borderWidthsAreNamed() = assertNone(".border( width that isn't Size.outline / Size.ring",
-        violations { f, _, l -> !inTheme(f) && Regex("""\.border\(\s*(?!Size\.(outline|ring)\b)[^)]""").containsMatchIn(code(l)) })
+        violations { f, _, l -> !inTheme(f) && Regex("""\.border\(\s*(?!Size\.(outline|ring|focusRing)\b|if \(focused\) Size\.focusRing else Size\.ring)[^)]""").containsMatchIn(code(l)) })
 
     /** Space.* is a gap, Size.* is a size; screens don't do sums on tokens. */
     @Test fun spacingTokensAreGapsNotSizes() = assertNone("spacing token used as a size, or token arithmetic on a screen: add a named token",
@@ -276,8 +280,9 @@ class ProjectRulesTest {
     private fun everyEnglishText(): List<Pair<String, String>> = english.toList() + englishPlurals.flatMap { (k, v) -> v.map { k to it } }
 
     /** Honest results: the app never says a room is safe, and never uses fear words (docs/COPY.md). */
+    /** "No cameras" only with where it looked (CLAUDE.md: "No cameras found on this Wi-Fi"), never on its own. */
     @Test fun theAppNeverSaysSafeOrSpy() {
-        val banned = Regex("""\b(safe|safely|safety|clean|secure|secured|protected|spy|spying|danger|dangerous|threat|hacker|hacked|oops|bug detect\w*|no cameras)\b""", RegexOption.IGNORE_CASE)
+        val banned = Regex("""\b(safe|safely|safety|clean|secure|secured|protected|spy|spying|danger|dangerous|threat|hacker|hacked|oops|bug detect\w*|no cameras(?! found on))\b""", RegexOption.IGNORE_CASE)
         val bad = everyEnglishText().filter { (k, v) -> banned.containsMatchIn(v) && k !in WORDS_ALLOWED }.map { (k, v) -> "$k: $v" }
         assertNone("a word the app never says", bad)
     }

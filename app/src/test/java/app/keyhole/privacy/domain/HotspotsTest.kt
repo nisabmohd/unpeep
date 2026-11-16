@@ -70,6 +70,11 @@ class HotspotsTest {
     @Test fun nearnessInWords() {
         assertEquals(Nearness.FAR, nearness(-88))
         assertEquals(Nearness.NEAR, nearness(-70))
+        // One scale for the word, the pills and the signal (00-decisions): Right here from −50, Close to −62, Near to −74.
+        assertEquals(Nearness.VERY_CLOSE, nearness(-50))
+        assertEquals(Nearness.CLOSE, nearness(-62))
+        assertEquals(Nearness.NEAR, nearness(-74))
+        assertEquals(Nearness.FAR, nearness(-75))
         assertEquals(Nearness.CLOSE, nearness(-60))
         assertEquals(Nearness.VERY_CLOSE, nearness(-45))
     }

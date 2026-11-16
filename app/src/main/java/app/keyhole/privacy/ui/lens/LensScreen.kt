@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.lens
 
+import androidx.compose.foundation.layout.fillMaxHeight
 import android.annotation.SuppressLint
 import android.content.pm.ActivityInfo
 import android.graphics.ColorMatrix
@@ -67,6 +68,7 @@ import app.keyhole.privacy.ui.components.Grouped
 import app.keyhole.privacy.ui.components.IconCircle
 import app.keyhole.privacy.ui.components.KeyholeSheet
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.RoundIconButton
 import app.keyhole.privacy.ui.components.Segment
@@ -218,7 +220,11 @@ fun LensContent(
 ) {
     val c = MaterialTheme.colorScheme
     val running = s.status == CameraStatus.RUNNING || s.status == CameraStatus.STARTING
-    Column(Modifier.fillMaxSize().background(c.background).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+    // On its side (T05, large screens ignore the portrait lock): the picture fills the screen, the controls move to a
+    // rail on the trailing side.
+    val config = androidx.compose.ui.platform.LocalConfiguration.current
+    val sideways = config.screenWidthDp > config.screenHeightDp
+    val topBar: @Composable () -> Unit = {
         BackTopBar(
             onBack, Modifier.widthIn(max = Size.contentMax),
             title = stringResource(if (s.mode == Check.INFRARED) R.string.infrared_finder else R.string.lens_finder), close = s.sweep,
@@ -227,8 +233,10 @@ fun LensContent(
                 if (s.sweep) TopBarAction(stringResource(if (s.next == null) R.string.see_report else R.string.next), onNext)
             },
         )
-        var box by remember { mutableStateOf(IntSize.Zero) }
-        Box(Modifier.weight(1f).fillMaxWidth().onSizeChanged { box = it }) {
+    }
+    var box by remember { mutableStateOf(IntSize.Zero) }
+    val picture: @Composable (Modifier) -> Unit = { m ->
+        Box(m.onSizeChanged { box = it }) {
             when (s.status) {
                 CameraStatus.NEEDS_PERMISSION -> CameraMessage(R.drawable.ic_camera, R.string.perm_camera_title, if (settingsOnly) R.string.perm_denied_line else R.string.perm_camera_line)
                 CameraStatus.IN_USE -> CameraMessage(R.drawable.ic_camera, R.string.camera_problem_title, R.string.camera_in_use_line)
@@ -245,13 +253,37 @@ fun LensContent(
                     // Notes go first: on top of the picture.
                     Column(Modifier.padding(Space.screen), verticalArrangement = Arrangement.spacedBy(Space.inline)) {
                         if (s.mode == Check.INFRARED && s.seesInfrared == false) {
-                            Note(stringResource(R.string.ir_blocked_text), title = stringResource(R.string.ir_blocked_title), icon = painterResource(R.drawable.ic_warning), warning = true)
+                            Note(stringResource(R.string.ir_blocked_text), title = stringResource(R.string.ir_blocked_title), tone = NoteTone.WARNING)
                         }
-                        if (photoFailed) Note(stringResource(R.string.photo_not_saved), icon = painterResource(R.drawable.ic_warning), warning = true)
+                        if (photoFailed) Note(stringResource(R.string.photo_not_saved), tone = NoteTone.ERROR)
                     }
                 }
             }
         }
+    }
+    if (sideways) {
+        Row(Modifier.fillMaxSize().background(c.background).statusBarsPadding().navigationBarsPadding()) {
+            Column(Modifier.weight(1f).fillMaxSize()) {
+                topBar()
+                picture(Modifier.weight(1f).fillMaxWidth())
+                if (running) {
+                    Row(Modifier.fillMaxWidth().padding(Space.block), verticalAlignment = Alignment.CenterVertically) {
+                        LensFilters(s, onFilter, onZoom, Modifier.weight(1f))
+                    }
+                }
+                when (s.status) {
+                    CameraStatus.NEEDS_PERMISSION -> Dock { PrimaryButton(stringResource(if (settingsOnly) R.string.open_settings else R.string.allow), onAllow, Modifier.fillMaxWidth()) }
+                    CameraStatus.IN_USE, CameraStatus.FAILED -> Dock { PrimaryButton(stringResource(R.string.try_again), onRetry, Modifier.fillMaxWidth(), icon = painterResource(R.drawable.ic_refresh)) }
+                    else -> Unit
+                }
+            }
+            LensRail(s, running, onMode, onTorch, onTips, onShutter)
+        }
+        return
+    }
+    Column(Modifier.fillMaxSize().background(c.background).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+        topBar()
+        picture(Modifier.weight(1f).fillMaxWidth())
         LensControls(s, running, onMode, onFilter, onZoom, onTorch, onTips, onShutter)
         when (s.status) {
             CameraStatus.NEEDS_PERMISSION -> Dock(Modifier.widthIn(max = Size.contentMax)) {
@@ -272,6 +304,37 @@ private fun CameraMessage(icon: Int, title: Int, line: Int) {
     }
 }
 
+/** No filter · Red · Contrast · 2×, in one row that scrolls sideways when it must. */
+@Composable
+private fun LensFilters(s: LensState, onFilter: (LensFilter) -> Unit, onZoom: () -> Unit, modifier: Modifier = Modifier) {
+    Row(modifier.horizontalScroll(rememberScrollState()).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.inline)) {
+        Chip(stringResource(R.string.filter_none), s.filter == LensFilter.NONE, { onFilter(LensFilter.NONE) })
+        Chip(stringResource(R.string.filter_red), s.filter == LensFilter.RED, { onFilter(LensFilter.RED) })
+        Chip(stringResource(R.string.filter_contrast), s.filter == LensFilter.CONTRAST, { onFilter(LensFilter.CONTRAST) })
+        if (s.spec?.canZoom2x == true) Chip(stringResource(R.string.zoom_2x), s.zoom2x, onZoom)
+    }
+}
+
+/**
+ * The trailing rail on its side (T05): Lens · Infrared at the top, the shutter in the middle, the torch and tips
+ * below. The same controls as upright, in a column.
+ */
+@Composable
+private fun LensRail(s: LensState, running: Boolean, onMode: (Check) -> Unit, onTorch: () -> Unit, onTips: () -> Unit, onShutter: () -> Unit) {
+    Column(
+        Modifier.fillMaxHeight().padding(horizontal = Space.block, vertical = Space.screen),
+        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.block),
+    ) {
+        RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.check_lens), { onMode(Check.LENS) }, active = s.mode == Check.LENS)
+        RoundIconButton(painterResource(R.drawable.ic_infrared), stringResource(R.string.check_infrared), { onMode(Check.INFRARED) }, active = s.mode == Check.INFRARED)
+        Spacer(Modifier.weight(1f))
+        if (running) Shutter(painterResource(R.drawable.ic_camera), stringResource(R.string.take_photo), onShutter, enabled = s.status == CameraStatus.RUNNING)
+        Spacer(Modifier.weight(1f))
+        if (running && s.mode == Check.LENS && s.spec?.hasTorch == true) RoundIconButton(painterResource(R.drawable.ic_lens), stringResource(R.string.torch), onTorch, active = s.torch)
+        RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips)
+    }
+}
+
 /** Filters and 2× · Lens or Infrared · the hint · tips, the shutter and the torch. */
 @Composable
 private fun LensControls(
@@ -283,17 +346,7 @@ private fun LensControls(
         Modifier.widthIn(max = Size.contentMax).fillMaxWidth().padding(top = Space.block),
         horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(Space.block),
     ) {
-        if (running) {
-            Row(
-                Modifier.horizontalScroll(rememberScrollState()).padding(horizontal = Space.screen).selectableGroup(),
-                horizontalArrangement = Arrangement.spacedBy(Space.inline),
-            ) {
-                Chip(stringResource(R.string.filter_none), s.filter == LensFilter.NONE, { onFilter(LensFilter.NONE) })
-                Chip(stringResource(R.string.filter_red), s.filter == LensFilter.RED, { onFilter(LensFilter.RED) })
-                Chip(stringResource(R.string.filter_contrast), s.filter == LensFilter.CONTRAST, { onFilter(LensFilter.CONTRAST) })
-                if (s.spec?.canZoom2x == true) Chip(stringResource(R.string.zoom_2x), s.zoom2x, onZoom)
-            }
-        }
+        if (running) LensFilters(s, onFilter, onZoom, Modifier.padding(horizontal = Space.screen))
         Segmented(
             listOf(Segment(stringResource(R.string.check_lens), painterResource(R.drawable.ic_lens)), Segment(stringResource(R.string.check_infrared), painterResource(R.drawable.ic_infrared))),
             if (s.mode == Check.INFRARED) 1 else 0, { onMode(if (it == 1) Check.INFRARED else Check.LENS) },
@@ -301,7 +354,7 @@ private fun LensControls(
         if (running) {
             Column(Modifier.padding(horizontal = Space.heading), horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(stringResource(if (s.mode == Check.INFRARED) R.string.infrared_hint else R.string.lens_hint), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
-                if (s.photos > 0) Text(pluralStringResource(R.plurals.photos_saved, s.photos, s.photos), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
+                if (s.photos > 0) Text(pluralStringResource(R.plurals.photos_saved, s.photos, s.photos), style = KeyholeType.supporting, color = c.primary, textAlign = TextAlign.Center)
             }
             Row(Modifier.fillMaxWidth().padding(horizontal = Space.heading, vertical = Space.block), verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.SpaceBetween) {
                 RoundIconButton(painterResource(R.drawable.ic_help), stringResource(R.string.tips), onTips)
@@ -318,7 +371,7 @@ private fun LensControls(
 
 /** How to look for a lens, and (Infrared) the remote test again. */
 @Composable
-private fun LensTipsSheet(mode: Check, onDismiss: () -> Unit, onTestAgain: () -> Unit) {
+internal fun LensTipsSheet(mode: Check, onDismiss: () -> Unit, onTestAgain: () -> Unit) {
     KeyholeSheet(stringResource(R.string.tips_title), onDismiss, line = stringResource(R.string.tips_line)) {
         Grouped(Modifier.padding(horizontal = Space.screen)) {
             row { shape -> SignRow(painterResource(R.drawable.ic_lamp), stringResource(R.string.tip_dark), shape = shape) }
@@ -335,7 +388,7 @@ private fun LensTipsSheet(mode: Check, onDismiss: () -> Unit, onTestAgain: () ->
 
 /** The first time Infrared opens: can this phone's camera see infrared at all? */
 @Composable
-private fun InfraredTestSheet(onDismiss: () -> Unit, onAnswer: (Boolean) -> Unit) {
+internal fun InfraredTestSheet(onDismiss: () -> Unit, onAnswer: (Boolean) -> Unit) {
     KeyholeSheet(stringResource(R.string.ir_test_title), onDismiss, line = stringResource(R.string.ir_test_line)) {
         Column(Modifier.selectableGroup()) {
             ChoiceRow(

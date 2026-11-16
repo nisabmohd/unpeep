@@ -42,6 +42,9 @@ fun BodyFont.family(): FontFamily = when (this) {
     BodyFont.SPACE_GROTESK -> SpaceGroteskFamily
 }
 
+/** "Aa" written in [font] (Appearance › Font): the one place a font is chosen on screen, not by the theme. */
+fun fontSample(font: BodyFont, base: TextStyle): TextStyle = base.copy(fontFamily = font.family())
+
 fun keyholeTypography(font: BodyFont, scale: Float, rtl: Boolean = false): Typography {
     val f = font.family()
     // Line height as a ratio (em), not sp: Android 14+ scales big sp values less than small ones, so a fixed sp

@@ -1,16 +1,25 @@
 package app.keyhole.privacy.ui.components
 
+import app.keyhole.privacy.ui.theme.Alpha
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.platform.LocalDensity
+import kotlin.math.roundToInt
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.layout.layout
 import android.graphics.SurfaceTexture
 import android.view.TextureView
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -50,11 +59,10 @@ import app.keyhole.privacy.ui.theme.Viewfinder
 @Composable
 fun CameraPreview(contentWidth: Int, contentHeight: Int, onTexture: (TextureView?) -> Unit, modifier: Modifier = Modifier, description: String? = null) {
     val listener = rememberUpdatedState(onTexture)
-    BoxWithConstraints(
+    Box(
         modifier.fillMaxSize().clipToBounds().then(if (description != null) Modifier.semantics { contentDescription = description } else Modifier),
         contentAlignment = Alignment.Center,
     ) {
-        val (sx, sy) = cropScale(contentWidth.toFloat(), contentHeight.toFloat(), maxWidth.value, maxHeight.value)
         AndroidView(
             factory = { context ->
                 TextureView(context).apply {
@@ -69,7 +77,14 @@ fun CameraPreview(contentWidth: Int, contentHeight: Int, onTexture: (TextureView
                     }
                 }
             },
-            modifier = Modifier.requiredSize(maxWidth * sx, maxHeight * sy),
+            // As large as it must be to cover the box in the picture's shape, centred; the box clips the rest.
+            modifier = Modifier.layout { measurable, room ->
+                val (sx, sy) = cropScale(contentWidth.toFloat(), contentHeight.toFloat(), room.maxWidth.toFloat(), room.maxHeight.toFloat())
+                val w = (room.maxWidth * sx).roundToInt()
+                val h = (room.maxHeight * sy).roundToInt()
+                val view = measurable.measure(Constraints.fixed(w, h))
+                layout(room.maxWidth, room.maxHeight) { view.place((room.maxWidth - w) / 2, (room.maxHeight - h) / 2) }
+            },
         )
     }
 }
@@ -85,12 +100,16 @@ data class SpotMark(val x: Float, val y: Float)
 @Composable
 fun SpotRings(marks: List<SpotMark>, label: String, description: String, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
-    BoxWithConstraints(modifier.fillMaxSize().clearAndSetSemantics { if (marks.isNotEmpty()) contentDescription = description }) {
-        val w = maxWidth
-        val h = maxHeight
+    val density = LocalDensity.current
+    var room by remember { mutableStateOf(IntSize.Zero) }
+    Box(modifier.fillMaxSize().onSizeChanged { room = it }.clearAndSetSemantics { if (marks.isNotEmpty()) contentDescription = description }) {
+        val w = with(density) { room.width.toDp() }
+        val h = with(density) { room.height.toDp() }
         marks.filter { it.x in 0f..1f && it.y in 0f..1f }.forEachIndexed { i, m ->
             val cx = w * m.x
             val cy = h * m.y
+            // A soft glow, then the ring (08): the eye finds it at a glance on a dark picture.
+            Box(Modifier.offset(cx - Size.glintGlow / 2, cy - Size.glintGlow / 2).size(Size.glintGlow).clip(Shapes.pill).background(c.primary.copy(alpha = Alpha.glow)))
             Box(Modifier.offset(cx - Size.glintRing / 2, cy - Size.glintRing / 2).size(Size.glintRing).border(Size.ring, c.primary, Shapes.pill))
             Box(Modifier.offset(cx - Size.dot / 2, cy - Size.dot / 2).size(Size.dot).clip(Shapes.pill).background(Viewfinder.content))
             if (i == 0) {
@@ -108,7 +127,7 @@ fun SpotRings(marks: List<SpotMark>, label: String, description: String, modifie
 fun Shutter(icon: Painter, label: String, onClick: () -> Unit, modifier: Modifier = Modifier, enabled: Boolean = true) {
     val c = MaterialTheme.colorScheme
     Box(
-        modifier.size(Size.shutter).border(Size.ring, Viewfinder.content, Shapes.pill).clip(Shapes.pill)
+        modifier.size(Size.shutter).focusRing(Shapes.pill).border(Size.ring, Viewfinder.content, Shapes.pill).clip(Shapes.pill)
             .clickable(enabled = enabled, role = Role.Button, onClickLabel = label) {
                 onClick()
             }

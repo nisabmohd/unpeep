@@ -1,5 +1,6 @@
 package app.keyhole.privacy.ui.components
 
+import androidx.compose.ui.zIndex
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -61,13 +62,20 @@ fun ReorderList(items: List<ReorderItem>, onMove: (from: Int, to: Int) -> Unit, 
     var rowHeight by remember { mutableIntStateOf(0) }
     Column(modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(Space.row)) {
         items.forEachIndexed { i, item ->
-            val shape = Shapes.grouped(i, items.size)
             val lifted = i == dragging
+            // Lifted, the row is a card of its own: fully rounded, its shadow the same shape (no square edge showing
+            // around the corners), and drawn above the rows it passes.
+            val shape = if (lifted) Shapes.surface else Shapes.grouped(i, items.size)
             Row(
                 Modifier
                     .fillMaxWidth()
                     .onSizeChanged { if (rowHeight == 0) rowHeight = it.height }
-                    .then(if (lifted) Modifier.offset { IntOffset(0, offset.roundToInt()) }.graphicsLayer { shadowElevation = Size.cardShadow.toPx() } else Modifier)
+                    .then(
+                        if (lifted) {
+                            Modifier.zIndex(1f).offset { IntOffset(0, offset.roundToInt()) }
+                                .graphicsLayer { shadowElevation = Size.cardShadow.toPx(); this.shape = shape; clip = true }
+                        } else Modifier,
+                    )
                     .clip(shape)
                     .background(if (lifted) c.surfaceContainer else c.surfaceContainerLow)
                     .toggleable(item.on, role = Role.Switch) {

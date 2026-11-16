@@ -36,6 +36,9 @@ fun <T> standardSpec(ms: Int = Duration.STANDARD): FiniteAnimationSpec<T> = twee
 fun <T> progressSpec(): FiniteAnimationSpec<T> = tween(Duration.STANDARD, easing = Easing.standard)
 fun <T> shortSpec(): FiniteAnimationSpec<T> = tween(Duration.SHORT, easing = Easing.standard)
 
+/** A steady loop over [ms] with no easing (WaitingDots steps through it). */
+fun <T> stepSpec(ms: Int): androidx.compose.animation.core.DurationBasedAnimationSpec<T> = tween(ms, easing = androidx.compose.animation.core.LinearEasing)
+
 /** Shared axis X: a 10% shift + fade. */
 private const val AXIS_SHIFT = 10
 

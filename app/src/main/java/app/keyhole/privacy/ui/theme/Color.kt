@@ -124,10 +124,18 @@ object Hues {
     const val CHECKLIST = 186f
     /** A report (Home's last report, Reports rows): the amber of paper. */
     const val REPORT = 40f
+    /** Checklist items that aren't a check's colour (00-checklist-icons): smoke detector, lights, clocks and bins. */
+    const val ITEM_WARM = 11f
+    const val ITEM_LIGHT = 48f
+    const val ITEM_BLUE = 221f
 }
 
 /** The launcher's background: the mark's tile on Welcome and About (TOKENS.md › Brand). */
 val Brand = Color(0xFF173782)
+
+/** The other mid apps' launcher colours, behind their marks in About › More from mid apps. */
+val BurrowBrand = Color(0xFFA3294A)
+val WeftBrand = Color(0xFF2A6F52)
 
 /** The seed. */
 const val DEFAULT_ACCENT_HUE = 222f
@@ -154,6 +162,13 @@ val RedFilter = Color(0xFFFF2A2A)
 object Alpha {
     /** The lens' outer ring (the faintest). */
     const val ringOuter = 0.55f
+    /** A pressed check circle: its halo, and how far it darkens toward its icon colour. */
+    const val halo = 0.6f
+    const val pressDarken = 0.07f
+    /** The glow behind a ringed spot on the viewfinder. */
+    const val glow = 0.22f
+    /** A waiting dot that isn't lit. */
+    const val dotDim = 0.3f
     /** The lens' outermost ring when there are three. */
     const val ringFaint = 0.3f
     /** The lens' middle ring. */

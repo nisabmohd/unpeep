@@ -193,8 +193,21 @@ class SmokeTest {
         home()
         rule.onNodeWithText(text(R.string.start)).performClick()
         waitFor(text(R.string.skip_step))
+        // Closing asks first (E07): stop without a report goes back Home.
         rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        waitFor(text(R.string.stop_sweep_title))
+        rule.onNodeWithText(text(R.string.stop_no_report)).performClick()
         home()
+    }
+
+    @Test fun closingASweepCanStillKeepGoing() {
+        home()
+        rule.onNodeWithText(text(R.string.start)).performClick()
+        waitFor(text(R.string.skip_step))
+        rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        waitFor(text(R.string.stop_sweep_title))
+        rule.onNodeWithText(text(R.string.keep_going)).performClick()
+        waitFor(text(R.string.skip_step))
     }
 
     @Test fun theLensFinderOpensOnItsCameraOrSaysWhatItNeeds() {

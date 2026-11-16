@@ -17,6 +17,9 @@ class VisitReporter(
     private val notes: SweepNotes, private val wifi: WifiSession, private val hotspots: NearbySession<*>, private val bluetooth: NearbySession<*>,
     private val settings: SettingsRepository, private val reports: ReportRepository, private val now: () -> Long = System::currentTimeMillis,
 ) {
+    /** Stop without a report: nothing is saved, and the next check starts a new visit. */
+    fun drop() = notes.drop()
+
     /** Saves the report and returns its id. */
     suspend fun save(): Long {
         val s = settings.settings.first()

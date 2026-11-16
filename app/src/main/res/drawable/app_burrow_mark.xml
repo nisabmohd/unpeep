@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Burrow's launcher mark (by mid apps), copied from its repo for About › More from mid apps. Change it there. -->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp" android:height="108dp"
+    android:viewportWidth="108" android:viewportHeight="108">
+    <group android:scaleX="0.17054" android:scaleY="0.17054" android:translateX="10.3411" android:translateY="10.3411">
+        <path android:pathData="M140,340 V288 A116,116 0 0,1 372,288 V340" android:strokeColor="#FFFFFFFF" android:strokeWidth="26" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M140,288 A76,76 0 0,1 292,288 V340" android:strokeColor="#FFFFFFFF" android:strokeWidth="26" android:strokeLineCap="round" android:strokeLineJoin="round" />
+        <path android:pathData="M140,288 A36,36 0 0,1 212,288 V340" android:strokeColor="#FFFFFFFF" android:strokeWidth="26" android:strokeLineCap="round" android:strokeLineJoin="round" />
+    </group>
+</vector>

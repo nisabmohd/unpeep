@@ -1,5 +1,19 @@
 package app.keyhole.privacy.ui.nav
 
+import androidx.compose.foundation.layout.Row
+import app.keyhole.privacy.ui.isWide
+import app.keyhole.privacy.ui.components.KeyholeNavRail
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.union
+import androidx.compose.foundation.layout.only
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.displayCutout
+import androidx.compose.foundation.layout.WindowInsetsSides
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -73,6 +87,8 @@ import app.keyhole.privacy.ui.wifi.WifiOthersViewModel
 import app.keyhole.privacy.ui.wifi.WifiResultsScreen
 import app.keyhole.privacy.ui.wifi.WifiResultsViewModel
 import app.keyhole.privacy.ui.components.KeyholeNavBar
+import app.keyhole.privacy.ui.components.LocalToasts
+import app.keyhole.privacy.ui.components.ToastHost
 import app.keyhole.privacy.ui.components.NavItem
 import app.keyhole.privacy.ui.home.HomeScreen
 import app.keyhole.privacy.ui.home.HomeViewModel
@@ -102,8 +118,9 @@ private val TABS = listOf<Any>(HomeRoute, ReportsRoute, MoreRoute)
  * The whole app: the three tabs with the bottom nav, and every pushed screen without it. Tabs fade through,
  * pushes use shared axis X, predictive back is on (manifest).
  */
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostController = rememberNavController()) {
+fun KeyholeNavHost(container: AppContainer, settings: Settings, open: OpenFromOutside? = null, onOpened: () -> Unit = {}, nav: NavHostController = rememberNavController()) {
     val entry by nav.currentBackStackEntryAsState()
     val destination = entry?.destination
     val tab = TABS.indexOfFirst { t -> destination?.hierarchy?.any { it.hasRoute(t::class) } == true }
@@ -129,7 +146,58 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
             }
         }
     }
-    Column(Modifier.fillMaxSize()) {
+    val toasts = LocalToasts.current
+    // One More item's screen: pushed on a phone, in the right pane of More on a wide window (T04).
+    val MoreItemScreen: @Composable (MoreItem, () -> Unit) -> Unit = { item, back ->
+        when (item) {
+            MoreItem.APPEARANCE -> AppearanceScreen(viewModel { AppearanceViewModel(container.settings) }, onBack = back)
+            MoreItem.SWEEP_STEPS -> SweepStepsScreen(viewModel { AppearanceViewModel(container.settings) }, onBack = back)
+            // Opened as a sheet from More; a route only for completeness (deep links, tests).
+            MoreItem.LANGUAGE -> LanguageSheet(onDismiss = back)
+            MoreItem.MARKED_KNOWN -> MarkedKnownScreen(viewModel { MarkedKnownViewModel(container.reports) }, onBack = back)
+            MoreItem.HOW_IT_WORKS -> HowItWorksScreen(onBack = back)
+            MoreItem.LIMITS -> LimitsScreen(onBack = back, onChecklist = { nav.navigate(CheckRoute(Check.CHECKLIST, settings.place)) })
+            MoreItem.PRIVACY -> PrivacyScreen(viewModel { PrivacyViewModel(container.reports, container.notes) }, onBack = back)
+            MoreItem.ABOUT -> AboutScreen(onBack = back, onPrivacy = { nav.navigate(MoreItemRoute(MoreItem.PRIVACY)) }, onLicences = { nav.navigate(MoreItemRoute(MoreItem.LICENCES)) })
+            MoreItem.LICENCES -> LicencesScreen(onBack = back, onOpen = { nav.navigate(LicenceRoute(it.title, it.file)) })
+            MoreItem.FOUND_CAMERA -> FoundCameraScreen(viewModel { HelpViewModel(container.helpNumbers, container.settings) }, onBack = back)
+        }
+    }
+    // A launcher shortcut. Held until Welcome is done (a first run starts there), then opened over Home.
+    LaunchedEffect(open, settings.onboarded) {
+        if (open == null || !settings.onboarded) return@LaunchedEffect
+        when (open) {
+            OpenFromOutside.Sweep -> nav.navigate(SweepRoute(settings.place)) { popUpTo<HomeRoute>(); launchSingleTop = true }
+            is OpenFromOutside.OneCheck -> nav.navigate(CheckRoute(open.check, settings.place)) { popUpTo<HomeRoute>(); launchSingleTop = true }
+            OpenFromOutside.Reports -> nav.navigate(ReportsRoute) {
+                popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+                launchSingleTop = true
+                restoreState = true
+            }
+        }
+        onOpened()
+    }
+    // Landscape: the system's buttons and the camera cutout sit at the sides; keep clear of them (as Burrow).
+    // The keyboard: everything above it; the nav bar steps aside while it is up.
+    val keyboard = WindowInsets.isImeVisible
+    // Wide (from 840 dp): the rail instead of the bottom nav, beside every screen but Welcome and the viewfinder.
+    val wide = isWide()
+    val fullScreen = destination?.hierarchy?.any { it.hasRoute(WelcomeRoute::class) || it.hasRoute(LensRoute::class) } == true
+    val rail = wide && !fullScreen && destination != null
+    val goTab: (Int) -> Unit = { i ->
+        nav.navigate(TABS[i]) {
+            popUpTo(nav.graph.findStartDestination().id) { saveState = true }
+            launchSingleTop = true
+            restoreState = true
+        }
+    }
+    androidx.compose.foundation.layout.Row(
+        Modifier.fillMaxSize()
+            .windowInsetsPadding(WindowInsets.navigationBars.union(WindowInsets.displayCutout).only(WindowInsetsSides.Horizontal))
+            .imePadding(),
+    ) {
+    if (rail) KeyholeNavRail(items, tab, onSelect = goTab)
+    Column(Modifier.weight(1f).fillMaxSize()) {
         Box(Modifier.weight(1f)) {
             NavHost(
                 nav, startDestination = if (settings.onboarded) HomeRoute else WelcomeRoute,
@@ -154,8 +222,29 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                     )
                 }
                 composable<ReportsRoute>(enterTransition = NavMotion.tabEnter, exitTransition = NavMotion.tabExit, popEnterTransition = NavMotion.tabEnter, popExitTransition = NavMotion.tabExit) {
-                    val vm = viewModel { ReportsViewModel(container.reports) }
-                    ReportsScreen(vm, onOpen = { nav.navigate(ReportRoute(it)) })
+                    val vm = viewModel { ReportsViewModel(container.reports, container.appScope) }
+                    if (wide) {
+                        // T02: the list on the left, the picked report (the newest at first) on the right.
+                        val reports by vm.state.collectAsStateWithLifecycle()
+                        var picked by rememberSaveable { mutableStateOf<Long?>(null) }
+                        val shown = picked?.takeIf { id -> reports.reports.any { it.id == id } } ?: reports.reports.firstOrNull()?.id
+                        Row(Modifier.fillMaxSize()) {
+                            Box(Modifier.weight(1f)) { ReportsScreen(vm, onOpen = { picked = it }) }
+                            Box(Modifier.weight(1f)) {
+                                if (shown != null) {
+                                    val report = viewModel(key = "report-$shown") { ReportViewModel(shown, container.reports) }
+                                    ReportScreen(
+                                        report, onBack = { picked = null },
+                                        onFinding = { nav.navigate(FindingRoute(shown, it)) },
+                                        onPhoto = { nav.navigate(PhotoRoute(it)) },
+                                        onFoundSomething = { nav.navigate(FoundCameraRoute(shown)) },
+                                    )
+                                }
+                            }
+                        }
+                    } else {
+                        ReportsScreen(vm, onOpen = { nav.navigate(ReportRoute(it)) })
+                    }
                 }
                 composable<MoreRoute>(enterTransition = NavMotion.tabEnter, exitTransition = NavMotion.tabExit, popEnterTransition = NavMotion.tabEnter, popExitTransition = NavMotion.tabExit) {
                     val vm = viewModel { MoreViewModel(container.settings, container.reports, container.helpNumbers) }
@@ -163,7 +252,16 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                     val helpState by help.state.collectAsStateWithLifecycle()
                     var helpOpen by rememberSaveable { mutableStateOf(false) }
                     var languageOpen by rememberSaveable { mutableStateOf(false) }
-                    MoreScreen(vm, onOpen = { nav.navigate(MoreItemRoute(it)) }, onHelpNumbers = { helpOpen = true }, onLanguage = { languageOpen = true })
+                    if (wide) {
+                        // T04: More's list on the left, the picked item (Appearance at first) on the right.
+                        var picked by rememberSaveable { mutableStateOf(MoreItem.APPEARANCE) }
+                        Row(Modifier.fillMaxSize()) {
+                            Box(Modifier.weight(1f)) { MoreScreen(vm, onOpen = { if (it == MoreItem.FOUND_CAMERA) nav.navigate(MoreItemRoute(it)) else picked = it }, onHelpNumbers = { helpOpen = true }, onLanguage = { languageOpen = true }) }
+                            Box(Modifier.weight(1f)) { MoreItemScreen(picked) { picked = MoreItem.APPEARANCE } }
+                        }
+                    } else {
+                        MoreScreen(vm, onOpen = { nav.navigate(MoreItemRoute(it)) }, onHelpNumbers = { helpOpen = true }, onLanguage = { languageOpen = true })
+                    }
                     if (helpOpen) HelpNumbersSheet(helpState, onDismiss = { helpOpen = false }, onChoose = { help.choose(it); helpOpen = false })
                     if (languageOpen) LanguageSheet(onDismiss = { languageOpen = false })
                 }
@@ -177,6 +275,10 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                             nav.navigate(to) { popUpTo<SweepRoute> { inclusive = true } }
                         },
                         onFinished = finish,
+                        onDrop = {
+                            container.visit.drop()
+                            nav.popBackStack()
+                        },
                     )
                 }
                 composable<CheckRoute> { e ->
@@ -224,7 +326,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                 composable<FindingRoute> { e ->
                     val route = e.toRoute<FindingRoute>()
                     val vm = viewModel { ReportViewModel(route.reportId, container.reports) }
-                    FindingScreen(vm, route.findingId, onBack = nav::popBackStack)
+                    FindingScreen(vm, route.findingId, onBack = nav::popBackStack, onFoundIt = { nav.navigate(FoundCameraRoute(route.reportId)) })
                 }
                 composable<PhotoRoute> { e ->
                     PhotoScreen(e.toRoute<PhotoRoute>().path, onBack = nav::popBackStack)
@@ -307,37 +409,18 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                     )
                 }
                 composable<MoreItemRoute> { e ->
-                    when (e.toRoute<MoreItemRoute>().item) {
-                        MoreItem.APPEARANCE -> AppearanceScreen(viewModel { AppearanceViewModel(container.settings) }, onBack = nav::popBackStack)
-                        MoreItem.SWEEP_STEPS -> SweepStepsScreen(viewModel { AppearanceViewModel(container.settings) }, onBack = nav::popBackStack)
-                        MoreItem.LANGUAGE -> {
-                            // Opened as a sheet from More; a route only for completeness (deep links, tests).
-                            LanguageSheet(onDismiss = { nav.popBackStack() })
-                        }
-                        MoreItem.MARKED_KNOWN -> MarkedKnownScreen(viewModel { MarkedKnownViewModel(container.reports) }, onBack = nav::popBackStack)
-                        MoreItem.HOW_IT_WORKS -> HowItWorksScreen(onBack = nav::popBackStack)
-                        MoreItem.LIMITS -> LimitsScreen(onBack = nav::popBackStack, onChecklist = { nav.navigate(CheckRoute(Check.CHECKLIST, settings.place)) })
-                        MoreItem.PRIVACY -> PrivacyScreen(viewModel { PrivacyViewModel(container.reports, container.notes) }, onBack = nav::popBackStack)
-                        MoreItem.ABOUT -> AboutScreen(onBack = nav::popBackStack, onPrivacy = { nav.navigate(MoreItemRoute(MoreItem.PRIVACY)) }, onLicences = { nav.navigate(MoreItemRoute(MoreItem.LICENCES)) })
-                        MoreItem.LICENCES -> LicencesScreen(onBack = nav::popBackStack, onOpen = { nav.navigate(LicenceRoute(it.title, it.file)) })
-                        MoreItem.FOUND_CAMERA -> FoundCameraScreen(viewModel { HelpViewModel(container.helpNumbers, container.settings) }, onBack = nav::popBackStack)
-                    }
+                    MoreItemScreen(e.toRoute<MoreItemRoute>().item) { nav.popBackStack() }
                 }
                 composable<LicenceRoute> { e ->
                     val route = e.toRoute<LicenceRoute>()
                     LicenceTextScreen(route.title, route.file, onBack = nav::popBackStack)
                 }
             }
+            // Over every screen; above the nav bar on a tab (the bar sits under this box), else above the dock.
+            ToastHost(toasts, overNav = tab >= 0 && !rail)
         }
-        if (tab >= 0) {
-            KeyholeNavBar(items, tab, onSelect = { i ->
-                nav.navigate(TABS[i]) {
-                    popUpTo(nav.graph.findStartDestination().id) { saveState = true }
-                    launchSingleTop = true
-                    restoreState = true
-                }
-            })
-        }
+        if (tab >= 0 && !keyboard && !rail) KeyholeNavBar(items, tab, onSelect = goTab)
+    }
     }
 }
 

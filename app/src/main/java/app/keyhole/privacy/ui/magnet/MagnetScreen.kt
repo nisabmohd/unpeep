@@ -43,6 +43,7 @@ import app.keyhole.privacy.ui.components.DetailScreen
 import app.keyhole.privacy.ui.components.EmptyState
 import app.keyhole.privacy.ui.components.LensProgress
 import app.keyhole.privacy.ui.components.Note
+import app.keyhole.privacy.ui.components.NoteTone
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.RoundIconButton
 import app.keyhole.privacy.ui.components.SecondaryButton
@@ -85,6 +86,8 @@ data class MagnetState(
     val beep: Boolean = false,
     /** This reading is in the report. */
     val added: Boolean = false,
+    /** The sensor went quiet for a few seconds (E05): no reading is shown rather than an old one. */
+    val stopped: Boolean = false,
     val sweep: Boolean = false,
     val next: Check? = null,
     /** Bumped on each new jump, for the one buzz per jump. */
@@ -111,7 +114,11 @@ class MagnetViewModel(
     private val added = MutableStateFlow(false)
     @Volatile private var beepOn = false
 
+    @Volatile private var lastField = now()
+
     private val readings = sensor.fields().onEach { field ->
+        lastField = now()
+        if (latest.value.stopped) latest.update { it.copy(stopped = false) }
         val average = sampler.add(field, now()) ?: return@onEach
         val r = meter.add(average)
         val base = meter.normal
@@ -125,7 +132,16 @@ class MagnetViewModel(
         )
     }.map { }.onStart { emit(Unit) }
 
-    val state: StateFlow<MagnetState> = combine(latest, settings.settings, added, readings) { l, s, a, _ ->
+    /** Once a second: has the sensor answered lately? */
+    private val watchdog = kotlinx.coroutines.flow.flow {
+        while (true) {
+            kotlinx.coroutines.delay(WATCH_MS)
+            if (sensor.available && now() - lastField > STALL_MS && !latest.value.stopped) latest.update { it.copy(stopped = true) }
+            emit(Unit)
+        }
+    }.onStart { emit(Unit) }
+
+    val state: StateFlow<MagnetState> = combine(latest, settings.settings, added, readings, watchdog) { l, s, a, _, _ ->
         beepOn = s.magnetBeep
         val steps = sweepSteps(place, s.stepOrder, s.stepsOff)
         l.copy(beep = s.magnetBeep, added = a, next = if (sweep) steps.getOrNull(steps.indexOf(Check.MAGNET) + 1) else null)
@@ -189,14 +205,33 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
             if (s.sweep) TopBarAction(stringResource(if (s.next == null) R.string.see_report else R.string.next), onNext)
         },
         dock = if (s.available) { {
-            ButtonPair(
-                secondary = { m -> SecondaryButton(stringResource(R.string.set_normal_again), onSetNormal, m, enabled = !s.learning) },
-                primary = { m -> PrimaryButton(stringResource(if (s.added) R.string.added_to_report else R.string.add_to_report), onAdd, m, enabled = !s.learning && !s.added) },
-            )
+            if (s.stopped) {
+                // E05: nothing to add; setting normal again is the way back.
+                ButtonPair(
+                    secondary = { m -> SecondaryButton(stringResource(R.string.add_to_report), onAdd, m, enabled = false) },
+                    primary = { m -> PrimaryButton(stringResource(R.string.set_normal_again), onSetNormal, m) },
+                )
+            } else {
+                ButtonPair(
+                    secondary = { m -> SecondaryButton(stringResource(R.string.set_normal_again), onSetNormal, m, enabled = !s.learning) },
+                    primary = { m -> PrimaryButton(stringResource(if (s.added) R.string.added_to_report else R.string.add_to_report), onAdd, m, enabled = !s.learning && !s.added) },
+                )
+            }
         } } else null,
     ) {
         if (!s.available) {
             EmptyState(painterResource(R.drawable.ic_magnet), stringResource(R.string.no_magnet_title), stringResource(R.string.block_no_bluetooth_line))
+            return@DetailScreen
+        }
+        if (s.stopped) {
+            Note(stringResource(R.string.magnet_stopped_text), title = stringResource(R.string.magnet_stopped_title), tone = NoteTone.ERROR)
+            Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
+                Spacer(Modifier.height(Space.lensTop))
+                LensProgress(0f, stringResource(R.string.magnet_no_value), stringResource(R.string.magnet_no_reading_unit), icon = { CheckIcon(Check.MAGNET, Modifier.height(Size.iconCircle)) })
+                Spacer(Modifier.height(Space.lensBottom))
+                Text(stringResource(R.string.magnet_no_reading_title), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
+                Text(stringResource(R.string.magnet_last_line, s.normal, s.now), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
+            }
             return@DetailScreen
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
@@ -233,11 +268,14 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
             BarMeter(s.bars, MagnetMeter.BARS, MagnetMeter.JUMP, MagnetViewModel.FULL, stringResource(R.string.magnet_chart, s.above))
         }
         Spacer(Modifier.height(Space.block))
-        Note(stringResource(R.string.magnet_note))
+        Note(stringResource(R.string.magnet_note), tone = NoteTone.HONESTY, icon = painterResource(R.drawable.ic_info))
     }
 }
 
 private const val PERCENT = 100
+private const val WATCH_MS = 1_000L
+/** No reading for this long and the sensor counts as stopped. */
+private const val STALL_MS = 4_000L
 
 @Preview
 @Composable

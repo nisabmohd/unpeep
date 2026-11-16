@@ -65,7 +65,7 @@ enum class Nearness { FAR, NEAR, CLOSE, VERY_CLOSE }
 fun nearness(rssi: Int): Nearness = when {
     rssi >= -50 -> Nearness.VERY_CLOSE
     rssi >= -62 -> Nearness.CLOSE
-    rssi >= -75 -> Nearness.NEAR
+    rssi >= -74 -> Nearness.NEAR
     else -> Nearness.FAR
 }
 

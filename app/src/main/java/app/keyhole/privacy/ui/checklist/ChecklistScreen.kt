@@ -1,5 +1,8 @@
 package app.keyhole.privacy.ui.checklist
 
+import androidx.compose.foundation.layout.Arrangement
+import app.keyhole.privacy.ui.components.AddPhotoTile
+import app.keyhole.privacy.ui.theme.Size
 import android.content.Context
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -189,7 +192,9 @@ fun ChecklistContent(s: ChecklistState, onBack: () -> Unit, onItem: (ChecklistIt
 fun AnswerSheet(item: ChecklistItem, current: ChecklistEntry?, onDismiss: () -> Unit, onAnswer: (ChecklistEntry?) -> Unit) {
     val context = LocalContext.current
     val look = item.look
-    var notSure by rememberSaveable { mutableStateOf(current?.answer == ChecklistAnswer.NOT_SURE) }
+    // Pick, then Save (09b): a tap only moves the radio. Undo takes a saved answer back.
+    var picked by rememberSaveable { mutableStateOf(current?.answer) }
+    val notSure = picked == ChecklistAnswer.NOT_SURE
     var note by rememberSaveable { mutableStateOf(current?.note.orEmpty()) }
     var photo by rememberSaveable { mutableStateOf(current?.photoPath) }
     var pending by rememberSaveable { mutableStateOf<String?>(null) }
@@ -207,24 +212,31 @@ fun AnswerSheet(item: ChecklistItem, current: ChecklistEntry?, onDismiss: () -> 
     val ask = rememberPermissionAsk(Check.LENS) { granted -> if (granted) takePhoto() }
     KeyholeSheet(
         stringResource(look.title), onDismiss, line = stringResource(look.line),
-        footer = if (notSure) { {
+        footer = {
             ButtonPair(
-                secondary = { m -> SecondaryButton(stringResource(R.string.cancel), onDismiss, m) },
-                primary = { m -> PrimaryButton(stringResource(R.string.save), { onAnswer(ChecklistEntry(ChecklistAnswer.NOT_SURE, note.trim(), photo)) }, m) },
+                secondary = { m ->
+                    if (current != null) SecondaryButton(stringResource(R.string.undo), { onAnswer(null) }, m)
+                    else SecondaryButton(stringResource(R.string.cancel), onDismiss, m)
+                },
+                primary = { m ->
+                    PrimaryButton(stringResource(R.string.save), {
+                        picked?.let { a -> onAnswer(if (a == ChecklistAnswer.NOT_SURE) ChecklistEntry(a, note.trim(), photo) else ChecklistEntry(a)) }
+                    }, m, enabled = picked != null)
+                },
             )
-        } } else null,
+        },
     ) {
         Column(Modifier.selectableGroup()) {
             ChoiceRow(
-                stringResource(R.string.looks_fine), current?.answer == ChecklistAnswer.LOOKS_FINE && !notSure, { onAnswer(ChecklistEntry(ChecklistAnswer.LOOKS_FINE)) },
+                stringResource(R.string.looks_fine), picked == ChecklistAnswer.LOOKS_FINE, { picked = ChecklistAnswer.LOOKS_FINE },
                 line = stringResource(R.string.looks_fine_line), leading = { IconCircle(painterResource(R.drawable.ic_check), CircleTone.Accent) },
             )
             ChoiceRow(
-                stringResource(R.string.not_sure), notSure, { notSure = true },
+                stringResource(R.string.not_sure), notSure, { picked = ChecklistAnswer.NOT_SURE },
                 line = stringResource(R.string.not_sure_item_line), leading = { IconCircle(painterResource(R.drawable.ic_help), CircleTone.Warning) },
             )
             ChoiceRow(
-                stringResource(R.string.skip), current?.answer == ChecklistAnswer.SKIPPED && !notSure, { onAnswer(ChecklistEntry(ChecklistAnswer.SKIPPED)) },
+                stringResource(R.string.skip), picked == ChecklistAnswer.SKIPPED, { picked = ChecklistAnswer.SKIPPED },
                 line = stringResource(R.string.skip_line), leading = { IconCircle(painterResource(R.drawable.ic_skip), CircleTone.Neutral) },
             )
         }
@@ -232,19 +244,14 @@ fun AnswerSheet(item: ChecklistItem, current: ChecklistEntry?, onDismiss: () -> 
             Column(Modifier.padding(horizontal = Space.screen, vertical = Space.block)) {
                 KeyholeTextField(note, { note = it }, stringResource(R.string.note_hint), stringResource(R.string.note_label), singleLine = false)
                 Spacer(Modifier.height(Space.block))
-                Row(verticalAlignment = Alignment.CenterVertically) {
-                    photo?.let { PhotoThumb(it, stringResource(R.string.change_photo), onClick = { if (app.keyhole.privacy.scan.Access.granted(context, Check.LENS)) takePhoto() else ask.ask() }) }
+                // The photo (09c): its thumbnail, then the dashed tile that takes one (or another), named beside it.
+                val take = { if (app.keyhole.privacy.scan.Access.granted(context, Check.LENS)) takePhoto() else ask.ask() }
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(Space.inline)) {
+                    photo?.let { PhotoThumb(it, stringResource(R.string.change_photo), size = Size.photoSmall, onClick = take) }
+                    AddPhotoTile(stringResource(if (photo == null) R.string.add_photo else R.string.change_photo), take)
                 }
             }
-            SheetLine(
-                stringResource(if (photo == null) R.string.add_photo else R.string.change_photo), icon = painterResource(R.drawable.ic_camera_add),
-                onClick = { if (app.keyhole.privacy.scan.Access.granted(context, Check.LENS)) takePhoto() else ask.ask() },
-            )
         }
-        if (current != null) {
-            SheetLine(stringResource(R.string.undo), icon = painterResource(R.drawable.ic_refresh), onClick = { onAnswer(null) })
-        }
-        Spacer(Modifier.height(Space.block))
     }
 }
 

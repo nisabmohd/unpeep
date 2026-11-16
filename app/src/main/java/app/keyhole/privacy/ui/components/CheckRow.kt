@@ -1,5 +1,11 @@
 package app.keyhole.privacy.ui.components
 
+import app.keyhole.privacy.ui.theme.Alpha
+import androidx.compose.ui.graphics.lerp
+import androidx.compose.runtime.remember
+import androidx.compose.foundation.interaction.collectIsFocusedAsState
+import androidx.compose.foundation.interaction.collectIsPressedAsState
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.scaleIn
@@ -57,16 +63,22 @@ enum class CheckState { PLAIN, DONE, CURRENT, SKIPPED }
 
 /** One check: its hue circle and Solar icon. The hue is on the circle only. */
 @Composable
-fun CheckIcon(check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN) {
+fun CheckIcon(check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN, pressed: Boolean = false, focused: Boolean = false) {
     val c = MaterialTheme.colorScheme
     val colors = checkColors(check.hue)
-    val ring by animateFloatAsState(if (state == CheckState.CURRENT) 1f else 0f, shortSpec(), label = "checkRing")
+    val ring by animateFloatAsState(if (state == CheckState.CURRENT || focused) 1f else 0f, shortSpec(), label = "checkRing")
+    val halo by animateFloatAsState(if (pressed) 1f else 0f, shortSpec(), label = "checkHalo")
     Box(modifier.widthIn(max = Size.checkSlot).size(Size.checkSlot), contentAlignment = Alignment.Center) {
-        // The current step: a primary ring a little outside the circle, fading in.
-        Box(Modifier.size(Size.checkRing).graphicsLayer { alpha = ring }.border(Size.ring, c.primary, Shapes.pill))
+        // Pressed (00-focus-states): a soft halo of the circle's own colour spreads out; the circle darkens a little.
+        Box(Modifier.size(Size.iconCircle + Size.pressHalo * 2).graphicsLayer { alpha = halo * Alpha.halo }.clip(Shapes.pill).background(colors.container))
+        // The current step, or keyboard focus: a primary ring a little outside the circle, fading in.
+        Box(Modifier.size(Size.checkRing).graphicsLayer { alpha = ring }.border(if (focused) Size.focusRing else Size.ring, c.primary, Shapes.pill))
         Box(
             Modifier.size(Size.iconCircle).clip(Shapes.pill)
-                .then(if (state == CheckState.SKIPPED) Modifier.border(Size.outline, c.outline, Shapes.pill) else Modifier.background(colors.container)),
+                .then(
+                    if (state == CheckState.SKIPPED) Modifier.border(Size.outline, c.outline, Shapes.pill)
+                    else Modifier.background(if (pressed) lerp(colors.container, colors.onContainer, Alpha.pressDarken) else colors.container),
+                ),
             contentAlignment = Alignment.Center,
         ) {
             Icon(painterResource(check.icon), null, tint = if (state == CheckState.SKIPPED) c.onSurfaceVariant else colors.onContainer, modifier = Modifier.size(Size.iconInCircle))
@@ -111,11 +123,17 @@ fun CheckRow(checks: List<Check>, modifier: Modifier = Modifier, state: (Check) 
     Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = Space.inline)) {
         checks.forEach { check ->
             val name = stringResource(check.label)
+            // The whole slot is the target, but touch and focus show on the circle only; the label never changes (00-focus-states).
+            val touch = remember { MutableInteractionSource() }
+            val pressed by touch.collectIsPressedAsState()
+            val focused by touch.collectIsFocusedAsState()
             Column(
-                Modifier.widthIn(min = Size.checkSlot).clip(Shapes.surface).clickable(role = Role.Button, onClickLabel = stringResource(R.string.run_check, name)) { onRun(check) }.padding(bottom = Space.small),
+                Modifier.widthIn(min = Size.checkSlot)
+                    .clickable(interactionSource = touch, indication = null, role = Role.Button, onClickLabel = stringResource(R.string.run_check, name)) { onRun(check) }
+                    .padding(bottom = Space.small),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                CheckIcon(check, Modifier.height(Size.iconButton))
+                CheckIcon(check, Modifier.height(Size.iconButton), pressed = pressed, focused = focused)
                 Spacer(Modifier.height(Space.small))
                 Text(name, style = KeyholeType.caption, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.width(Size.checkSlot))
             }

@@ -7,6 +7,13 @@ import kotlinx.serialization.Serializable
 /* Type-safe routes (docs/SCREENS.md). The three tabs first, then what they push. */
 @Serializable data object HomeRoute
 @Serializable data object ReportsRoute
+
+/** Where a launcher shortcut asks the app to go (MainActivity.ACTION_*, res/xml/shortcuts.xml). */
+sealed interface OpenFromOutside {
+    data object Sweep : OpenFromOutside
+    data class OneCheck(val check: app.keyhole.privacy.domain.Check) : OpenFromOutside
+    data object Reports : OpenFromOutside
+}
 @Serializable data object MoreRoute
 
 /** 01 Welcome (first run). */

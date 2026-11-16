@@ -4,4 +4,7 @@
     <color name="page">#F9FAFC</color>
     <!-- Brand: launcher background (docs/TOKENS.md). -->
     <color name="ic_launcher_background">#173782</color>
+    <!-- Launcher shortcuts (fixed, any accent): primaryContainer / onPrimaryContainer of the seed hue 222, light. -->
+    <color name="shortcut_background">#FFD8E2FB</color>
+    <color name="shortcut_icon">#FF0B1D46</color>
 </resources>

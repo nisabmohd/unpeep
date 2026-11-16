@@ -1,12 +1,11 @@
 package app.keyhole.privacy.ui.components
 
-import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.focusable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
@@ -58,7 +57,6 @@ private const val MAX_SHEET_FRACTION = 0.9f
  * top 10% of the screen visible however much it holds. Handle, [title] on the left with one muted [line], a round
  * close button; long content scrolls inside. The same sheet as Weft and Burrow.
  */
-@SuppressLint("UnusedBoxWithConstraintsScope")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun KeyholeSheet(title: String, onDismiss: () -> Unit, line: String? = null, footer: (@Composable ColumnScope.() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
@@ -73,11 +71,12 @@ fun KeyholeSheet(title: String, onDismiss: () -> Unit, line: String? = null, foo
         shape = Shapes.sheet,
         dragHandle = { Box(Modifier.padding(top = Space.block).size(width = Size.handle, height = Space.grid).clip(Shapes.pill).background(c.outline)) },
     ) {
-        BoxWithConstraints {
-            val byScreen = screen * MAX_SHEET_FRACTION - Size.handleArea - navBar
-            val max = if (constraints.hasBoundedHeight) minOf(byScreen, maxHeight) else byScreen
+        // heightIn keeps within the room the sheet is given too, so the smaller of the two wins.
+        val max = screen * MAX_SHEET_FRACTION - Size.handleArea - navBar
+        Box {
             // The sheet takes focus itself, so opening one never pops up the keyboard.
-            Column(Modifier.heightIn(max = max).nestedScroll(remember { ScrollStaysInside() }).focusable()) {
+            // imePadding: a sheet with a text field (Rename) lifts above the keyboard.
+            Column(Modifier.heightIn(max = max).imePadding().nestedScroll(remember { ScrollStaysInside() }).focusable()) {
                 Row(
                     Modifier.fillMaxWidth().padding(start = Space.heading, end = Space.screen, top = Space.block, bottom = Space.card),
                     verticalAlignment = Alignment.Top,
@@ -126,12 +125,16 @@ private class ScrollStaysInside : NestedScrollConnection {
     }
 }
 
-/** A quiet line inside a sheet, under its rows ("Keyhole got it wrong? Report it…"); tappable when [onClick] is set. */
+/**
+ * A quiet line inside a sheet, under its rows ("Keyhole got it wrong? Report it…"); tappable when [onClick] is set.
+ * [leaves]: it opens something outside Keyhole (the browser), shown by ↗ at the end (06).
+ */
 @Composable
-fun SheetLine(text: String, modifier: Modifier = Modifier, icon: Painter? = null, onClick: (() -> Unit)? = null) {
+fun SheetLine(text: String, modifier: Modifier = Modifier, icon: Painter? = null, onClick: (() -> Unit)? = null, leaves: Boolean = false) {
     val c = MaterialTheme.colorScheme
     Row(
         modifier.fillMaxWidth().padding(horizontal = Space.inline)
+            .then(if (onClick != null) Modifier.focusRing(Shapes.surface, inside = true) else Modifier)
             .clip(Shapes.surface)
             .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
             .heightIn(min = Size.iconButton).padding(horizontal = Space.card, vertical = Space.inline),
@@ -142,5 +145,9 @@ fun SheetLine(text: String, modifier: Modifier = Modifier, icon: Painter? = null
             Spacer(Modifier.width(Space.block))
         }
         Text(text, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
+        if (leaves) {
+            Spacer(Modifier.width(Space.block))
+            Icon(painterResource(R.drawable.ic_open), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.chevron))
+        }
     }
 }

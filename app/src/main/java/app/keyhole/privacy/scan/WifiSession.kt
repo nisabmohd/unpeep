@@ -66,8 +66,12 @@ class WifiSession(
                         ScanStatus.RUNNING -> WifiStatus.RUNNING
                         ScanStatus.NOT_ON_WIFI -> WifiStatus.NOT_ON_WIFI
                         ScanStatus.DONE -> WifiStatus.DONE
+                        ScanStatus.DROPPED -> WifiStatus.DROPPED
                     }
-                    raw.value = Raw(run, status, u.ssid, u.fraction, u.checked, u.total, secondsLeft(u.fraction, at - started, BUDGET_MS), u.devices, at)
+                    // Dropped: keep how far it got ("stopped at 11 of 18"), not the final tally.
+                    val prev = raw.value
+                    val (checked, total) = if (status == WifiStatus.DROPPED) prev.checked to prev.total else u.checked to u.total
+                    raw.value = Raw(run, status, u.ssid, u.fraction, checked, total, secondsLeft(u.fraction, at - started, BUDGET_MS), u.devices, at)
                     if (status == WifiStatus.DONE) onDone()
                 }
             } finally {

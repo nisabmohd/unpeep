@@ -118,6 +118,9 @@ abstract class NearbySession<T>(
     /** True when a scan could start now: allowed, and the radio is on. */
     fun ready(): Boolean = Access.granted(context, check) && Access.block(context, check) == null
 
+    /** How long until Android allows a fresh scan; 0 when it does now. Only Wi-Fi scans are rationed. */
+    open fun waitMs(): Long = 0L
+
     /** "Not a camera?": [knownAs] null takes the mark away again. */
     fun mark(device: NearbyDevice, knownAs: KnownAs?) = onMark(nearbyKey(check, device.name, device.id), knownAs, device.name ?: device.label ?: device.id)
 
@@ -140,6 +143,8 @@ class HotspotSession(
     marks: StateFlow<Map<String, KnownAs>>, onMark: (String, KnownAs?, String) -> Unit, onDone: () -> Unit = {}, now: () -> Long = System::currentTimeMillis,
 ) : NearbySession<SeenHotspot>(Check.HOTSPOTS, context, appScope, marks, onMark, onDone, now) {
     override val scanMs = 8_000L
+
+    override fun waitMs(): Long = scanner.waitMs()
 
     override fun judge(seen: List<SeenHotspot>, marks: Map<String, KnownAs>, added: Set<String>) = judgeHotspots(seen, signatures.hotspots, marks, added)
 

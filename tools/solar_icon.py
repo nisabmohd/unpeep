@@ -6,6 +6,7 @@ Icon and the widgets' colorFilter tint it), viewport 24. Brand marks (launcher, 
 usage: npm pack @iconify-json/solar && tar xzf iconify-json-solar-*.tgz   # outside the repo
        python3 tools/solar_icon.py <path>/package            # every icon
        python3 tools/solar_icon.py <path>/package ic_check   # one
+       python3 tools/solar_icon.py --shortcuts               # launcher shortcut icons, from the ic_* already drawn
 """
 import json, os, sys
 import xml.etree.ElementTree as ET
@@ -29,20 +30,21 @@ ICONS = {
     "ic_camera_device": "videocamera-record", "ic_warning": "danger-triangle", "ic_danger": "danger-circle",
     "ic_shield": "shield-check", "ic_shield_warning": "shield-warning", "ic_not_checked": "close-circle",
     "ic_smartphone": "smartphone", "ic_tv": "tv", "ic_plug": "plug-circle", "ic_walking": "walking",
-    "ic_map_point": "map-point", "ic_mirror": "mirror", "ic_lamp": "lamp", "ic_hanger": "hanger-2",
+    "ic_map_point": "map-point", "ic_mirror": "mirror-left", "ic_lamp": "lamp", "ic_hanger": "hanger-2",
     # Kinds of known device, trackers, Find it
     "ic_laptop": "laptop", "ic_printer": "printer", "ic_speaker": "speaker-minimalistic", "ic_gamepad": "gamepad",
     "ic_server": "server", "ic_home": "home-angle", "ic_tag": "tag", "ic_arrow_down": "arrow-down", "ic_chat": "chat-round-line",
     # Checklist, reports, help
-    "ic_pen": "pen", "ic_bed": "bed", "ic_clock": "clock-circle", "ic_wind": "wind", "ic_frame": "gallery-minimalistic",
-    "ic_box": "box", "ic_book": "book", "ic_leaf": "leaf", "ic_fire": "fire", "ic_socket": "socket", "ic_usb": "usb",
-    "ic_chair": "chair", "ic_monitor": "monitor", "ic_call": "phone-calling", "ic_camera_add": "camera-add",
-    "ic_notes": "notes", "ic_link": "link", "ic_skip": "minus-circle", "ic_car": "car",
+    "ic_pen": "pen", "ic_bed": "bedside-table", "ic_clock": "clock-circle", "ic_wind": "wind", "ic_frame": "gallery-minimalistic",
+    "ic_box": "box", "ic_book": "book", "ic_leaf": "leaf", "ic_fire": "fire-minimalistic", "ic_socket": "socket", "ic_usb": "usb",
+    "ic_chair": "armchair", "ic_monitor": "monitor", "ic_call": "phone-calling", "ic_camera_add": "camera-add",
+    "ic_notes": "notes", "ic_alarm": "alarm", "ic_bulb": "lightbulb-minimalistic", "ic_wheel": "wheel",
+    "ic_check_circle": "check-circle", "ic_bluetooth_off": "bluetooth-off", "ic_link": "link", "ic_skip": "minus-circle", "ic_car": "car",
     # Places
     "ic_place_stay": "suitcase", "ic_place_trial_room": "hanger", "ic_place_washroom": "bath",
     "ic_place_office": "buildings", "ic_place_car": "bus",
     # More, settings, about
-    "ic_lock": "lock-keyhole", "ic_palette": "palette", "ic_globe": "global", "ic_phone": "phone",
+    "ic_lock": "lock-keyhole", "ic_palette": "palette-round", "ic_globe": "global", "ic_phone": "phone",
     "ic_info": "info-circle", "ic_eye_closed": "eye-closed", "ic_translate": "translation-2", "ic_code": "code",
     "ic_star": "star", "ic_mail": "letter", "ic_heart": "hand-heart", "ic_user_shield": "shield-user",
     "ic_widget": "widget", "ic_structure": "structure",
@@ -161,7 +163,41 @@ def main(pkg, names):
         sys.exit("\n".join(problems))
 
 
+# Launcher shortcuts (res/xml/shortcuts.xml): shortcut name → the drawn icon whose glyph it shows.
+SHORTCUTS = {"sweep": "ic_radar", "lens": "ic_lens", "infrared": "ic_infrared", "reports": "ic_reports"}
+
+
+def shortcuts():
+    """Each shortcut: an adaptive icon (fixed brand container behind, the Solar glyph in front, about 40 dp of 108)."""
+    import re
+    for short, icon in SHORTCUTS.items():
+        src = open(os.path.join(OUT, f"{icon}.xml")).read()
+        paths = [re.sub(r'#FF000000', "@color/shortcut_icon", line.strip()) for line in src.splitlines() if line.strip().startswith(("<path", "<group", "</group"))]
+        solar = re.search(r"Solar ([\w-]+) \(Linear\)", src).group(1)
+        fg = "\n".join([
+            '<?xml version="1.0" encoding="utf-8"?>',
+            f'<!-- Launcher shortcut "{short}": Solar {solar} (Linear) by 480 Design, CC BY 4.0, from {icon}.xml. Written by tools/solar_icon.py. -->',
+            '<vector xmlns:android="http://schemas.android.com/apk/res/android"',
+            '    android:width="108dp" android:height="108dp" android:viewportWidth="108" android:viewportHeight="108">',
+            '    <group android:translateX="34" android:translateY="34" android:scaleX="1.6667" android:scaleY="1.6667">',
+            *["        " + line for line in paths],
+            "    </group>",
+            "</vector>",
+        ]) + "\n"
+        open(os.path.join(OUT, f"shortcut_{short}_fg.xml"), "w").write(fg)
+        open(os.path.join(OUT, f"shortcut_{short}.xml"), "w").write(
+            '<?xml version="1.0" encoding="utf-8"?>\n'
+            f'<!-- Launcher shortcut "{short}" (Solar, written by tools/solar_icon.py). -->\n'
+            '<adaptive-icon xmlns:android="http://schemas.android.com/apk/res/android">\n'
+            '    <background android:drawable="@color/shortcut_background" />\n'
+            f'    <foreground android:drawable="@drawable/shortcut_{short}_fg" />\n'
+            "</adaptive-icon>\n")
+
+
 if __name__ == "__main__":
+    if sys.argv[1:2] == ["--shortcuts"]:
+        shortcuts()
+        sys.exit(0)
     if len(sys.argv) < 2:
         sys.exit(__doc__)
     main(sys.argv[1], sys.argv[2:])

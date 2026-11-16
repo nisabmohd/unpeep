@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Long-press Keyhole's icon. Each starts MainActivity with an action (MainActivity.ACTION_*); icons from
+     tools/solar_icon.py (shortcuts mode). Static, so nothing runs in the background to keep them up to date. -->
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut android:shortcutId="sweep" android:enabled="true" android:icon="@drawable/shortcut_sweep"
+        android:shortcutShortLabel="@string/check_this_room" android:shortcutLongLabel="@string/check_this_room">
+        <intent android:action="app.keyhole.privacy.action.SWEEP"
+            android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="lens" android:enabled="true" android:icon="@drawable/shortcut_lens"
+        android:shortcutShortLabel="@string/lens_finder" android:shortcutLongLabel="@string/lens_finder">
+        <intent android:action="app.keyhole.privacy.action.LENS"
+            android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="infrared" android:enabled="true" android:icon="@drawable/shortcut_infrared"
+        android:shortcutShortLabel="@string/infrared_finder" android:shortcutLongLabel="@string/infrared_finder">
+        <intent android:action="app.keyhole.privacy.action.INFRARED"
+            android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
+    </shortcut>
+    <shortcut android:shortcutId="reports" android:enabled="true" android:icon="@drawable/shortcut_reports"
+        android:shortcutShortLabel="@string/tab_reports" android:shortcutLongLabel="@string/tab_reports">
+        <intent android:action="app.keyhole.privacy.action.REPORTS"
+            android:targetPackage="app.keyhole.privacy" android:targetClass="app.keyhole.privacy.MainActivity" />
+    </shortcut>
+</shortcuts>

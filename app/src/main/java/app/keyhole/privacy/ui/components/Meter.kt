@@ -59,7 +59,7 @@ fun BarMeter(values: List<Int>, slots: Int, jump: Int, max: Int, description: St
     val shown = values.takeLast(slots)
     Row(
         modifier.fillMaxWidth().height(Size.meter).padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description },
-        horizontalArrangement = Arrangement.spacedBy(Space.barGap),
+        horizontalArrangement = Arrangement.spacedBy(Space.meterGap),
         verticalAlignment = Alignment.Bottom,
     ) {
         // Empty slots on the left until there are enough readings: the newest is always on the right.

@@ -1,5 +1,19 @@
 package app.keyhole.privacy.ui.more
 
+import app.keyhole.privacy.ui.components.StepSlider
+import app.keyhole.privacy.ui.theme.Size
+import app.keyhole.privacy.ui.theme.KeyholeType
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.material3.Icon
+import androidx.compose.ui.draw.clip
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.background
+import app.keyhole.privacy.ui.components.ListRow
+import app.keyhole.privacy.ui.components.Grouped
+import app.keyhole.privacy.ui.theme.Shapes
+import app.keyhole.privacy.ui.theme.fontSample
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -103,30 +117,21 @@ fun textSizeLabel(t: TextSize): String = stringResource(
 fun AppearanceScreen(vm: AppearanceViewModel, onBack: () -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
     val settings = s ?: return
-    var sizing by rememberSaveable { mutableStateOf(false) }
-    AppearanceContent(settings, onBack, vm::mode, vm::dynamic, vm::accent, vm::font, onTextSize = { sizing = true }, onMove = vm::move, onStep = vm::step)
-    if (sizing) {
-        KeyholeSheet(stringResource(R.string.text_size), { sizing = false }) {
-            Column(Modifier.selectableGroup()) {
-                TextSize.entries.forEach { t -> ChoiceRow(textSizeLabel(t), settings.theme.textSize == t, { vm.textSize(t); sizing = false }) }
-            }
-            Spacer(Modifier.height(Space.block))
-        }
-    }
+    AppearanceContent(settings, onBack, vm::mode, vm::dynamic, vm::accent, vm::font, onTextSize = vm::textSize, onMove = vm::move, onStep = vm::step)
 }
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun AppearanceContent(
     s: Settings, onBack: () -> Unit, onMode: (ThemeMode) -> Unit, onDynamic: (Boolean) -> Unit, onAccent: (Float) -> Unit, onFont: (BodyFont) -> Unit,
-    onTextSize: () -> Unit, onMove: (Int, Int) -> Unit, onStep: (Check, Boolean) -> Unit,
+    onTextSize: (TextSize) -> Unit, onMove: (Int, Int) -> Unit, onStep: (Check, Boolean) -> Unit,
 ) {
     val dark = isAppDark()
     DetailScreen(onBack, title = stringResource(R.string.appearance)) {
         Box24(title = stringResource(R.string.theme)) {
             Segmented(
                 listOf(Segment(themeModeLabel(ThemeMode.SYSTEM)), Segment(themeModeLabel(ThemeMode.LIGHT)), Segment(themeModeLabel(ThemeMode.DARK))),
-                s.theme.mode.ordinal, { onMode(ThemeMode.entries[it]) }, Modifier.padding(horizontal = Space.card),
+                s.theme.mode.ordinal, { onMode(ThemeMode.entries[it]) }, Modifier.padding(horizontal = Space.card), fill = true,
             )
         }
         Spacer(Modifier.height(Space.block))
@@ -142,14 +147,32 @@ fun AppearanceContent(
             }
         }
         Spacer(Modifier.height(Space.block))
-        Box24 {
-            Row(Modifier.fillMaxWidth().padding(start = Space.card)) {
-                SectionLabel(stringResource(R.string.font), Modifier.weight(1f), action = stringResource(R.string.two_parts, stringResource(R.string.text_size), textSizeLabel(s.theme.textSize)), onAction = onTextSize)
-            }
-            FlowRow(Modifier.padding(horizontal = Space.card).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.inline)) {
-                BodyFont.entries.forEach { f -> Chip(fontLabel(f), s.theme.font == f, { onFont(f) }) }
+        // Font (as Burrow): each one written in itself, with what it is for; the picked one has a ✓.
+        SectionLabel(stringResource(R.string.font))
+        Grouped(Modifier.selectableGroup()) {
+            BodyFont.entries.forEach { f ->
+                row { shape ->
+                    val on = s.theme.font == f
+                    ListRow(
+                        fontLabel(f), shape = shape, line = stringResource(f.line),
+                        leading = {
+                            Box(Modifier.size(Size.iconCircle).clip(Shapes.pill).background(MaterialTheme.colorScheme.surfaceContainerHigh), contentAlignment = Alignment.Center) {
+                                Text(stringResource(R.string.font_sample), style = fontSample(f, KeyholeType.cardTitle), color = MaterialTheme.colorScheme.onSurfaceVariant)
+                            }
+                        },
+                        trailing = { if (on) Icon(painterResource(R.drawable.ic_check), null, tint = MaterialTheme.colorScheme.primary, modifier = Modifier.size(Size.icon)) },
+                        onClick = { onFont(f) }, selected = on,
+                    )
+                }
             }
         }
+        // Text size (as Weft): its name and the size now, then a slider that stops at each size.
+        Spacer(Modifier.height(Space.block))
+        val sizes = TextSize.entries
+        StepSlider(
+            stringResource(R.string.text_size), textSizeLabel(s.theme.textSize), sizes.indexOf(s.theme.textSize), sizes.size,
+            onStep = { onTextSize(sizes[it]) },
+        )
         SweepStepsSection(s, onMove, onStep)
     }
 }
@@ -196,3 +219,12 @@ fun LanguageSheet(onDismiss: () -> Unit) {
 @Preview
 @Composable
 private fun AppearancePreview() = KeyholeTheme { AppearanceContent(Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) }
+
+/** What each font is for (Appearance › Font). */
+private val BodyFont.line: Int
+    @androidx.annotation.StringRes get() = when (this) {
+        BodyFont.LEXEND -> R.string.font_lexend_line
+        BodyFont.OUTFIT -> R.string.font_outfit_line
+        BodyFont.ATKINSON -> R.string.font_atkinson_line
+        BodyFont.SPACE_GROTESK -> R.string.font_space_grotesk_line
+    }

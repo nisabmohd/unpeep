@@ -31,7 +31,14 @@ import java.util.Date
 class ReportWords(private val res: Resources, private val is24Hour: Boolean = false) {
     private fun s(id: Int, vararg args: Any): String = res.getString(id, *args)
 
-    fun date(at: Long): String = java.text.DateFormat.getDateInstance(java.text.DateFormat.MEDIUM).format(Date(at))
+    /** "Sun 15 Nov" (10), in the phone's own order; the year only when it isn't this year. */
+    fun date(at: Long): String {
+        val locale = res.configuration.locales[0]
+        val thisYear = java.util.Calendar.getInstance().get(java.util.Calendar.YEAR)
+        val year = java.util.Calendar.getInstance().apply { timeInMillis = at }.get(java.util.Calendar.YEAR)
+        val pattern = android.text.format.DateFormat.getBestDateTimePattern(locale, if (year == thisYear) "EEEdMMM" else "EEEdMMMyyyy")
+        return java.text.SimpleDateFormat(pattern, locale).format(Date(at))
+    }
     fun time(at: Long): String = java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT).format(Date(at))
 
     /** The report's name, or its place ("Trial room") until the user gives it one; the date is always on the line below. */
@@ -71,7 +78,8 @@ class ReportWords(private val res: Resources, private val is24Hour: Boolean = fa
     fun line(f: Finding): String = when (f.source) {
         FindingSource.CHECKLIST -> listOfNotNull(source(f), s(R.string.not_sure_lower), f.photos.takeIf { it > 0 }?.let { res.getQuantityString(R.plurals.photo_count, it, it) }).joinToString(" · ")
         FindingSource.MAGNET -> s(R.string.two_parts, source(f), s(R.string.magnet_finding_line, f.detail.toIntOrNull() ?: 0, f.note.toIntOrNull() ?: 0))
-        else -> s(R.string.two_parts, source(f), s(f.risk.label))
+        // Inside a line the result reads lower case (10: "Wi-Fi · likely camera").
+        else -> s(R.string.two_parts, source(f), s(if (f.risk == app.keyhole.privacy.domain.Risk.LIKELY_CAMERA) R.string.risk_likely_lower else R.string.risk_look_lower))
     }
 
     /** The reasons, one sentence each. */
