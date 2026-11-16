@@ -19,7 +19,7 @@ class HelpNumbersTest {
         val countries = Locale.getISOCountries().toSet()
         for (e in all) {
             assertTrue(e.country, e.country in countries)
-            for (n in listOfNotNull(e.emergency, e.police, e.line)) assertTrue("${e.country}: $n", Regex("^[0-9][0-9 -]{1,11}$").matches(n))
+            for (n in listOfNotNull(e.emergency, e.police, e.line)) assertTrue("${e.country}: $n", Regex("^#?[0-9][0-9 -]{1,12}$").matches(n))
             e.site?.let { assertTrue("${e.country}: $it", it.startsWith("https://")) }
         }
     }
@@ -31,9 +31,16 @@ class HelpNumbersTest {
     }
 
     @Test fun thePhonesRegionIsTheDefault() {
-        assertEquals("110", numbers("de").entry(null)?.police)
-        assertEquals("112", numbers("de").entry(null)?.emergency)
+        // Germany's police emergency number is 110 (112 reaches fire and ambulance), checked 16 Nov 2026.
+        assertEquals("110", numbers("de").entry(null)?.emergency)
         assertEquals("911", numbers("de").entry("US")?.emergency)
+    }
+
+    @Test fun aSeparatePoliceLineWhereOneExists() {
+        val gb = numbers(null).entry("GB")!!
+        assertEquals("999", gb.emergency)
+        assertEquals("101", gb.police)
+        assertEquals("#9110", numbers(null).entry("JP")!!.police)
     }
 
     @Test fun anUnknownOrMissingRegionHasNoEntry() {

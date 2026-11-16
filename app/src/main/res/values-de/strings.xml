@@ -18,7 +18,7 @@
     <string name="check_checklist">Checkliste</string>
     <string name="check_state_done">fertig</string>
     <string name="check_state_current">jetzt</string>
-    <string name="check_state_skipped">nicht gelaufen</string>
+    <string name="check_state_skipped">übersprungen</string>
     <string name="run_check">%1$s starten</string>
 
     <!-- Places -->
@@ -102,7 +102,7 @@
 
     <!-- Wi-Fi check: 03 Sweep, 04 Results, 05 Device, 06 Not a camera? -->
     <string name="skip_step">Schritt überspringen</string>
-    <string name="scan_again">Erneut scannen</string>
+    <string name="scan_again">Erneut suchen</string>
     <string name="cancel">Abbrechen</string>
     <string name="done">Fertig</string>
     <string name="share">Teilen</string>
@@ -121,11 +121,11 @@
     <string name="next_magnet">Weiter: Magnet</string>
     <string name="next_checklist">Weiter: Checkliste</string>
     <string name="risk_likely_camera">Wahrscheinlich Kamera</string>
-    <string name="risk_worth_a_look">Ansehen lohnt sich</string>
+    <string name="risk_worth_a_look">Einen Blick wert</string>
     <string name="risk_known">Bekannt</string>
     <string name="risk_not_recognised">Nicht erkannt</string>
     <string name="isolation_title">Nur der Router hat geantwortet</string>
-    <string name="isolation_text">Dieses WLAN trennt Geräte, eine Kamera darin bleibt unsichtbar. Die anderen Prüfungen gehen trotzdem.</string>
+    <string name="isolation_text">Dieses WLAN trennt Geräte voneinander, deshalb ist eine Kamera darin nicht zu sehen. Die anderen Prüfungen funktionieren trotzdem.</string>
     <string name="wifi_none_title">Keine Kameras in diesem WLAN gefunden</string>
     <string name="wifi_none_text">Kameras in anderen Netzen oder mit Speicherkarte erscheinen hier nicht.</string>
     <string name="other_devices_line">Haben geantwortet, aber nichts sagt, was sie sind</string>
@@ -150,7 +150,7 @@
     <string name="sign_router">Der Router dieses WLANs</string>
     <string name="sign_this_phone">Das Handy in deiner Hand</string>
     <string name="sign_none">Hat geantwortet, zeigt aber nichts Eindeutiges</string>
-    <string name="seen_at">gesehen %1$s</string>
+    <string name="seen_at">gesehen um %1$s</string>
     <string name="why">Warum</string>
     <string name="open_ports">Offene Ports</string>
     <string name="none_found">Keine gefunden</string>
@@ -167,7 +167,7 @@
     <string name="part_of_the_room">Teil des Raums</string>
     <string name="part_of_the_room_line">Der Fernseher, ein Lautsprecher oder der Router</string>
     <string name="not_sure">Nicht sicher</string>
-    <string name="not_sure_line">Auf der Liste lassen, zum Prüfen</string>
+    <string name="not_sure_line">Zum Prüfen auf der Liste lassen</string>
     <string name="report_wrong">Falsch erkannt? Melden</string>
     <string name="mark_as_known">Als bekannt markieren</string>
     <plurals name="about_seconds_left">
@@ -213,7 +213,7 @@
 
     <!-- Hotspots, Bluetooth and 07 Find it -->
     <string name="checking_hotspots">Suche nach Kamera-Hotspots</string>
-    <string name="checking_bluetooth">Bluetooth wird abgehört</string>
+    <string name="checking_bluetooth">Suche nach Bluetooth-Geräten</string>
     <string name="nothing_flagged_yet">Noch nichts Auffälliges</string>
     <string name="allow">Erlauben</string>
     <string name="open_settings">Einstellungen öffnen</string>
@@ -268,10 +268,10 @@
     <string name="getting_colder">Wird kälter</string>
     <string name="find_note_hotspots">Geh langsam und richte die Oberseite des Handys durch den Raum. Android aktualisiert das Signal etwa alle 30 s.</string>
     <string name="find_note_bluetooth">Geh langsam und richte die Oberseite des Handys durch den Raum. Das Signal aktualisiert sich jede Sekunde.</string>
-    <string name="find_lost_title">Seit einer Weile nicht gehört</string>
+    <string name="find_lost_title">Seit einer Weile kein Signal</string>
     <string name="find_lost_text">Das Signal ist vielleicht veraltet. Geh ein paar Schritte und warte.</string>
-    <string name="add_to_report">Zum Bericht</string>
-    <string name="remove_from_report">Aus Bericht entfernen</string>
+    <string name="add_to_report">Zum Bericht hinzufügen</string>
+    <string name="remove_from_report">Aus dem Bericht entfernen</string>
     <string name="added_to_report">Im Bericht</string>
     <plurals name="networks_nearby">
         <item quantity="one">%1$d Netz in der Nähe</item>
@@ -334,7 +334,7 @@
     <string name="ir_not_seen">Kein Licht</string>
     <string name="ir_not_seen_line">Die Kamera dieses Handys blockiert Infrarot</string>
     <string name="ir_blocked_title">Dieses Handy sieht Infrarot vielleicht nicht</string>
-    <string name="ir_blocked_text">Die Kamera blockt meist Infrarot. Der Linsenfinder geht trotzdem.</string>
+    <string name="ir_blocked_text">Die Kamera blockiert das meiste Infrarot. Der Linsensucher funktioniert trotzdem.</string>
     <string name="test_again">Erneut testen</string>
     <string name="magnet_learning_title">Der Normalwert des Raums wird gelernt</string>
     <string name="magnet_learning_line">Kurz stillhalten</string>
@@ -346,7 +346,7 @@
     <string name="magnet_normal_title">Etwa normal</string>
     <string name="magnet_now_line">Normal %1$d µT · jetzt %2$d µT</string>
     <string name="last_10_seconds">Letzte 10 Sekunden</string>
-    <string name="magnet_jumped">Gesprungen</string>
+    <string name="magnet_jumped">Sprung</string>
     <string name="magnet_chart">Messwerte der letzten 10 Sekunden, der neueste %1$d µT über normal</string>
     <string name="magnet_note">Führe die Oberseite des Handys langsam an Uhren, Ladegeräten und Rauchmeldern entlang. Lautsprecher, Magnete und Kabel lassen den Wert auch springen: Ein Sprung heißt Elektronik darin, keine Kamera.</string>
     <string name="set_normal_again">Normalwert neu setzen</string>
@@ -376,7 +376,7 @@
     <string name="section_desk">Schreibtisch</string>
     <string name="section_car">Im Auto</string>
     <string name="item_mirror_light">Lichttest</string>
-    <string name="item_mirror_light_line">Lampe aufs Glas. Licht dahinter ist ein Warnzeichen.</string>
+    <string name="item_mirror_light_line">Raum dunkel, Lampe ans Glas. Siehst du einen Raum dahinter, schau genauer hin.</string>
     <string name="item_mirror_edges">Ränder und Rahmen</string>
     <string name="item_mirror_edges_line">Spalten, Löcher oder ein loser Rahmen</string>
     <string name="item_smoke_detector">Rauchmelder</string>
@@ -384,11 +384,11 @@
     <string name="item_clock">Uhren und Radios</string>
     <string name="item_clock_line">Ein dunkler Punkt im Zifferblatt oder Lautsprechergitter</string>
     <string name="item_chargers">Ladegeräte und Steckdosen</string>
-    <string name="item_chargers_line">Zusätzliche Löcher, oder eins, das an nichts hängt</string>
+    <string name="item_chargers_line">Zusätzliche Löcher oder ein Ladegerät, an dem nichts hängt</string>
     <string name="item_usb">USB-Stecker und Kabel</string>
     <string name="item_usb_line">Ein Stecker mit einem Punkt an der Seite</string>
     <string name="item_tv">Fernseher und Receiver</string>
-    <string name="item_tv_line">Zieh ab, was du nicht nutzt</string>
+    <string name="item_tv_line">Ein Punkt im Rahmen oder eine Kamera obendrauf</string>
     <string name="item_lamps">Lampe</string>
     <string name="item_lamps_line">Ein dunkler Punkt, der nicht dorthin gehört</string>
     <string name="item_frames">Bilder und Rahmen</string>
@@ -445,7 +445,7 @@
         <item quantity="other">%1$d von %2$d Prüfungen</item>
     </plurals>
     <string name="step_was_skipped">%1$s wurde übersprungen</string>
-    <string name="all_checks_ran">Alle Prüfungen liefen</string>
+    <string name="all_checks_ran">Alle Prüfungen wurden durchgeführt</string>
     <string name="found">Gefunden</string>
     <string name="photos">Fotos</string>
     <string name="couldnt_check">Nicht prüfbar</string>
@@ -480,12 +480,12 @@
     <string name="finding_note">Deine Notiz</string>
     <string name="address">Adresse</string>
     <string name="found_camera_line">Nachzusehen war richtig. Ein Schritt nach dem anderen.</string>
-    <string name="found_step_1">Nicht anfassen oder abziehen</string>
+    <string name="found_step_1">Nicht anfassen, nicht ausstecken</string>
     <string name="found_step_1_line">Das kann der Polizei später helfen</string>
     <string name="found_step_2">Fotos und ein Video machen</string>
     <string name="found_step_2_line">Wo sie ist und wohin sie zeigt</string>
     <string name="found_step_3">Geh, wenn du dich unsicher fühlst</string>
-    <string name="found_step_3_line">Du gehst vor</string>
+    <string name="found_step_3_line">Deine Sicherheit geht vor</string>
     <string name="found_step_4">Sag es dem Gastgeber oder dem Laden</string>
     <string name="found_step_4_line">Und der Buchungsplattform</string>
     <string name="help_where_you_are">Hilfe dort, wo du bist</string>
@@ -555,7 +555,7 @@
     <string name="drag_to_reorder">Zum Sortieren ziehen</string>
     <string name="move_up">Nach oben</string>
     <string name="move_down">Nach unten</string>
-    <string name="sweep_steps_note">Eine Prüfung läuft die eingeschalteten Schritte in dieser Reihenfolge.</string>
+    <string name="sweep_steps_note">Ein Durchlauf geht die eingeschalteten Schritte in dieser Reihenfolge durch.</string>
     <string name="language_line">Keyholes eigene Sprache, unabhängig vom Handy</string>
     <string name="marked_known_note">Geräte, die du als keine Kamera markiert hast. Tippe zum Aufheben.</string>
     <string name="marked_mine">Als deins markiert</string>
@@ -563,18 +563,18 @@
     <string name="marked_known_empty_line">Markiere ein Gerät mit „Keine Kamera?“ und es erscheint hier.</string>
     <string name="how_wifi">Findet Geräte in diesem WLAN, die wie Kameras antworten.</string>
     <string name="how_hotspots">Erkennt WLAN-Namen, die billige Kameras zur Einrichtung nutzen.</string>
-    <string name="how_bluetooth">Hört Tracker und kameraähnliche Bluetooth-Namen.</string>
+    <string name="how_bluetooth">Findet Tracker und kameraähnliche Bluetooth-Namen.</string>
     <string name="how_lens">Lampe und Kamera markieren kleine, helle Punkte.</string>
     <string name="how_infrared">Die Frontkamera zeigt Infrarotlichter im Dunkeln.</string>
     <string name="how_magnet">Zeigt, wenn das Magnetfeld nahe Elektronik springt.</string>
     <string name="how_checklist">Die Stellen, die man von Hand prüfen sollte.</string>
     <string name="how_note">Prüfungen laufen nur, wenn du sie startest. Nichts verlässt dein Handy.</string>
     <string name="limits_intro">Keine Prüfung kann versprechen, dass ein Raum sicher ist. Das kann Keyhole nicht sehen.</string>
-    <string name="limit_memory_card">Sie nehmen auf eine Karte auf und senden nichts. Nutze Linsenfinder, Infrarot, Magnet und Checkliste.</string>
+    <string name="limit_memory_card">Sie nehmen auf eine Karte auf und senden nichts. Nutze Linsensucher, Infrarot, Magnet und Checkliste.</string>
     <string name="limit_other_network">Kameras in einem anderen WLAN, mit mobilen Daten oder in einem WLAN, das das Handy nicht sieht</string>
     <string name="limit_isolation">Andere Geräte antworten nicht</string>
-    <string name="limit_trackers">Solche, die nichts senden oder auf eine unbekannte Art</string>
-    <string name="limit_infrared">Die Kamera blockt es; der Fernbedienungstest zeigt es.</string>
+    <string name="limit_trackers">Solche, die nichts aussenden oder auf eine Art, die Keyhole noch nicht kennt</string>
+    <string name="limit_infrared">Ihre Kamera blockiert es; der Fernbedienungstest zeigt es dir.</string>
     <string name="privacy_header_line">Kein Konto, keine Werbung, kein Tracking.</string>
     <string name="why_keyhole_asks">Warum Keyhole fragt</string>
     <string name="perm_row_wifi_line">Keine Berechtigung nötig.</string>
@@ -617,12 +617,12 @@
         <item quantity="other">%1$d von etwa %2$d gefragt</item>
     </plurals>
     <plurals name="networks_so_far">
-        <item quantity="one">Bisher %d Netz, keins wie eine Kamera</item>
-        <item quantity="other">Bisher %d Netze, keins wie eine Kamera</item>
+        <item quantity="one">Bisher %d Netz, keins sieht nach einer Kamera aus</item>
+        <item quantity="other">Bisher %d Netze, keins sieht nach einer Kamera aus</item>
     </plurals>
     <plurals name="bluetooth_so_far">
-        <item quantity="one">Bisher %d Gerät, keins wie ein Tracker</item>
-        <item quantity="other">Bisher %d Geräte, keins wie ein Tracker</item>
+        <item quantity="one">Bisher %d Gerät, keins sieht nach einem Tracker aus</item>
+        <item quantity="other">Bisher %d Geräte, keins sieht nach einem Tracker aus</item>
     </plurals>
     <plurals name="networks_count">
         <item quantity="one">%d Netz</item>
@@ -632,7 +632,7 @@
         <item quantity="one">%d Gerät</item>
         <item quantity="other">%d Geräte</item>
     </plurals>
-    <string name="summary_nothing">In dieser Suche kam nichts</string>
+    <string name="summary_nothing">Bei dieser Suche ist nichts aufgefallen</string>
     <string name="all_known_kinds">Alle sind bekannte Gerätearten.</string>
     <string name="none_like_camera">Keins davon sieht nach einer Kamera aus.</string>
     <plurals name="devices_answered">
@@ -663,7 +663,7 @@
     <string name="app_weft_line">Kleine Gewohnheiten, ehrlich geführt</string>
     <string name="results_cleared">Diese Ergebnisse wurden gelöscht, als Keyhole geschlossen wurde</string>
     <string name="report_gone">Dieser Bericht wurde gelöscht</string>
-    <string name="stop_sweep_title">Diese Prüfung beenden?</string>
+    <string name="stop_sweep_title">Diesen Durchlauf beenden?</string>
     <string name="stop_sweep_line">Du bist bei Prüfung %1$d von %2$d.</string>
     <string name="stop_and_report">Beenden und Bericht ansehen</string>
     <plurals name="stop_and_report_line">
@@ -680,9 +680,9 @@
         <item quantity="other">%1$d von %2$d Prüfungen sind fertig. Im Hintergrund ging nichts verloren.</item>
     </plurals>
     <string name="aeroplane_title">Flugmodus ist an</string>
-    <string name="aeroplane_line">Schalte ihn aus oder spring zu den Prüfungen ohne Signal.</string>
-    <string name="skip_to_lens">Zum Linsenfinder</string>
-    <string name="skip_to_infrared">Zum Infrarot-Finder</string>
+    <string name="aeroplane_line">Schalte ihn aus oder spring zu den Prüfungen, die kein Signal brauchen.</string>
+    <string name="skip_to_lens">Zum Linsensucher</string>
+    <string name="skip_to_infrared">Zum Infrarotsucher</string>
     <string name="skip_to_magnet">Zum Magnet</string>
     <string name="skip_to_checklist">Zur Checkliste</string>
     <string name="magnet_stopped_title">Der Sensor antwortet nicht mehr</string>
@@ -725,10 +725,10 @@
     <string name="limit_infrared_title">Infrarot auf manchen Handys</string>
     <string name="pdf_page">Seite %1$d von %2$d</string>
     <string name="pdf_checks">Prüfungen</string>
-    <string name="pdf_ran">Gelaufen</string>
+    <string name="pdf_ran">Durchgeführt</string>
     <string name="pdf_skipped">Übersprungen</string>
     <string name="pdf_unseen">Keine Suche sieht das</string>
-    <string name="gap_skipped_line">Bei dieser Prüfung übersprungen</string>
+    <string name="gap_skipped_line">In diesem Durchlauf übersprungen</string>
     <string name="gap_memory_card_line">Eine Kamera, die auf Karte aufnimmt und nichts sendet</string>
     <string name="gap_other_network_line">Kameras in einem anderen WLAN oder mit mobilen Daten</string>
     <string name="tip_photo">Speichere ein Foto jeder Stelle für den Bericht</string>

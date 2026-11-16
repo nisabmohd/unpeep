@@ -403,7 +403,7 @@
     <string name="section_desk">Desk</string>
     <string name="section_car">Inside the car</string>
     <string name="item_mirror_light">Light test</string>
-    <string name="item_mirror_light_line">Torch on the glass. Light behind it is a warning.</string>
+    <string name="item_mirror_light_line">Room dark, torch against the glass. If you can see a space behind it, look closer.</string>
     <string name="item_mirror_edges">Edges and frame</string>
     <string name="item_mirror_edges_line">Gaps, holes or a loose frame</string>
     <string name="item_smoke_detector">Smoke detector</string>
@@ -415,7 +415,7 @@
     <string name="item_usb">USB plugs and cables</string>
     <string name="item_usb_line">A plug with a dot on its side</string>
     <string name="item_tv">TV and set-top box</string>
-    <string name="item_tv_line">Unplug what you don\'t use</string>
+    <string name="item_tv_line">A dot in the frame, or a camera on top</string>
     <string name="item_lamps">Light fitting</string>
     <string name="item_lamps_line">A dark dot that doesn\'t belong</string>
     <string name="item_frames">Pictures and frames</string>

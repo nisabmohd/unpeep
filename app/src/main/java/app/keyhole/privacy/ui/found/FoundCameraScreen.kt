@@ -81,8 +81,11 @@ fun countryName(code: String): String = Locale("", code).getDisplayCountry(Local
 
 private fun dial(context: android.content.Context, number: String) {
     // The dialer opens with the number filled in; the user presses call. Keyhole never calls by itself.
-    runCatching { context.startActivity(Intent(Intent.ACTION_DIAL, ("tel:" + number.filter { it.isDigit() }).toUri())) }
+    runCatching { context.startActivity(Intent(Intent.ACTION_DIAL, dialUri(number).toUri())) }
 }
+
+/** "tel:" for [number]: digits, + * # kept (Japan's police line is #9110), spaces and dashes dropped, # encoded. */
+internal fun dialUri(number: String): String = "tel:" + number.filter { it.isDigit() || it in "+*#" }.replace("#", "%23")
 
 /**
  * 11 If you find a camera: what to do, step by step · who to call where you are (Change opens the help numbers) ·

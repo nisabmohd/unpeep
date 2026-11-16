@@ -30,7 +30,8 @@ fun checklist(place: Place): List<Pair<ChecklistSection, List<ChecklistItem>>> =
     Place.STAY -> listOf(
         ChecklistSection.MIRROR to listOf(ChecklistItem.MIRROR_LIGHT, ChecklistItem.MIRROR_EDGES),
         ChecklistSection.DEVICES to listOf(ChecklistItem.SMOKE_DETECTOR, ChecklistItem.CLOCK, ChecklistItem.CHARGERS, ChecklistItem.TV),
-        ChecklistSection.ROOM to listOf(ChecklistItem.LAMPS, ChecklistItem.FRAMES, ChecklistItem.VENTS, ChecklistItem.PLANTS),
+        // Coat hooks and "gifts" are common hidden-camera forms in rented rooms (reviewed 16 Nov 2026).
+        ChecklistSection.ROOM to listOf(ChecklistItem.LAMPS, ChecklistItem.FRAMES, ChecklistItem.VENTS, ChecklistItem.PLANTS, ChecklistItem.HOOKS, ChecklistItem.OBJECTS),
         ChecklistSection.BED to listOf(ChecklistItem.BED),
         ChecklistSection.BATH to listOf(ChecklistItem.SHOWER, ChecklistItem.SHELVES),
     )

@@ -106,18 +106,18 @@
     <string name="not_on_wifi_title">Wi-Fi に未接続</string>
     <string name="not_on_wifi_line">この部屋のWi-Fiにつないで、もう一度スキャンしてください。</string>
     <string name="next_wifi">次へ: Wi-Fi</string>
-    <string name="next_hotspots">次へ: スポット</string>
+    <string name="next_hotspots">次へ: ホットスポット</string>
     <string name="next_bluetooth">次へ: Bluetooth</string>
     <string name="next_lens">次へ: レンズ</string>
     <string name="next_infrared">次へ: 赤外線</string>
     <string name="next_magnet">次へ: 磁気</string>
-    <string name="next_checklist">次へ: リスト</string>
+    <string name="next_checklist">次へ: チェックリスト</string>
     <string name="risk_likely_camera">カメラの可能性大</string>
     <string name="risk_worth_a_look">要確認</string>
     <string name="risk_known">既知</string>
     <string name="risk_not_recognised">不明</string>
     <string name="isolation_title">応答したのはルーターだけです</string>
-    <string name="isolation_text">このWi-Fiは機器同士を分けるため、カメラは見えません。他のチェックは使えます。</string>
+    <string name="isolation_text">このWi-Fiはデバイス同士を分けるため、接続中のカメラは見えません。他のチェックは使えます。</string>
     <string name="wifi_none_title">このWi-Fiでカメラは見つかりませんでした</string>
     <string name="wifi_none_text">別のネットワークやメモリーカードのカメラはここに出ません。</string>
     <string name="other_devices_line">応答はありますが、種類が分かりません</string>
@@ -194,13 +194,13 @@
     </plurals>
 
     <!-- Hotspots, Bluetooth and 07 Find it -->
-    <string name="checking_hotspots">カメラのスポットを検索中</string>
+    <string name="checking_hotspots">カメラのホットスポットを検索中</string>
     <string name="checking_bluetooth">Bluetooth を検索中</string>
     <string name="nothing_flagged_yet">まだ確認が必要なものはありません</string>
     <string name="allow">許可</string>
     <string name="open_settings">設定を開く</string>
     <string name="perm_hotspots_title">位置情報を許可</string>
-    <string name="perm_hotspots_line">Wi-Fi名の表示に必要です。Keyholeは居場所を読みません。</string>
+    <string name="perm_hotspots_line">Wi-Fi名の表示に必要です。Keyholeは現在地を取得しません。</string>
     <string name="perm_bluetooth_title">付近のデバイスを許可</string>
     <string name="perm_bluetooth_line">トラッカーとBluetoothカメラを見つけるためです。</string>
     <string name="perm_denied_line">設定で許可してから戻ってください。</string>
@@ -215,12 +215,12 @@
     <string name="hotspots_none_title">カメラのホットスポットは見つかりませんでした</string>
     <string name="hotspots_none_text">Wi-Fi接続済みのカメラは名前を出しません。Wi-Fiチェックで探します。</string>
     <string name="bluetooth_none_title">トラッカーやBluetoothカメラは見つかりませんでした</string>
-    <string name="bluetooth_none_text">電源オフや電波を出さない機器は表示されません。</string>
+    <string name="bluetooth_none_text">電源オフや電波を出さないデバイスは表示されません。</string>
     <string name="other_networks_line">近くのルーターやスマートフォンです。何かの兆候ではありません。</string>
     <string name="other_networks_title">その他の Wi-Fi</string>
     <string name="other_bluetooth_line">イヤホン、時計、スマートフォン</string>
     <string name="other_bluetooth_title">その他の Bluetooth デバイス</string>
-    <string name="kind_camera_hotspot">カメラのスポット</string>
+    <string name="kind_camera_hotspot">カメラのホットスポット</string>
     <string name="kind_network">Wi-Fi ネットワーク</string>
     <string name="kind_tracker">トラッカー</string>
     <string name="kind_ble_camera">Bluetooth のカメラ名</string>
@@ -248,8 +248,8 @@
     <string name="trend_steady">変化なし</string>
     <string name="getting_warmer">近づいています</string>
     <string name="getting_colder">離れています</string>
-    <string name="find_note_hotspots">ゆっくり歩き、電話の上端を部屋の中に向けてください。Androidは約30秒ごとに信号を更新します。</string>
-    <string name="find_note_bluetooth">ゆっくり歩き、電話の上端を部屋の中に向けてください。信号は毎秒更新されます。</string>
+    <string name="find_note_hotspots">ゆっくり歩き、スマートフォンの上端を部屋の中に向けてください。Androidは約30秒ごとに信号を更新します。</string>
+    <string name="find_note_bluetooth">ゆっくり歩き、スマートフォンの上端を部屋の中に向けてください。信号は毎秒更新されます。</string>
     <string name="find_lost_title">しばらく検出されていません</string>
     <string name="find_lost_text">信号が古いかもしれません。少し動いて待ってください。</string>
     <string name="add_to_report">レポートに追加</string>
@@ -317,14 +317,14 @@
     <string name="magnet_learning_value">%1$d%%</string>
     <string name="magnet_learning_unit">測定済み</string>
     <string name="magnet_above_value">+%1$d µT</string>
-    <string name="magnet_above_line">通常より上</string>
+    <string name="magnet_above_line">通常より高い</string>
     <string name="magnet_jumped_title">近くに電子機器</string>
     <string name="magnet_normal_title">ほぼ通常</string>
     <string name="magnet_now_line">通常 %1$d µT · 現在 %2$d µT</string>
     <string name="last_10_seconds">直近 10 秒</string>
     <string name="magnet_jumped">急上昇</string>
     <string name="magnet_chart">直近 10 秒の測定値。最新は通常より %1$d µT 上</string>
-    <string name="magnet_note">電話の上端を時計・充電器・煙感知器に沿ってゆっくり動かしてください。スピーカー・磁石・配線でも跳ね上がるので、跳ね上がりは電子機器があるという意味で、カメラとは限りません。</string>
+    <string name="magnet_note">スマートフォンの上端を時計・充電器・煙感知器に沿ってゆっくり動かしてください。スピーカー・磁石・配線でも急上昇するので、急上昇は電子機器があるという意味で、カメラとは限りません。</string>
     <string name="set_normal_again">通常値を再設定</string>
     <string name="beep_on_jump">急上昇時にビープ音</string>
     <string name="no_magnet_title">この端末には磁気センサーがありません</string>
@@ -349,7 +349,7 @@
     <string name="section_desk">デスク</string>
     <string name="section_car">車内</string>
     <string name="item_mirror_light">ライトテスト</string>
-    <string name="item_mirror_light_line">ガラスにライトを当てます。奥に光が見えたら要注意です。</string>
+    <string name="item_mirror_light_line">部屋を暗くして、ライトをガラスに当てます。奥に空間が見えたら、よく確かめてください。</string>
     <string name="item_mirror_edges">縁と枠</string>
     <string name="item_mirror_edges_line">すき間、穴、ゆるんだ枠</string>
     <string name="item_smoke_detector">煙感知器</string>
@@ -361,7 +361,7 @@
     <string name="item_usb">USB プラグとケーブル</string>
     <string name="item_usb_line">側面に点があるプラグ</string>
     <string name="item_tv">テレビとチューナー</string>
-    <string name="item_tv_line">使わないものはプラグを抜く</string>
+    <string name="item_tv_line">枠の小さな点や、上に載ったカメラ</string>
     <string name="item_lamps">照明器具</string>
     <string name="item_lamps_line">不自然な黒い点</string>
     <string name="item_frames">絵と額縁</string>
@@ -426,14 +426,14 @@
     <string name="source_bluetooth">Bluetooth</string>
     <string name="source_checklist">リスト</string>
     <string name="source_magnet">磁気</string>
-    <string name="not_sure_lower">不明</string>
+    <string name="not_sure_lower">分からない</string>
     <string name="marked_mine_undo">自分のものとしてマーク · タップで取り消し</string>
     <string name="marked_room_undo">部屋の備品としてマーク · タップで取り消し</string>
     <string name="undo_title">マークを外しますか？</string>
     <string name="undo_line">要確認のリストに戻ります。</string>
     <string name="undo">元に戻す</string>
     <string name="gap_not_run">%1$s：スキップ</string>
-    <string name="gap_isolated">このWi-Fiの他の機器：分離されています</string>
+    <string name="gap_isolated">このWi-Fiの他のデバイス：分離されています</string>
     <string name="gap_no_infrared">赤外線: この端末のカメラが遮っている可能性があります</string>
     <string name="gap_memory_card">メモリーカードに記録するだけのカメラ</string>
     <string name="gap_other_network">別のネットワークやモバイルデータにつながったカメラ</string>
@@ -502,7 +502,7 @@
     </plurals>
 
     <!-- 01 Welcome, 14 Appearance, More's screens, 16 Privacy, 17 About, 18 Licences -->
-    <string name="welcome_title">いる部屋を確かめよう</string>
+    <string name="welcome_title">今いる部屋を確かめよう</string>
     <string name="welcome_line">どんな部屋でも隠しカメラやトラッカーを確認し、結果をはっきり表示します。</string>
     <string name="get_started">はじめる</string>
     <string name="welcome_footer">無料のオープンソース · データは端末の外に出ません</string>
@@ -525,29 +525,29 @@
     <string name="move_down">下へ移動</string>
     <string name="sweep_steps_note">オンのステップをこの順番で行います。</string>
     <string name="language_line">端末とは別の、Keyhole の表示言語</string>
-    <string name="marked_known_note">カメラではないと印を付けた機器です。タップで取り消し。</string>
+    <string name="marked_known_note">カメラではないとマークしたデバイスです。タップで取り消し。</string>
     <string name="marked_mine">自分のものとしてマーク</string>
     <string name="marked_room">部屋の備品としてマーク</string>
     <string name="marked_known_empty_line">「カメラではない？」でマークしたデバイスがここに表示されます。</string>
     <string name="how_wifi">このWi-Fiでカメラのように応答するデバイスを探します。</string>
     <string name="how_hotspots">安いカメラが設定時に使うWi-Fi名を見つけます。</string>
     <string name="how_bluetooth">トラッカーとカメラらしいBluetooth名を見つけます。</string>
-    <string name="how_lens">ライトとカメラで小さく光る点に印をつけます。</string>
+    <string name="how_lens">ライトとカメラで小さく光る点を囲みます。</string>
     <string name="how_infrared">前面カメラで暗い所の赤外線ライトを映します。</string>
-    <string name="how_magnet">電子機器の近くで磁場が跳ねると知らせます。</string>
+    <string name="how_magnet">電子機器の近くで磁場が急上昇すると知らせます。</string>
     <string name="how_checklist">手で確かめたい場所です。</string>
-    <string name="how_note">チェックは始めたときだけ動きます。何も外に出ません。</string>
-    <string name="limits_intro">どのチェックも部屋が安全だと約束はできません。Keyholeに見えないのはこれです。</string>
+    <string name="how_note">チェックは始めたときだけ動きます。データは端末の外に出ません。</string>
+    <string name="limits_intro">どのチェックも部屋が安全だと約束はできません。Keyholeには次のものが見えません。</string>
     <string name="limit_memory_card">カードに記録し何も送信しません。レンズファインダー・赤外線・磁気・チェックリストを使ってください。</string>
-    <string name="limit_other_network">別のWi-Fi、モバイルデータ、または電話から見えないWi-Fiのカメラ</string>
-    <string name="limit_isolation">他の機器は応答しません</string>
+    <string name="limit_other_network">別のWi-Fi、モバイルデータ、または端末から見えないWi-Fiのカメラ</string>
+    <string name="limit_isolation">他のデバイスは応答しません</string>
     <string name="limit_trackers">電波を出さない、またはKeyholeが未対応の方式のもの</string>
     <string name="limit_infrared">カメラが遮ります。リモコンテストで分かります。</string>
     <string name="privacy_header_line">アカウントなし、広告なし、追跡なし。</string>
     <string name="why_keyhole_asks">Keyhole が許可を求める理由</string>
     <string name="perm_row_wifi_line">許可は不要です。</string>
-    <string name="perm_row_location">位置情報（スポット用）</string>
-    <string name="perm_row_location_line">Wi-Fi名のためだけ。居場所は読みません。</string>
+    <string name="perm_row_location">位置情報（ホットスポット用）</string>
+    <string name="perm_row_location_line">Wi-Fi名のためだけ。現在地は取得しません。</string>
     <string name="perm_row_bluetooth_line">トラッカーや Bluetooth カメラを見つけるため</string>
     <string name="perm_row_camera">カメラ</string>
     <string name="perm_row_camera_line">レンズと赤外線のファインダー用。録画はしません。</string>
@@ -556,7 +556,7 @@
     <string name="delete_all">すべてのレポートを削除</string>
     <string name="delete_all_line">マークしたデバイスも</string>
     <string name="delete_all_title">すべて削除しますか？</string>
-    <string name="delete_all_sheet_line">すべてのレポート、写真、印。元に戻せません。</string>
+    <string name="delete_all_sheet_line">すべてのレポート、写真、マーク。元に戻せません。</string>
     <string name="deleted_all">すべて削除しました</string>
     <string name="version_by">バージョン %1$s · mid apps</string>
     <string name="update_check">アップデートを確認</string>
@@ -625,7 +625,7 @@
     <string name="stop_sweep_line">%2$d件中%1$d件目のチェックです。</string>
     <string name="stop_and_report">止めてレポートを見る</string>
     <plurals name="stop_and_report_line">
-        <item quantity="other">%2$d件中%1$d件のチェックが終わりました。残りは未確認として載ります。</item>
+        <item quantity="other">%2$d件中%1$d件のチェックが終わりました。残りは「未チェック」と表示されます。</item>
     </plurals>
     <string name="stop_no_report">レポートを作らずに止める</string>
     <string name="stop_no_report_line">見つかったものは破棄されます</string>
@@ -650,7 +650,7 @@
         <item quantity="other">あと%d秒</item>
     </plurals>
     <string name="scan_paused_title">スキャンは一時停止中です</string>
-    <string name="scan_paused_text">Wi-Fiスキャンは2分に4回までです。</string>
+    <string name="scan_paused_text">AndroidではWi-Fiスキャンは2分に4回までです。</string>
     <string name="font_lexend_line">読みやすさ重視 · 既定</string>
     <string name="font_outfit_line">丸みがあってやさしい</string>
     <string name="font_atkinson_line">ロービジョン向け</string>
@@ -663,7 +663,7 @@
     <string name="row_web_port">ポート%1$dにウェブページあり</string>
     <string name="holding">変わらず</string>
     <string name="last_signal">最後の信号</string>
-    <string name="marked_toast">既知に設定しました</string>
+    <string name="marked_toast">既知としてマークしました</string>
     <string name="marked_change_line">タップで変更・取り消し</string>
     <string name="text_size_caption">端末のフォントサイズに上乗せ</string>
     <string name="report_problem_line">GitHubでIssueを開きます</string>
@@ -675,7 +675,7 @@
     <string name="later">後で</string>
     <string name="limit_memory_card_title">メモリーカード型カメラ</string>
     <string name="limit_other_network_title">別のネットワーク</string>
-    <string name="limit_isolation_title">機器を分けるゲストWi-Fi</string>
+    <string name="limit_isolation_title">デバイスを分けるゲストWi-Fi</string>
     <string name="limit_trackers_title">電波を出さないトラッカー</string>
     <string name="limit_infrared_title">一部機種の赤外線</string>
     <string name="pdf_page">%1$d / %2$dページ</string>
@@ -687,6 +687,6 @@
     <string name="gap_memory_card_line">カードに記録し何も送信しないカメラ</string>
     <string name="gap_other_network_line">別のWi-Fiやモバイルデータのカメラ</string>
     <string name="tip_photo">見つけた場所は写真に残してレポートへ</string>
-    <string name="font_system">システムのデフォルト</string>
-    <string name="font_system_line">お使いの電話のフォント</string>
+    <string name="font_system">システムの既定</string>
+    <string name="font_system_line">お使いの端末のフォント</string>
 </resources>

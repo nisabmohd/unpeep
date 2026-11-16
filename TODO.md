@@ -9,12 +9,6 @@ round up to **final v3** (`design/screens/`, `design/README.md`): screens 01–1
 E01–E17, tablets and landscape T01–T06, PDF (10g), update sheet (17a–d), toasts for events and Notes for states.
 Tests: unit and rule tests, plus 137 on-device tests (`ComponentsTest`, `ScreensTest`, `AccessibilityTest`, `SmokeTest`).
 
-## Now
-- [x] Final v3: Appearance › Font gets a fifth row, System default ("Your phone's font") (14, 14a)
-- [x] Final v3: lens finder on its side (T05, T05a): panel 272 dp wide with the hint and photos-saved line; tips and
-      Next in the top bar
-- [ ] Owner: review and commit everything after `f56d8e1` (nothing since is committed)
-
 ## On a real phone
 Done on a OnePlus (Android 17): Welcome, Home, Appearance, Magnet (real sensor), Lens + photo + Switch camera,
 Hotspots with Location, Bluetooth permission and "Bluetooth is off", Checklist, Report, PDF export.
@@ -44,12 +38,12 @@ Hotspots with Location, Bluetooth permission and "Bluetooth is off", Checklist, 
 - [ ] About › More from mid apps: check the Burrow and Weft store links
 - [ ] Lint: dependency-update and AGP-version warnings (updating needs a decision)
 
-## Words and data
-- [ ] Translations (de, es, fr, hi, ja, pt-BR) were written by Claude: a native speaker reads each, especially the
-      honesty lines, the checklist and the help steps
-- [ ] Help numbers (`assets/help/numbers.json`, 50 countries): check each against an official source
-- [ ] Checklist content per place: read by someone who has checked rooms by hand
-- [ ] Database: version 1, schema in `app/schemas`; any change needs a migration and a test
+## Next
+- [ ] "Enjoying Keyhole?" sheet, as Weft's `SupportPromptSheet` / Burrow's review ask: Rate (play), Star on GitHub,
+      Sponsor, Maybe later. Shown at a calm moment (a report just saved), never during a scan; after a few reports and
+      7+ days of use, at most weekly, never again after 4 × Maybe later, not for 180 days after Rate / Star / Sponsor
+      (rule `SupportPrompt.shouldShow`, unit-tested). Play build opens Play's own rating card (`PlayReview`); foss and
+      github show Star and Sponsor only. Needs a design board ("Design review: support sheet")
 
 ## Later
 - Checklist items: the board names a few the app doesn't ("Key fob and tags", "Wall clock"); decide which list wins

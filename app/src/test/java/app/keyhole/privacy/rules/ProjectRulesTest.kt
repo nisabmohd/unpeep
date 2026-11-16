@@ -32,6 +32,23 @@ class ProjectRulesTest {
     // --- Hard rules --------------------------------------------------------------------------------
 
     /** Local network only: every socket is made in scan/net/LocalOnly.kt, which refuses anything not local. */
+    /**
+     * The database keeps people's reports: a new version needs its exported schema committed, a Migration from the
+     * last version (never a destructive fallback), and a test that runs it.
+     */
+    @Test fun everyDatabaseVersionHasItsSchemaAndMigration() {
+        val db = File(main, "java/app/keyhole/privacy/data/db/Database.kt").readText()
+        val version = Regex("""@Database\([^)]*version = (\d+)""").find(db)!!.groupValues[1].toInt()
+        val schemas = File(root, "app/schemas/app.keyhole.privacy.data.db.KeyholeDatabase")
+        for (v in 1..version) assertTrue("schema $v.json not exported to app/schemas", File(schemas, "$v.json").exists())
+        assertTrue("fallbackToDestructiveMigration deletes people's reports", kotlin.none { it.readText().contains("fallbackToDestructiveMigration") })
+        val tests = File(src, "androidTest").walkTopDown().filter { it.extension == "kt" }.joinToString("\n") { it.readText() }
+        for (v in 2..version) {
+            assertTrue("no Migration(${v - 1}, $v) in Database.kt", Regex("""Migration\(\s*${v - 1}\s*,\s*$v\s*\)""").containsMatchIn(db))
+            assertTrue("no androidTest runs the migration ${v - 1} → $v (MigrationTestHelper)", tests.contains("runMigrationsAndValidate") && tests.contains("$v"))
+        }
+    }
+
     @Test fun socketsOnlyInLocalOnly() = assertNone("a socket outside scan/net/LocalOnly.kt",
         violations(allKotlin) { f, _, l ->
             !rel(f).endsWith("scan/net/LocalOnly.kt") &&

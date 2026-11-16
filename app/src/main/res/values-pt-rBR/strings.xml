@@ -66,7 +66,7 @@
 
     <!-- 12 Reports -->
     <string name="reports_empty_title">Ainda não há relatórios</string>
-    <string name="reports_empty_line">Verifique um quarto e o relatório aparece aqui.</string>
+    <string name="reports_empty_line">Verifique um cômodo e o relatório aparece aqui.</string>
 
     <!-- 13 More -->
     <string name="appearance">Aparência</string>
@@ -92,7 +92,7 @@
     <string name="how_keyhole_works">Como o Keyhole funciona</string>
     <string name="how_keyhole_works_line">O que cada verificação procura</string>
     <string name="what_keyhole_cant_find">O que o Keyhole não encontra</string>
-    <string name="what_keyhole_cant_find_line">E como verificar à mão</string>
+    <string name="what_keyhole_cant_find_line">E como verificar por conta própria</string>
     <string name="if_you_find_a_camera">Se você encontrar uma câmera</string>
     <string name="if_you_find_a_camera_line">O que fazer, passo a passo</string>
     <string name="privacy">Privacidade</string>
@@ -120,7 +120,7 @@
     <string name="found_so_far">Encontrado até agora</string>
     <string name="nothing_answered_yet">Nada respondeu ainda</string>
     <string name="not_on_wifi_title">Sem Wi-Fi</string>
-    <string name="not_on_wifi_line">Entre no Wi-Fi deste quarto e busque de novo.</string>
+    <string name="not_on_wifi_line">Entre no Wi-Fi deste local e escaneie de novo.</string>
     <string name="next_wifi">Próximo: Wi-Fi</string>
     <string name="next_hotspots">Próximo: redes</string>
     <string name="next_bluetooth">Próximo: Bluetooth</string>
@@ -133,7 +133,7 @@
     <string name="risk_known">Conhecido</string>
     <string name="risk_not_recognised">Não reconhecido</string>
     <string name="isolation_title">Só o roteador respondeu</string>
-    <string name="isolation_text">Este Wi-Fi separa os aparelhos, então uma câmera nele não aparece. As outras verificações funcionam.</string>
+    <string name="isolation_text">Este Wi-Fi separa os dispositivos, então uma câmera nele não aparece. As outras verificações funcionam.</string>
     <string name="wifi_none_title">Nenhuma câmera encontrada neste Wi-Fi</string>
     <string name="wifi_none_text">Câmeras em outras redes ou com cartão de memória não aparecem aqui.</string>
     <string name="other_devices_line">Responderam, mas nada diz o que são</string>
@@ -141,7 +141,7 @@
     <string name="kind_phone">Celular</string>
     <string name="kind_computer">Computador</string>
     <string name="kind_tv">TV</string>
-    <string name="kind_speaker">Alto-falante</string>
+    <string name="kind_speaker">Caixa de som</string>
     <string name="kind_printer">Impressora</string>
     <string name="kind_router">Roteador</string>
     <string name="kind_console">Console</string>
@@ -157,7 +157,7 @@
     <string name="sign_marked">Você marcou como conhecido</string>
     <string name="sign_router">O roteador deste Wi-Fi</string>
     <string name="sign_this_phone">O celular na sua mão</string>
-    <string name="sign_none">Respondeu, mas não mostra nada para um lado nem para o outro</string>
+    <string name="sign_none">Respondeu, mas não indica nada em nenhum sentido</string>
     <string name="seen_at">visto às %1$s</string>
     <string name="why">Por quê</string>
     <string name="open_ports">Portas abertas</string>
@@ -173,7 +173,7 @@
     <string name="its_mine">É meu</string>
     <string name="its_mine_line">Um celular, notebook ou algo que eu trouxe</string>
     <string name="part_of_the_room">Parte do cômodo</string>
-    <string name="part_of_the_room_line">A TV, um alto-falante ou o roteador</string>
+    <string name="part_of_the_room_line">A TV, uma caixa de som ou o roteador</string>
     <string name="not_sure">Não tenho certeza</string>
     <string name="not_sure_line">Manter na lista para conferir</string>
     <string name="report_wrong">Errou? Avise</string>
@@ -232,7 +232,7 @@
     <!-- Hotspots, Bluetooth and 07 Find it -->
     <string name="checking_hotspots">Procurando redes de câmeras</string>
     <string name="checking_bluetooth">Ouvindo o Bluetooth</string>
-    <string name="nothing_flagged_yet">Nada para olhar ainda</string>
+    <string name="nothing_flagged_yet">Nada para conferir ainda</string>
     <string name="allow">Permitir</string>
     <string name="open_settings">Abrir configurações</string>
     <string name="perm_hotspots_title">Permitir localização</string>
@@ -241,17 +241,17 @@
     <string name="perm_bluetooth_line">Para encontrar rastreadores e câmeras Bluetooth.</string>
     <string name="perm_denied_line">Permita nas Configurações e volte.</string>
     <string name="block_wifi_off_title">O Wi-Fi está desligado</string>
-    <string name="block_wifi_off_line">Ligue e busque de novo.</string>
+    <string name="block_wifi_off_line">Ligue e escaneie de novo.</string>
     <string name="block_bluetooth_off_title">O Bluetooth está desligado</string>
-    <string name="block_bluetooth_off_line">Ligue e busque de novo.</string>
+    <string name="block_bluetooth_off_line">Ligue e escaneie de novo.</string>
     <string name="block_location_off_title">A localização está desligada</string>
     <string name="block_location_off_line">O Android precisa da localização ligada para listar Wi-Fi.</string>
     <string name="block_no_bluetooth_title">Este celular não tem Bluetooth</string>
     <string name="block_no_bluetooth_line">Pule. O relatório vai indicar.</string>
-    <string name="hotspots_none_title">Nenhum hotspot de câmera encontrado</string>
+    <string name="hotspots_none_title">Nenhuma rede de câmera encontrada</string>
     <string name="hotspots_none_text">Uma câmera já no Wi-Fi esconde o nome. A verificação de Wi-Fi procura essas.</string>
     <string name="bluetooth_none_title">Nenhum rastreador ou câmera Bluetooth encontrado</string>
-    <string name="bluetooth_none_text">Aparelhos desligados ou em silêncio não aparecem aqui.</string>
+    <string name="bluetooth_none_text">Dispositivos desligados ou em silêncio não aparecem aqui.</string>
     <string name="other_networks_line">Roteadores e celulares por perto. Não é sinal de nada.</string>
     <string name="other_networks_title">Outras redes</string>
     <string name="other_bluetooth_line">Fones, relógios e celulares</string>
@@ -262,14 +262,14 @@
     <string name="kind_ble_camera">Nome de câmera Bluetooth</string>
     <string name="kind_ble_other">Dispositivo Bluetooth</string>
     <string name="unnamed_device">Dispositivo sem nome</string>
-    <string name="reason_hotspot">O nome é um que câmeras %1$s usam na configuração</string>
-    <string name="reason_hotspot_weak">O nome é um que câmeras e tomadas inteligentes usam</string>
-    <string name="reason_tracker">Anuncia-se como rastreador: %1$s</string>
+    <string name="reason_hotspot">É um nome que câmeras %1$s usam na configuração</string>
+    <string name="reason_hotspot_weak">É um nome usado por câmeras e tomadas inteligentes</string>
+    <string name="reason_tracker">Se identifica como rastreador: %1$s</string>
     <string name="reason_ble_camera">O nome parece o de uma câmera</string>
     <string name="reason_network">Uma rede Wi-Fi por perto</string>
     <string name="reason_ble_other">Um dispositivo Bluetooth por perto</string>
     <string name="signal_dbm">%1$d dBm</string>
-    <string name="updated_now">atualizado agora</string>
+    <string name="updated_now">Atualizado agora</string>
     <string name="find_it">Encontrar</string>
     <string name="nearness_very_close">Bem aqui</string>
     <string name="nearness_very_close_line">menos de 1 m</string>
@@ -284,10 +284,10 @@
     <string name="trend_steady">Estável</string>
     <string name="getting_warmer">Está esquentando</string>
     <string name="getting_colder">Está esfriando</string>
-    <string name="find_note_hotspots">Ande devagar e aponte o topo do celular pelo quarto. O Android atualiza o sinal a cada 30 s, mais ou menos.</string>
-    <string name="find_note_bluetooth">Ande devagar e aponte o topo do celular pelo quarto. O sinal atualiza a cada segundo.</string>
-    <string name="find_lost_title">Não é ouvido há um tempo</string>
-    <string name="find_lost_text">O sinal pode estar desatualizado. Ande alguns passos e espere.</string>
+    <string name="find_note_hotspots">Ande devagar e aponte o topo do celular pelo cômodo. O Android atualiza o sinal a cada 30 s, mais ou menos.</string>
+    <string name="find_note_bluetooth">Ande devagar e aponte o topo do celular pelo cômodo. O sinal atualiza a cada segundo.</string>
+    <string name="find_lost_title">Sem sinal há um tempo</string>
+    <string name="find_lost_text">O sinal pode estar desatualizado. Dê alguns passos e espere.</string>
     <string name="add_to_report">Adicionar ao relatório</string>
     <string name="remove_from_report">Tirar do relatório</string>
     <string name="added_to_report">No relatório</string>
@@ -317,9 +317,9 @@
         <item quantity="other">%1$d outros dispositivos Bluetooth</item>
     </plurals>
     <plurals name="updated_ago">
-        <item quantity="one">atualizado há %1$d s</item>
-        <item quantity="many">atualizado há %1$d s</item>
-        <item quantity="other">atualizado há %1$d s</item>
+        <item quantity="one">Atualizado há %1$d s</item>
+        <item quantity="many">Atualizado há %1$d s</item>
+        <item quantity="other">Atualizado há %1$d s</item>
     </plurals>
 
     <!-- 08 Lens finder, Infrared and Magnet -->
@@ -330,7 +330,7 @@
     <string name="filter_red">Vermelho</string>
     <string name="filter_contrast">Contraste</string>
     <string name="look_here">Olhe aqui</string>
-    <string name="lens_hint">Luz apagada, mova devagar.</string>
+    <string name="lens_hint">Luz apagada, mova o celular devagar.</string>
     <string name="infrared_hint">Luz apagada. Infravermelho aparece como ponto roxo ou branco parado.</string>
     <string name="camera_preview">Imagem da câmera</string>
     <string name="take_photo">Salvar uma foto</string>
@@ -347,7 +347,7 @@
     <string name="tips_title">Como procurar uma lente</string>
     <string name="tips_line">Marca possíveis lentes. Olhe de perto para ter certeza.</string>
     <string name="tip_dark">Apague as luzes e feche as cortinas</string>
-    <string name="tip_slow">Mova devagar, com o celular na altura dos olhos</string>
+    <string name="tip_slow">Mova o celular devagar, na altura dos olhos</string>
     <string name="tip_places">Detectores de fumaça, relógios, carregadores, ventilações e espelhos</string>
     <string name="tip_glint">Uma lente é um ponto pequeno e nítido que não se mexe</string>
     <string name="tip_infrared">O infravermelho usa a câmera frontal</string>
@@ -361,7 +361,7 @@
     <string name="ir_blocked_text">A câmera bloqueia quase todo infravermelho. O localizador de lentes funciona.</string>
     <string name="test_again">Testar de novo</string>
     <string name="magnet_learning_title">Aprendendo o normal deste cômodo</string>
-    <string name="magnet_learning_line">Fique parado por um momento</string>
+    <string name="magnet_learning_line">Não se mexa por um momento</string>
     <string name="magnet_learning_value">%1$d%%</string>
     <string name="magnet_learning_unit">aprendido</string>
     <string name="magnet_above_value">+%1$d µT</string>
@@ -403,7 +403,7 @@
     <string name="section_desk">Mesa</string>
     <string name="section_car">Dentro do carro</string>
     <string name="item_mirror_light">Teste de luz</string>
-    <string name="item_mirror_light_line">Lanterna no vidro. Luz atrás é um sinal de alerta.</string>
+    <string name="item_mirror_light_line">Com o quarto escuro, encoste a lanterna no vidro. Se vir um espaço atrás, olhe de perto.</string>
     <string name="item_mirror_edges">Bordas e moldura</string>
     <string name="item_mirror_edges_line">Frestas, furos ou moldura solta</string>
     <string name="item_smoke_detector">Detector de fumaça</string>
@@ -415,7 +415,7 @@
     <string name="item_usb">Plugues USB e cabos</string>
     <string name="item_usb_line">Um plugue com um ponto na lateral</string>
     <string name="item_tv">TV e receptor</string>
-    <string name="item_tv_line">Tire da tomada o que você não usa</string>
+    <string name="item_tv_line">Um ponto na moldura ou uma câmera em cima</string>
     <string name="item_lamps">Luminária</string>
     <string name="item_lamps_line">Um ponto escuro que não deveria estar ali</string>
     <string name="item_frames">Quadros e molduras</string>
@@ -448,7 +448,7 @@
     <string name="item_car_ports_line">Um carregador com um ponto</string>
     <string name="item_car_ceiling">Luz de teto e para-sóis</string>
     <string name="item_car_ceiling_line">A tampa da luz e as bordas dos para-sóis</string>
-    <string name="item_car_seats">Encostos de cabeça e de banco</string>
+    <string name="item_car_seats">Apoios de cabeça e encostos</string>
     <string name="item_car_seats_line">Bolsos e frestas voltados para o banco de trás</string>
     <string name="looks_fine">Parece normal</string>
     <string name="looks_fine_line">Nada que não deveria estar ali</string>
@@ -476,7 +476,7 @@
     <string name="all_checks_ran">Todas as verificações foram feitas</string>
     <string name="found">Encontrado</string>
     <string name="photos">Fotos</string>
-    <string name="couldnt_check">Não deu para conferir</string>
+    <string name="couldnt_check">Não deu para verificar</string>
     <string name="source_wifi">Wi-Fi</string>
     <string name="source_hotspot">Rede</string>
     <string name="source_bluetooth">Bluetooth</string>
@@ -489,17 +489,17 @@
     <string name="undo_line">Volta para a lista do que conferir.</string>
     <string name="undo">Desfazer</string>
     <string name="gap_not_run">%1$s: pulado</string>
-    <string name="gap_isolated">Outros aparelhos do Wi-Fi: ele os separa</string>
+    <string name="gap_isolated">Outros dispositivos do Wi-Fi: ele os separa</string>
     <string name="gap_no_infrared">Luzes infravermelhas: a câmera deste celular pode bloqueá-las</string>
     <string name="gap_memory_card">Câmeras que só gravam em cartão</string>
     <string name="gap_other_network">Câmeras em outra rede ou nos dados móveis</string>
-    <string name="report_not_safe_note">Isto lista o que foi verificado. Não garante que o quarto é seguro.</string>
+    <string name="report_not_safe_note">Isto lista o que foi verificado. Não garante que o cômodo esteja seguro.</string>
     <string name="found_something">Achou algo?</string>
     <string name="export">Exportar</string>
     <string name="export_done">Salvo como PDF</string>
     <string name="export_failed">Não deu para salvar o PDF</string>
     <string name="magnet_finding">Eletrônicos por perto</string>
-    <string name="magnet_finding_line">+%1$d µT acima de um normal de %2$d µT</string>
+    <string name="magnet_finding_line">+%1$d µT acima do normal (%2$d µT)</string>
     <string name="report_pdf_footer">Feito com o Keyhole. Nada foi enviado.</string>
     <string name="photo">Foto</string>
     <string name="delete">Excluir</string>
@@ -508,11 +508,11 @@
     <string name="finding_note">Sua nota</string>
     <string name="address">Endereço</string>
     <string name="found_camera_line">Verificar foi a decisão certa. Um passo de cada vez.</string>
-    <string name="found_step_1">Não toque nem desligue</string>
+    <string name="found_step_1">Não toque nem tire da tomada</string>
     <string name="found_step_1_line">Isso pode ajudar a polícia depois</string>
     <string name="found_step_2">Tire fotos e grave um vídeo</string>
     <string name="found_step_2_line">Onde está e para onde aponta</string>
-    <string name="found_step_3">Saia se não se sentir segura</string>
+    <string name="found_step_3">Saia se não se sentir em segurança</string>
     <string name="found_step_3_line">Você vem em primeiro lugar</string>
     <string name="found_step_4">Avise o anfitrião ou a loja</string>
     <string name="found_step_4_line">E a plataforma de reserva</string>
@@ -567,7 +567,7 @@
 
     <!-- 01 Welcome, 14 Appearance, More's screens, 16 Privacy, 17 About, 18 Licences -->
     <string name="welcome_title">Conheça o cômodo onde você está</string>
-    <string name="welcome_line">Verifique qualquer quarto atrás de câmeras e rastreadores escondidos, com resultados claros.</string>
+    <string name="welcome_line">Procure câmeras e rastreadores escondidos em qualquer cômodo, com resultados claros.</string>
     <string name="get_started">Começar</string>
     <string name="welcome_footer">Grátis e de código aberto · Nada sai do seu celular</string>
     <string name="welcome_art_on_wifi">no Wi-Fi</string>
@@ -589,7 +589,7 @@
     <string name="move_down">Mover para baixo</string>
     <string name="sweep_steps_note">A verificação segue as etapas ativas, nesta ordem.</string>
     <string name="language_line">O idioma do Keyhole, separado do celular</string>
-    <string name="marked_known_note">Aparelhos que você marcou como não câmera. Toque para desfazer.</string>
+    <string name="marked_known_note">Dispositivos que você marcou como não câmera. Toque para desfazer.</string>
     <string name="marked_mine">Marcado como seu</string>
     <string name="marked_room">Marcado como parte do cômodo</string>
     <string name="marked_known_empty_line">Marque um dispositivo com \"Não é uma câmera?\" e ele aparece aqui.</string>
@@ -599,12 +599,12 @@
     <string name="how_lens">Lanterna e câmera marcam pontos pequenos e brilhantes.</string>
     <string name="how_infrared">A câmera frontal mostra luzes infravermelhas no escuro.</string>
     <string name="how_magnet">Mostra quando o campo magnético salta perto de eletrônicos.</string>
-    <string name="how_checklist">Os lugares que vale olhar com as mãos.</string>
+    <string name="how_checklist">Os lugares que vale conferir por conta própria.</string>
     <string name="how_note">As verificações só rodam quando você inicia. Nada sai do celular.</string>
-    <string name="limits_intro">Nenhuma verificação garante que um quarto é seguro. Isto é o que o Keyhole não vê.</string>
+    <string name="limits_intro">Nenhuma verificação garante que um cômodo esteja seguro. Isto é o que o Keyhole não vê.</string>
     <string name="limit_memory_card">Gravam no cartão e não enviam nada. Use o localizador de lentes, o infravermelho, o ímã e a lista.</string>
     <string name="limit_other_network">Câmeras em outro Wi-Fi, nos dados móveis ou num Wi-Fi que o celular não vê</string>
-    <string name="limit_isolation">Os outros aparelhos não respondem</string>
+    <string name="limit_isolation">Os outros dispositivos não respondem</string>
     <string name="limit_trackers">Os que não emitem, ou emitem de um jeito que o Keyhole ainda não conhece</string>
     <string name="limit_infrared">A câmera bloqueia; o teste do controle mostra.</string>
     <string name="privacy_header_line">Sem conta, sem anúncios, sem rastreio.</string>
@@ -646,7 +646,7 @@
     </plurals>
     <string name="nothing_answered_line">Os dispositivos aparecem aqui um a um conforme respondem</string>
     <plurals name="asked_of">
-        <item quantity="one">%1$d de cerca de %2$d consultado</item>
+        <item quantity="one">%1$d de cerca de %2$d consultados</item>
         <item quantity="many">%1$d de cerca de %2$d consultados</item>
         <item quantity="other">%1$d de cerca de %2$d consultados</item>
     </plurals>
@@ -690,7 +690,7 @@
     </plurals>
     <string name="maker_hidden">Oculto pelo Android</string>
     <string name="risk_likely_lower">provável câmera</string>
-    <string name="risk_look_lower">vale uma olhada</string>
+    <string name="risk_look_lower">vale conferir</string>
     <string name="report_deleted">Relatório apagado</string>
     <string name="removed_from_report">Removido do relatório</string>
     <plurals name="you_saved_photos">
@@ -765,7 +765,7 @@
     <string name="later">Depois</string>
     <string name="limit_memory_card_title">Câmeras com cartão</string>
     <string name="limit_other_network_title">Outras redes</string>
-    <string name="limit_isolation_title">Wi-Fi de visitantes que separa aparelhos</string>
+    <string name="limit_isolation_title">Wi-Fi de visitantes que separa dispositivos</string>
     <string name="limit_trackers_title">Rastreadores silenciosos</string>
     <string name="limit_infrared_title">Infravermelho em alguns celulares</string>
     <string name="pdf_page">Página %1$d de %2$d</string>

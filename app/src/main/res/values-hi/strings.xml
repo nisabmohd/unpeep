@@ -120,8 +120,8 @@
     <string name="next_infrared">अगला: इन्फ़्रारेड</string>
     <string name="next_magnet">अगला: चुंबक</string>
     <string name="next_checklist">अगला: चेकलिस्ट</string>
-    <string name="risk_likely_camera">शायद कैमरा</string>
-    <string name="risk_worth_a_look">एक बार देख लें</string>
+    <string name="risk_likely_camera">संभावित कैमरा</string>
+    <string name="risk_worth_a_look">देखने लायक</string>
     <string name="risk_known">जाना-पहचाना</string>
     <string name="risk_not_recognised">पहचाना नहीं गया</string>
     <string name="isolation_title">सिर्फ़ राउटर ने जवाब दिया</string>
@@ -143,13 +143,13 @@
     <string name="sign_onvif">नेटवर्क कैमरे की तरह जवाब देता है</string>
     <string name="sign_rtsp">पोर्ट %1$d पर वीडियो स्ट्रीम करता है</string>
     <string name="sign_camera_maker">इसकी कंपनी IP कैमरे बनाती है</string>
-    <string name="sign_camera_port">पोर्ट %1$d कैमरे इस्तेमाल करते हैं</string>
+    <string name="sign_camera_port">पोर्ट %1$d कैमरों में इस्तेमाल होता है</string>
     <string name="sign_web_page">इसका एक वेब पेज है, पर कुछ नहीं बताता कि यह क्या है</string>
     <string name="sign_known_kind">जाने-पहचाने तरह के डिवाइस से मेल खाता है: %1$s</string>
     <string name="sign_marked">आपने इसे जाना-पहचाना चिह्नित किया</string>
     <string name="sign_router">इस वाई-फ़ाई का राउटर</string>
     <string name="sign_this_phone">वही फ़ोन जो आपके हाथ में है</string>
-    <string name="sign_none">जवाब दिया, पर किसी भी तरफ़ कुछ नहीं दिखाता</string>
+    <string name="sign_none">जवाब दिया, पर इससे कुछ पता नहीं चलता</string>
     <string name="seen_at">%1$s पर दिखा</string>
     <string name="why">क्यों</string>
     <string name="open_ports">खुले पोर्ट</string>
@@ -175,8 +175,8 @@
         <item quantity="other">लगभग %1$d से. बाकी</item>
     </plurals>
     <plurals name="likely_cameras_count">
-        <item quantity="one">%1$d शायद कैमरा</item>
-        <item quantity="other">%1$d शायद कैमरे</item>
+        <item quantity="one">%1$d संभावित कैमरा</item>
+        <item quantity="other">%1$d संभावित कैमरे</item>
     </plurals>
     <plurals name="worth_a_look_count">
         <item quantity="one">%1$d देखने लायक</item>
@@ -213,7 +213,7 @@
 
     <!-- Hotspots, Bluetooth and 07 Find it -->
     <string name="checking_hotspots">कैमरा हॉटस्पॉट ढूँढे जा रहे हैं</string>
-    <string name="checking_bluetooth">ब्लूटूथ सुना जा रहा है</string>
+    <string name="checking_bluetooth">ब्लूटूथ डिवाइस ढूँढे जा रहे हैं</string>
     <string name="nothing_flagged_yet">अभी तक देखने लायक कुछ नहीं</string>
     <string name="allow">अनुमति दें</string>
     <string name="open_settings">सेटिंग खोलें</string>
@@ -221,7 +221,7 @@
     <string name="perm_hotspots_line">Android इसी से वाई-फ़ाई नाम दिखाता है। Keyhole कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
     <string name="perm_bluetooth_title">आसपास के डिवाइस की अनुमति दें</string>
     <string name="perm_bluetooth_line">ट्रैकर और ब्लूटूथ कैमरे ढूँढने के लिए।</string>
-    <string name="perm_denied_line">सेटिंग्स में अनुमति दें, फिर लौटें।</string>
+    <string name="perm_denied_line">सेटिंग में अनुमति दें, फिर लौटें।</string>
     <string name="block_wifi_off_title">वाई-फ़ाई बंद है</string>
     <string name="block_wifi_off_line">इसे चालू करें, फिर दोबारा स्कैन करें।</string>
     <string name="block_bluetooth_off_title">ब्लूटूथ बंद है</string>
@@ -233,7 +233,7 @@
     <string name="hotspots_none_title">कोई कैमरा हॉटस्पॉट नहीं मिला</string>
     <string name="hotspots_none_text">वाई-फ़ाई से जुड़ा कैमरा अपना नाम नहीं दिखाता। वाई-फ़ाई जाँच उन्हें ढूँढती है।</string>
     <string name="bluetooth_none_title">कोई ट्रैकर या ब्लूटूथ कैमरा नहीं मिला</string>
-    <string name="bluetooth_none_text">बंद या चुप डिवाइस यहाँ नहीं दिखते।</string>
+    <string name="bluetooth_none_text">बंद या सिग्नल न भेजने वाले डिवाइस यहाँ नहीं दिखते।</string>
     <string name="other_networks_line">आस-पास के राउटर और फ़ोन। यह किसी बात का संकेत नहीं है।</string>
     <string name="other_networks_title">अन्य नेटवर्क</string>
     <string name="other_bluetooth_line">ईयरबड, घड़ियाँ और फ़ोन</string>
@@ -268,7 +268,7 @@
     <string name="getting_colder">दूर जा रहे हैं</string>
     <string name="find_note_hotspots">धीरे चलें और फ़ोन का ऊपरी हिस्सा कमरे में घुमाएँ। Android सिग्नल लगभग हर 30 s में अपडेट करता है।</string>
     <string name="find_note_bluetooth">धीरे चलें और फ़ोन का ऊपरी हिस्सा कमरे में घुमाएँ। सिग्नल हर सेकंड अपडेट होता है।</string>
-    <string name="find_lost_title">कुछ देर से सुनाई नहीं दिया</string>
+    <string name="find_lost_title">कुछ देर से सिग्नल नहीं मिला</string>
     <string name="find_lost_text">सिग्नल पुराना हो सकता है। कुछ कदम चलें और रुकें।</string>
     <string name="add_to_report">रिपोर्ट में जोड़ें</string>
     <string name="remove_from_report">रिपोर्ट से हटाएँ</string>
@@ -299,15 +299,15 @@
     </plurals>
 
     <!-- 08 Lens finder, Infrared and Magnet -->
-    <string name="lens_finder">लेंस खोजक</string>
-    <string name="infrared_finder">इन्फ़्रारेड खोजक</string>
+    <string name="lens_finder">लेंस फ़ाइंडर</string>
+    <string name="infrared_finder">इन्फ़्रारेड फ़ाइंडर</string>
     <string name="next">अगला</string>
     <string name="filter_none">कोई फ़िल्टर नहीं</string>
     <string name="filter_red">लाल</string>
     <string name="filter_contrast">कंट्रास्ट</string>
     <string name="look_here">यहाँ देखें</string>
     <string name="lens_hint">लाइट बंद, धीरे चलें।</string>
-    <string name="infrared_hint">लाइट बंद। इन्फ्रारेड स्थिर बैंगनी या सफ़ेद बिंदु दिखता है।</string>
+    <string name="infrared_hint">लाइट बंद। इन्फ़्रारेड स्थिर बैंगनी या सफ़ेद बिंदु जैसा दिखता है।</string>
     <string name="camera_preview">कैमरा की तस्वीर</string>
     <string name="take_photo">फ़ोटो सेव करें</string>
     <string name="torch">टॉर्च</string>
@@ -326,7 +326,7 @@
     <string name="tip_slow">फ़ोन को आँखों की ऊँचाई पर रखकर धीरे चलें</string>
     <string name="tip_places">स्मोक डिटेक्टर, घड़ियाँ, चार्जर, वेंट और आईने</string>
     <string name="tip_glint">लेंस एक छोटा, तेज़ बिंदु है जो टिका रहता है</string>
-    <string name="tip_infrared">इन्फ्रारेड सामने का कैमरा इस्तेमाल करता है</string>
+    <string name="tip_infrared">इन्फ़्रारेड सामने का कैमरा इस्तेमाल करता है</string>
     <string name="ir_test_title">क्या यह फ़ोन इन्फ़्रारेड देख सकता है?</string>
     <string name="ir_test_line">टीवी रिमोट को स्क्रीन की ओर करके कोई भी बटन दबाएँ।</string>
     <string name="ir_saw">मुझे रोशनी दिखी</string>
@@ -334,7 +334,7 @@
     <string name="ir_not_seen">कोई रोशनी नहीं</string>
     <string name="ir_not_seen_line">इस फ़ोन का कैमरा इन्फ़्रारेड रोकता है</string>
     <string name="ir_blocked_title">यह फ़ोन शायद इन्फ़्रारेड न देख पाए</string>
-    <string name="ir_blocked_text">इसका कैमरा ज़्यादातर इन्फ्रारेड रोकता है। लेंस फ़ाइंडर काम करता है।</string>
+    <string name="ir_blocked_text">इसका कैमरा ज़्यादातर इन्फ़्रारेड रोकता है। लेंस फ़ाइंडर फिर भी काम करता है।</string>
     <string name="test_again">फिर से जाँचें</string>
     <string name="magnet_learning_title">इस कमरे का सामान्य स्तर सीखा जा रहा है</string>
     <string name="magnet_learning_line">एक पल स्थिर रखें</string>
@@ -348,7 +348,7 @@
     <string name="last_10_seconds">पिछले 10 सेकंड</string>
     <string name="magnet_jumped">उछला</string>
     <string name="magnet_chart">पिछले 10 सेकंड की रीडिंग, सबसे नई सामान्य से %1$d µT ऊपर</string>
-    <string name="magnet_note">फ़ोन का ऊपरी हिस्सा घड़ियों, चार्जर और स्मोक डिटेक्टर के पास धीरे घुमाएँ। स्पीकर, मैग्नेट और तार भी इसे उछालते हैं, इसलिए उछाल का मतलब अंदर इलेक्ट्रॉनिक्स है, कैमरा नहीं।</string>
+    <string name="magnet_note">फ़ोन का ऊपरी हिस्सा घड़ियों, चार्जर और स्मोक डिटेक्टर के पास धीरे घुमाएँ। स्पीकर, चुंबक और तारों से भी यह उछलता है, इसलिए उछाल का मतलब अंदर इलेक्ट्रॉनिक्स है, कैमरा नहीं।</string>
     <string name="set_normal_again">सामान्य फिर से तय करें</string>
     <string name="beep_on_jump">उछाल पर बीप</string>
     <string name="no_magnet_title">इस फ़ोन में मैग्नेट सेंसर नहीं है</string>
@@ -376,7 +376,7 @@
     <string name="section_desk">डेस्क</string>
     <string name="section_car">गाड़ी के अंदर</string>
     <string name="item_mirror_light">रोशनी की जाँच</string>
-    <string name="item_mirror_light_line">शीशे पर टॉर्च रखें। पीछे रोशनी दिखे तो सावधान।</string>
+    <string name="item_mirror_light_line">कमरा अंधेरा रखें, टॉर्च शीशे से सटाएँ। पीछे कोई जगह दिखे तो ध्यान से देखें।</string>
     <string name="item_mirror_edges">किनारे और फ़्रेम</string>
     <string name="item_mirror_edges_line">दरारें, छेद या ढीला फ़्रेम</string>
     <string name="item_smoke_detector">स्मोक डिटेक्टर</string>
@@ -384,11 +384,11 @@
     <string name="item_clock">घड़ियाँ और रेडियो</string>
     <string name="item_clock_line">डायल या स्पीकर जाली में काला बिंदु</string>
     <string name="item_chargers">चार्जर और सॉकेट</string>
-    <string name="item_chargers_line">अतिरिक्त छेद, या कोई जो किसी चीज़ से जुड़ा न हो</string>
+    <string name="item_chargers_line">फालतू छेद, या ऐसा चार्जर जिससे कुछ जुड़ा न हो</string>
     <string name="item_usb">USB प्लग और केबल</string>
     <string name="item_usb_line">किनारे पर बिंदु वाला प्लग</string>
     <string name="item_tv">टीवी और सेट-टॉप बॉक्स</string>
-    <string name="item_tv_line">जो इस्तेमाल न करें, उसका प्लग निकाल दें</string>
+    <string name="item_tv_line">फ़्रेम में कोई बिंदु, या ऊपर रखा कैमरा</string>
     <string name="item_lamps">लाइट फ़िटिंग</string>
     <string name="item_lamps_line">ऐसा काला बिंदु जो वहाँ का न लगे</string>
     <string name="item_frames">तस्वीरें और फ़्रेम</string>
@@ -465,11 +465,11 @@
     <string name="gap_no_infrared">इन्फ़्रारेड लाइट: इस फ़ोन का कैमरा इन्हें रोक सकता है</string>
     <string name="gap_memory_card">सिर्फ़ मेमोरी कार्ड पर रिकॉर्ड करने वाले कैमरे</string>
     <string name="gap_other_network">दूसरे नेटवर्क या मोबाइल डेटा पर कैमरे</string>
-    <string name="report_not_safe_note">इसमें बताया है कि क्या जाँचा गया। यह कमरे के सुरक्षित होने का वादा नहीं।</string>
+    <string name="report_not_safe_note">इसमें बताया है कि क्या जाँचा गया। यह इस बात का वादा नहीं करती कि कमरा सुरक्षित है।</string>
     <string name="found_something">कुछ मिला?</string>
     <string name="export">एक्सपोर्ट करें</string>
     <string name="export_done">PDF के रूप में सेव हुआ</string>
-    <string name="export_failed">PDF सहेजी नहीं जा सकी</string>
+    <string name="export_failed">PDF सेव नहीं हो सकी</string>
     <string name="magnet_finding">आस-पास इलेक्ट्रॉनिक्स</string>
     <string name="magnet_finding_line">%2$d µT के सामान्य से +%1$d µT ऊपर</string>
     <string name="report_pdf_footer">Keyhole से बना। कुछ भी कहीं नहीं भेजा गया।</string>
@@ -478,14 +478,14 @@
     <string name="delete_report_title">यह रिपोर्ट हटाएँ?</string>
     <string name="delete_report_line">इसकी फ़ोटो भी हट जाएँगी। इसे वापस नहीं लाया जा सकता।</string>
     <string name="finding_note">आपका नोट</string>
-    <string name="address">पता</string>
+    <string name="address">एड्रेस</string>
     <string name="found_camera_line">जाँचना सही था। एक-एक कदम उठाएँ।</string>
     <string name="found_step_1">इसे न छुएँ, न प्लग निकालें</string>
     <string name="found_step_1_line">यह बाद में पुलिस की मदद कर सकता है</string>
     <string name="found_step_2">फ़ोटो और एक वीडियो लें</string>
     <string name="found_step_2_line">यह कहाँ है और किस ओर है</string>
     <string name="found_step_3">असुरक्षित लगे तो वहाँ से निकल जाएँ</string>
-    <string name="found_step_3_line">आप सबसे पहले हैं</string>
+    <string name="found_step_3_line">सबसे ज़रूरी आप हैं</string>
     <string name="found_step_4">होस्ट या दुकान को बताएँ</string>
     <string name="found_step_4_line">और बुकिंग प्लेटफ़ॉर्म को</string>
     <string name="help_where_you_are">आप जहाँ हैं, वहाँ मदद</string>
@@ -510,7 +510,7 @@
     <string name="search">खोजें</string>
     <string name="no_reports_match">कोई रिपोर्ट नहीं मिली</string>
     <string name="last_report">पिछली रिपोर्ट</string>
-    <string name="this_visit">यह विज़िट अब तक</string>
+    <string name="this_visit">इस बार अब तक</string>
     <string name="place_lower_stay">ठहरने की जगह</string>
     <string name="place_lower_trial_room">ट्रायल रूम</string>
     <string name="place_lower_washroom">वॉशरूम</string>
@@ -563,14 +563,14 @@
     <string name="marked_known_empty_line">किसी डिवाइस को \"कैमरा नहीं है?\" से चिह्नित करें, वह यहाँ दिखेगा।</string>
     <string name="how_wifi">इस वाई-फ़ाई पर कैमरे जैसे जवाब देने वाले डिवाइस ढूँढता है।</string>
     <string name="how_hotspots">सस्ते कैमरे सेटअप में जो वाई-फ़ाई नाम रखते हैं, उन्हें पहचानता है।</string>
-    <string name="how_bluetooth">ट्रैकर और कैमरे जैसे ब्लूटूथ नाम सुनता है।</string>
+    <string name="how_bluetooth">ट्रैकर और कैमरे जैसे ब्लूटूथ नाम पकड़ता है।</string>
     <string name="how_lens">टॉर्च और कैमरा छोटे, चमकते बिंदु घेरते हैं।</string>
-    <string name="how_infrared">सामने का कैमरा अंधेरे में इन्फ्रारेड रोशनी दिखाता है।</string>
+    <string name="how_infrared">सामने का कैमरा अंधेरे में इन्फ़्रारेड रोशनी दिखाता है।</string>
     <string name="how_magnet">इलेक्ट्रॉनिक्स के पास चुंबकीय क्षेत्र उछले तो दिखाता है।</string>
     <string name="how_checklist">वे जगहें जिन्हें हाथ से देखना चाहिए।</string>
     <string name="how_note">जाँच तभी चलती है जब आप शुरू करें। कुछ भी फ़ोन से बाहर नहीं जाता।</string>
-    <string name="limits_intro">कोई जाँच वादा नहीं कर सकती कि कमरा सुरक्षित है। यह वह है जो Keyhole नहीं देख सकता।</string>
-    <string name="limit_memory_card">ये कार्ड पर रिकॉर्ड करते हैं और कुछ नहीं भेजते। लेंस फ़ाइंडर, इन्फ्रारेड, मैग्नेट और चेकलिस्ट इस्तेमाल करें।</string>
+    <string name="limits_intro">कोई जाँच वादा नहीं कर सकती कि कमरा सुरक्षित है। Keyhole इन्हें नहीं देख सकता।</string>
+    <string name="limit_memory_card">ये कार्ड पर रिकॉर्ड करते हैं और कुछ नहीं भेजते। लेंस फ़ाइंडर, इन्फ़्रारेड, चुंबक और चेकलिस्ट इस्तेमाल करें।</string>
     <string name="limit_other_network">दूसरे वाई-फ़ाई, मोबाइल डेटा, या ऐसे वाई-फ़ाई पर कैमरे जो फ़ोन नहीं देखता</string>
     <string name="limit_isolation">दूसरे डिवाइस जवाब नहीं देते</string>
     <string name="limit_trackers">जो संकेत नहीं भेजते, या ऐसे भेजते हैं जो Keyhole अभी नहीं जानता</string>
@@ -582,14 +582,14 @@
     <string name="perm_row_location_line">सिर्फ़ वाई-फ़ाई नामों के लिए। आप कहाँ हैं, कभी नहीं।</string>
     <string name="perm_row_bluetooth_line">ट्रैकर और ब्लूटूथ कैमरे ढूँढने के लिए</string>
     <string name="perm_row_camera">कैमरा</string>
-    <string name="perm_row_camera_line">लेंस और इन्फ़्रारेड खोजक के लिए। कुछ भी रिकॉर्ड नहीं होता।</string>
+    <string name="perm_row_camera_line">लेंस और इन्फ़्रारेड फ़ाइंडर के लिए। कुछ भी रिकॉर्ड नहीं होता।</string>
     <string name="privacy_policy">निजता नीति</string>
     <string name="privacy_policy_line">पूरा टेक्स्ट, एक पेज</string>
     <string name="delete_all">सारी रिपोर्ट हटाएँ</string>
     <string name="delete_all_line">और आपके चिह्नित डिवाइस</string>
     <string name="delete_all_title">सब कुछ हटाएँ?</string>
     <string name="delete_all_sheet_line">हर रिपोर्ट, फ़ोटो और निशान। यह वापस नहीं होगा।</string>
-    <string name="deleted_all">सब कुछ मिटा दिया गया</string>
+    <string name="deleted_all">सब कुछ हटा दिया गया</string>
     <string name="version_by">वर्शन %1$s · mid apps से</string>
     <string name="update_check">अपडेट जाँचें</string>
     <string name="update_check_line">GitHub Releases से</string>
@@ -600,7 +600,7 @@
     <string name="report_problem">समस्या बताएँ</string>
     <string name="licences_line">Keyhole में ओपन-सोर्स सॉफ़्टवेयर</string>
     <string name="update_checking">अपडेट जाँच रहे हैं</string>
-    <string name="update_latest_title">आपके पास नया वर्शन है</string>
+    <string name="update_latest_title">आपके पास सबसे नया वर्शन है</string>
     <string name="update_open">रिलीज़ पेज खोलें</string>
     <string name="update_failed_title">जाँच नहीं हो सकी</string>
     <string name="update_failed_line">GitHub ने जवाब नहीं दिया। कनेक्शन देखें और फिर कोशिश करें।</string>
@@ -650,19 +650,19 @@
     <string name="maker_hidden">Android ने छिपाया है</string>
     <string name="risk_likely_lower">संभावित कैमरा</string>
     <string name="risk_look_lower">देखने लायक</string>
-    <string name="report_deleted">रिपोर्ट मिटा दी गई</string>
+    <string name="report_deleted">रिपोर्ट हटा दी गई</string>
     <string name="removed_from_report">रिपोर्ट से हटाया गया</string>
     <plurals name="you_saved_photos">
-        <item quantity="one">आपने %d फ़ोटो सहेजी</item>
-        <item quantity="other">आपने %d फ़ोटो सहेजीं</item>
+        <item quantity="one">आपने %d फ़ोटो सेव की</item>
+        <item quantity="other">आपने %d फ़ोटो सेव कीं</item>
     </plurals>
-    <string name="saving_pdf">PDF सहेजी जा रही है…</string>
+    <string name="saving_pdf">PDF सेव हो रही है…</string>
     <string name="open">खोलें</string>
     <string name="more_from_mid_apps">mid apps के और ऐप</string>
     <string name="app_burrow_line">पैसा जो खुद का हिसाब रखे</string>
     <string name="app_weft_line">छोटी आदतें, ईमानदारी से निभाई</string>
     <string name="results_cleared">Keyhole बंद होने पर वे नतीजे हटा दिए गए</string>
-    <string name="report_gone">वह रिपोर्ट मिटा दी गई थी</string>
+    <string name="report_gone">वह रिपोर्ट हटा दी गई थी</string>
     <string name="stop_sweep_title">यह जाँच रोकें?</string>
     <string name="stop_sweep_line">आप %2$d में से जाँच %1$d पर हैं।</string>
     <string name="stop_and_report">रोकें और रिपोर्ट देखें</string>
@@ -682,8 +682,8 @@
     <string name="aeroplane_title">एयरप्लेन मोड चालू है</string>
     <string name="aeroplane_line">इसे बंद करें, या बिना सिग्नल वाली जाँचों पर जाएँ।</string>
     <string name="skip_to_lens">लेंस फ़ाइंडर पर जाएँ</string>
-    <string name="skip_to_infrared">इन्फ्रारेड फ़ाइंडर पर जाएँ</string>
-    <string name="skip_to_magnet">मैग्नेट पर जाएँ</string>
+    <string name="skip_to_infrared">इन्फ़्रारेड फ़ाइंडर पर जाएँ</string>
+    <string name="skip_to_magnet">चुंबक पर जाएँ</string>
     <string name="skip_to_checklist">चेकलिस्ट पर जाएँ</string>
     <string name="magnet_stopped_title">सेंसर ने जवाब देना बंद कर दिया</string>
     <string name="magnet_stopped_text">स्पीकर या चुंबक से दूर जाएँ, फिर सामान्य दोबारा सेट करें।</string>
@@ -721,17 +721,17 @@
     <string name="limit_memory_card_title">मेमोरी-कार्ड कैमरे</string>
     <string name="limit_other_network_title">दूसरे नेटवर्क</string>
     <string name="limit_isolation_title">डिवाइस अलग रखने वाला गेस्ट वाई-फ़ाई</string>
-    <string name="limit_trackers_title">चुप ट्रैकर</string>
-    <string name="limit_infrared_title">कुछ फ़ोन पर इन्फ्रारेड</string>
+    <string name="limit_trackers_title">सिग्नल न भेजने वाले ट्रैकर</string>
+    <string name="limit_infrared_title">कुछ फ़ोन पर इन्फ़्रारेड</string>
     <string name="pdf_page">पेज %1$d / %2$d</string>
     <string name="pdf_checks">जाँचें</string>
-    <string name="pdf_ran">हुईं</string>
+    <string name="pdf_ran">पूरी हुईं</string>
     <string name="pdf_skipped">छोड़ी गई</string>
     <string name="pdf_unseen">कोई स्कैन इसे नहीं देखता</string>
     <string name="gap_skipped_line">इस जाँच में छोड़ी गई</string>
     <string name="gap_memory_card_line">कार्ड पर रिकॉर्ड करने वाला कैमरा जो कुछ नहीं भेजता</string>
     <string name="gap_other_network_line">दूसरे वाई-फ़ाई या मोबाइल डेटा पर कैमरे</string>
-    <string name="tip_photo">रिपोर्ट के लिए हर जगह की फ़ोटो सहेजें</string>
+    <string name="tip_photo">रिपोर्ट के लिए किसी भी बिंदु की फ़ोटो सेव करें</string>
     <string name="font_system">सिस्टम डिफ़ॉल्ट</string>
     <string name="font_system_line">आपके फ़ोन का फ़ॉन्ट</string>
 </resources>
