@@ -62,7 +62,8 @@ import androidx.compose.ui.graphics.Color
 fun MarkTile(size: androidx.compose.ui.unit.Dp, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     Box(modifier.size(size).clip(Shapes.logo(size)).background(c.primary).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
-        // The adaptive icon's one-colour layer is 108 units with the mark 48 across in its middle: drawn 1.5×, the mark is two thirds of the tile.
+        // The adaptive icon's one-colour layer is 108 units with the mark 42 across in its middle: drawn 1.5×, the tile is the
+        // 72 the launcher shows and the mark sits 15 from each side, as on the home screen.
         Icon(painterResource(R.drawable.ic_launcher_monochrome), null, tint = c.onPrimary, modifier = Modifier.requiredSize(size * MARK_SCALE))
     }
 }
