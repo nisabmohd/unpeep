@@ -35,7 +35,7 @@ import app.keyhole.privacy.ui.theme.Space
 fun SegmentMeter(level: Int, segments: Int, startLabel: String, endLabel: String, description: String, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     val lit = level.coerceIn(0, segments)
-    Column(modifier.fillMaxWidth().padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description }, verticalArrangement = Arrangement.spacedBy(Space.inline)) {
+    Column(modifier.fillMaxWidth().padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description }, verticalArrangement = Arrangement.spacedBy(Space.meterLabels)) {
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
             repeat(segments) { i ->
                 val strength = if (segments <= 1) 1f else Alpha.meterFaint + (1f - Alpha.meterFaint) * i / (segments - 1)
@@ -43,8 +43,8 @@ fun SegmentMeter(level: Int, segments: Int, startLabel: String, endLabel: String
             }
         }
         Row(Modifier.fillMaxWidth()) {
-            Text(startLabel, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
-            Text(endLabel, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+            Text(startLabel, style = KeyholeType.small, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
+            Text(endLabel, style = KeyholeType.small, color = c.onSurfaceVariant, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
         }
     }
 }
@@ -79,7 +79,7 @@ fun BarMeter(values: List<Int>, slots: Int, jump: Int, max: Int, description: St
 fun ProgressLine(progress: Float, description: String, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     val shown = progress.coerceIn(0f, 1f)
-    Box(modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill).background(c.surfaceContainerHighest).clearAndSetSemantics { contentDescription = description }) {
+    Box(modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill).background(c.surfaceContainerHigh).clearAndSetSemantics { contentDescription = description }) {
         if (shown > 0f) Box(Modifier.fillMaxWidth(shown).height(Size.progressLine).clip(Shapes.pill).background(c.primary))
     }
 }

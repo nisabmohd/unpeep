@@ -42,6 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Velocity
 import app.keyhole.privacy.R
 import app.keyhole.privacy.ui.theme.KeyholeType
@@ -59,7 +60,12 @@ private const val MAX_SHEET_FRACTION = 0.9f
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun KeyholeSheet(title: String, onDismiss: () -> Unit, line: String? = null, footer: (@Composable ColumnScope.() -> Unit)? = null, content: @Composable ColumnScope.() -> Unit) {
+fun KeyholeSheet(
+    title: String, onDismiss: () -> Unit, line: String? = null, footer: (@Composable ColumnScope.() -> Unit)? = null,
+    /** Stays under the title while the content scrolls beneath it: a search field (15). */
+    pinned: (@Composable ColumnScope.() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
     val c = MaterialTheme.colorScheme
     val density = LocalDensity.current
     val screen = with(density) { LocalWindowInfo.current.containerSize.height.toDp() }
@@ -68,6 +74,7 @@ fun KeyholeSheet(title: String, onDismiss: () -> Unit, line: String? = null, foo
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
         containerColor = c.background,
+        scrimColor = c.scrim,
         shape = Shapes.sheet,
         dragHandle = { Box(Modifier.padding(top = Space.block).size(width = Size.handle, height = Space.grid).clip(Shapes.pill).background(c.outline)) },
     ) {
@@ -78,19 +85,21 @@ fun KeyholeSheet(title: String, onDismiss: () -> Unit, line: String? = null, foo
             // imePadding: a sheet with a text field (Rename) lifts above the keyboard.
             Column(Modifier.heightIn(max = max).imePadding().nestedScroll(remember { ScrollStaysInside() }).focusable()) {
                 Row(
-                    Modifier.fillMaxWidth().padding(start = Space.heading, end = Space.screen, top = Space.block, bottom = Space.card),
+                    Modifier.fillMaxWidth().padding(start = Space.heading, end = Space.screen, top = Space.card, bottom = Space.card),
                     verticalAlignment = Alignment.Top,
                 ) {
-                    Column(Modifier.weight(1f).padding(top = Space.inline, end = Space.card)) {
+                    // The title's line starts 4 dp under the close button's top edge (13c, 15, E07).
+                    Column(Modifier.weight(1f).padding(top = Space.small, end = Space.card)) {
                         Text(title, style = KeyholeType.title, color = c.onSurface, modifier = Modifier.semantics { heading() })
                         if (line != null) Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.padding(top = Space.small))
                     }
                     RoundIconButton(painterResource(R.drawable.ic_close), stringResource(R.string.close), onDismiss)
                 }
+                if (pinned != null) Column(Modifier.fillMaxWidth(), content = pinned)
                 Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()), content = content)
                 if (footer != null) {
                     Column(
-                        Modifier.fillMaxWidth().padding(start = Space.screen, end = Space.screen, top = Space.block, bottom = Space.block),
+                        Modifier.fillMaxWidth().padding(start = Space.screen, end = Space.screen, top = Space.card, bottom = Space.block),
                         verticalArrangement = Arrangement.spacedBy(Space.inline), content = footer,
                     )
                 }
@@ -125,6 +134,19 @@ private class ScrollStaysInside : NestedScrollConnection {
     }
 }
 
+/** A sheet's list with nothing to show (15a: no country matches): what happened, and one muted line that still helps. */
+@Composable
+fun SheetEmpty(title: String, line: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    Column(
+        modifier.fillMaxWidth().padding(start = Space.heading, end = Space.heading, top = Space.dock, bottom = Space.sheetEmpty),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(title, style = KeyholeType.cardTitle, color = c.onSurface, textAlign = TextAlign.Center)
+        Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.small))
+    }
+}
+
 /**
  * A quiet line inside a sheet, under its rows ("Keyhole got it wrong? Report it…"); tappable when [onClick] is set.
  * [leaves]: it opens something outside Keyhole (the browser), shown by ↗ at the end (06).
@@ -141,8 +163,8 @@ fun SheetLine(text: String, modifier: Modifier = Modifier, icon: Painter? = null
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
-            Icon(icon, null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.chevron))
-            Spacer(Modifier.width(Space.block))
+            Icon(icon, null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.icon))
+            Spacer(Modifier.width(Space.card))
         }
         Text(text, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
         if (leaves) {

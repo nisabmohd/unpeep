@@ -72,8 +72,8 @@ fun KeyholeTextField(
         modifier = modifier.fillMaxWidth().semantics { contentDescription = label },
         decorationBox = { field ->
             Row(
-                Modifier.fillMaxWidth().clip(if (singleLine) Shapes.pill else Shapes.surface).background(c.surfaceContainerHigh)
-                    .heightIn(min = Size.field).padding(horizontal = Space.card, vertical = Space.block),
+                Modifier.fillMaxWidth().clip(if (singleLine) Shapes.pill else Shapes.surface).background(c.surfaceContainer)
+                    .heightIn(min = if (singleLine) Size.fieldLine else Size.field).padding(horizontal = Space.card, vertical = if (singleLine) Space.inline else Space.block),
                 verticalAlignment = if (singleLine) Alignment.CenterVertically else Alignment.Top,
             ) {
                 if (icon != null) {

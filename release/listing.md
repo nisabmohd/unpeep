@@ -5,6 +5,5 @@
 - Full: `fastlane/.../full_description.txt`
 - Category: Tools. Tags: privacy, travel.
 - Avoid "spy", "100%", "detect all", "safe" anywhere in the listing (policy + honesty).
-- Graphics: icon `icon-512.png` (from `tools/keyhole_mark.py`), feature graphic 1024×500, phone screenshots
-  from the design PNGs / `tools/store_shots.py`.
+- Graphics: see `README.md` (icon, feature graphic, eight phone screenshots and how each is made).
 - Contact: hello.midapps@gmail.com · Privacy policy: link to PRIVACY.md on GitHub.

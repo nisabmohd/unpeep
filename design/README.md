@@ -34,6 +34,14 @@ Prefixes: `00` design system · `01`–`18` screens, numbered like the existing 
 | Tab titles | App is right | 24 dp for the title, 16 dp for round buttons. Keep. |
 | Checklist items | Need from you | The app’s lists win. Send the item names per place and the icon board is finished to match. |
 
+## Boards updated on 2026-11-16
+
+03 and 03a–03h, E03, E07, E08 (the sweep's check row), 13c (Language: closer rows, 52 dp, 56 dp with a second line),
+15 and 15a (Help numbers: the search stays, the countries scroll under it). Rendered from the canvas's HTML at 2×.
+In 15 the canvas's markup had the rows 16 dp in from the sheet's edges (the list sat inside the search field's
+wrapper); the PNG here is rendered with that fixed, so the rows run edge to edge as in 13c. The canvas still needs
+the same fix.
+
 ## Rules decided
 
 | Rule | Decision |
@@ -50,7 +58,7 @@ Prefixes: `00` design system · `01`–`18` screens, numbered like the existing 
 | Not checked | One look everywhere: a grey circle and a muted line. The icon says what it is: the skipped check’s own icon, a memory card, an antenna for other networks, a tag for quiet trackers. An outlined ring in the check row, a grey dot in the PDF. No ✕, no amber. |
 | Nothing found | A lens header with the plain result, the rows for what couldn’t be checked, one honesty Note. |
 | Text at 200 % | Small text doubles; titles grow less. Buttons grow to 72 dp and stack with the primary on top; tags drop under the text; More tiles go to one column; nav labels, top-bar actions and the lens core stop at 130 %. |
-| Check row | 44 dp circles at 412 dp, shrinking evenly to 36 dp at 360 dp with at least 6 dp between them. Narrower than that, the row scrolls. |
+| Check row | In the report: 44 dp circles at 412 dp, shrinking evenly to 36 dp at 360 dp with at least 6 dp between them. In the sweep (03, updated 2026-11-16): 40 dp circles spread edge to edge inside the box's 16 dp padding, a 2 dp ring 2 dp outside the current one, a 20 dp ✓ hanging 5 dp off a finished one; they shrink to 36 dp the same way. Narrower than that, either row scrolls. |
 | Toast placement | 12 dp above the dock or the nav bar. Never over a sheet (the sheet closes first) and never on the viewfinder (the photo line and Notes speak there). |
 | Right to left | Rows, bars, chevrons and the progress line mirror. The lens glint, the progress arc and the meter’s Far → Right here direction don’t. |
 

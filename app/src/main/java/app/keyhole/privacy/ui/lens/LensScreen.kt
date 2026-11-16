@@ -235,8 +235,7 @@ fun LensContent(
     val c = MaterialTheme.colorScheme
     val running = s.status == CameraStatus.RUNNING || s.status == CameraStatus.STARTING
     // On its side (T05, large screens ignore the portrait lock): the controls move to a panel on the trailing side.
-    val config = androidx.compose.ui.platform.LocalConfiguration.current
-    val sideways = config.screenWidthDp > config.screenHeightDp
+    val sideways = app.keyhole.privacy.ui.windowSize().let { it.width > it.height }
     // The spots on screen: the camera sees a little more than the picture shows (centre crop), so the count and the
     // rings are the same spots, never "3 spots" with nothing ringed.
     var box by remember { mutableStateOf(IntSize.Zero) }
@@ -436,7 +435,7 @@ private fun LensControls(
         LensModes(s, onMode)
         if (running) {
             LensHint(s, Modifier.padding(horizontal = Space.heading), oneLine = true)
-            ShutterControls(s, onTorch, onFlip, onShutter, Modifier.padding(horizontal = Space.heading, vertical = Space.block))
+            ShutterControls(s, onTorch, onFlip, onShutter, Modifier.padding(horizontal = Space.shutterSide, vertical = Space.block))
         }
     }
 }

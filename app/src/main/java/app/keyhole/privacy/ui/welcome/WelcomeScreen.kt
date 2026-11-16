@@ -1,6 +1,5 @@
 package app.keyhole.privacy.ui.welcome
 
-import androidx.compose.foundation.Image
 import app.keyhole.privacy.ui.theme.checkColors
 import app.keyhole.privacy.domain.Check
 import app.keyhole.privacy.ui.hue
@@ -46,7 +45,6 @@ import app.keyhole.privacy.ui.components.Dock
 import app.keyhole.privacy.ui.components.FloatingCard
 import app.keyhole.privacy.ui.components.LensRings
 import app.keyhole.privacy.ui.components.PrimaryButton
-import app.keyhole.privacy.ui.theme.Brand
 import app.keyhole.privacy.ui.theme.Hues
 import app.keyhole.privacy.ui.theme.KeyholeTheme
 import app.keyhole.privacy.ui.theme.KeyholeType
@@ -56,12 +54,16 @@ import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.Space
 import androidx.compose.ui.graphics.Color
 
-/** The mark on its brand tile (Welcome, About): the launcher's foreground, which keeps the safe zone around it. */
+/**
+ * The mark on its tile (Welcome, About, the navigation rail). The tile follows the theme: the brand blue with the
+ * default colours in light, the accent or the phone's dynamic colour otherwise, as a themed launcher icon does.
+ */
 @Composable
 fun MarkTile(size: androidx.compose.ui.unit.Dp, modifier: Modifier = Modifier) {
-    Box(modifier.size(size).clip(Shapes.logo(size)).background(Brand).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
-        // The adaptive icon's foreground is 108 units with the mark in its middle 72: draw it 1.5× to fill the tile.
-        Image(painterResource(R.drawable.ic_launcher_foreground), null, modifier = Modifier.requiredSize(size * MARK_SCALE))
+    val c = MaterialTheme.colorScheme
+    Box(modifier.size(size).clip(Shapes.logo(size)).background(c.primary).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
+        // The adaptive icon's one-colour layer is 108 units with the mark in its middle 72: draw it 1.5× to fill the tile.
+        Icon(painterResource(R.drawable.ic_launcher_monochrome), null, tint = c.onPrimary, modifier = Modifier.requiredSize(size * MARK_SCALE))
     }
 }
 

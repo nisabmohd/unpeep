@@ -215,7 +215,7 @@ fun ReportContent(
                 secondary = { m -> SecondaryButton(stringResource(R.string.found_something), onFoundSomething, m) },
                 // While the PDF is written the button says so (10j) and waits.
                 primary = { m ->
-                    PrimaryButton(stringResource(if (exporting) R.string.saving_pdf else R.string.export), onExport, m, icon = painterResource(R.drawable.ic_export), enabled = !exporting)
+                    PrimaryButton(stringResource(if (exporting) R.string.saving_pdf else R.string.export), onExport, m, icon = if (exporting) null else painterResource(R.drawable.ic_export), enabled = !exporting)
                 },
             )
         },
@@ -229,10 +229,10 @@ fun ReportContent(
                 Tag(words.checksOf(report), TagKind.KNOWN)
             },
         )
-        Spacer(Modifier.height(Space.block))
+        Spacer(Modifier.height(Space.card))
         Box24 {
             CheckRow(report.planned, state = { check -> if (check in report.ran) CheckState.DONE else CheckState.SKIPPED })
-            Spacer(Modifier.height(Space.inline))
+            Spacer(Modifier.height(Space.summaryLegend))
             Text(words.skippedLine(report), style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.padding(horizontal = Space.card))
         }
         val found = report.findings.filter { it.finding.toLookAt }
@@ -272,7 +272,7 @@ fun ReportContent(
                 }
             }
         }
-        SectionLabel(stringResource(R.string.couldnt_check))
+        SectionLabel(stringResource(R.string.couldnt_check), meta = report.gaps.size.toString())
         Grouped {
             // The same row as every other list, calm (10b): a title, a muted line, and in a grey circle the skipped check's
             // own icon or the thing no scan can see (memory card, antenna, shield). Never an alarm colour.
@@ -300,7 +300,7 @@ fun RenameSheet(current: String, onDismiss: () -> Unit, onSave: (String) -> Unit
             )
         },
     ) {
-        Box(Modifier.padding(horizontal = Space.screen, vertical = Space.inline)) {
+        Box(Modifier.padding(horizontal = Space.screen)) {
             KeyholeTextField(name, { name = it }, stringResource(R.string.report_name_hint), stringResource(R.string.rename), maxLength = MAX_NAME)
         }
     }

@@ -43,7 +43,7 @@ import app.keyhole.privacy.ui.components.NumberCircle
 import app.keyhole.privacy.ui.components.PrimaryButton
 import app.keyhole.privacy.ui.components.SecondaryButton
 import app.keyhole.privacy.ui.components.SectionLabel
-import app.keyhole.privacy.ui.components.SheetLine
+import app.keyhole.privacy.ui.components.SheetEmpty
 import app.keyhole.privacy.ui.openInBrowser
 import app.keyhole.privacy.ui.report.rememberReportWords
 import app.keyhole.privacy.ui.theme.KeyholeTheme
@@ -119,10 +119,10 @@ fun FoundCameraContent(s: HelpState, onBack: () -> Unit, onChange: () -> Unit, o
             if (onShare != null) {
                 ButtonPair(
                     secondary = { m -> SecondaryButton(stringResource(R.string.share_report), onShare, m) },
-                    primary = { m -> PrimaryButton(stringResource(R.string.call_number, emergency), { onDial(emergency) }, m, icon = painterResource(R.drawable.ic_call)) },
+                    primary = { m -> PrimaryButton(stringResource(R.string.call_number, emergency), { onDial(emergency) }, m, icon = painterResource(R.drawable.ic_phone)) },
                 )
             } else {
-                PrimaryButton(stringResource(R.string.call_number, emergency), { onDial(emergency) }, Modifier.fillMaxWidth(), icon = painterResource(R.drawable.ic_call))
+                PrimaryButton(stringResource(R.string.call_number, emergency), { onDial(emergency) }, Modifier.fillMaxWidth(), icon = painterResource(R.drawable.ic_phone))
             }
         },
     ) {
@@ -144,7 +144,7 @@ fun FoundCameraContent(s: HelpState, onBack: () -> Unit, onChange: () -> Unit, o
                     s.fromPhone -> stringResource(R.string.emergency_line_phone, emergency, countryName(s.entry.country))
                     else -> stringResource(R.string.emergency_line, emergency, countryName(s.entry.country))
                 }
-                ListRow(stringResource(R.string.emergency), shape = shape, line = line, leading = { IconCircle(painterResource(R.drawable.ic_call), CircleTone.Accent) }, onClick = { onDial(emergency) })
+                ListRow(stringResource(R.string.emergency), shape = shape, line = line, leading = { IconCircle(painterResource(R.drawable.ic_phone), CircleTone.Accent) }, onClick = { onDial(emergency) })
             }
             val entry = s.entry
             if (entry != null && entry.police != entry.emergency) row { shape ->
@@ -170,10 +170,15 @@ fun HelpNumbersSheet(s: HelpState, onDismiss: () -> Unit, onChoose: (String?) ->
     val sorted = s.all.sortedBy { countryName(it.country) }
     val q = query.trim()
     val shown = if (q.isEmpty()) sorted else sorted.filter { countryName(it.country).contains(q, ignoreCase = true) || it.country.equals(q, ignoreCase = true) }
-    KeyholeSheet(stringResource(R.string.help_numbers), onDismiss, line = stringResource(R.string.help_numbers_line)) {
-        Box(Modifier.padding(horizontal = Space.screen, vertical = Space.inline)) {
-            KeyholeTextField(query, { query = it }, stringResource(R.string.search_countries), stringResource(R.string.search_countries), icon = painterResource(R.drawable.ic_search))
-        }
+    KeyholeSheet(
+        stringResource(R.string.help_numbers), onDismiss, line = stringResource(R.string.help_numbers_line),
+        // The search stays put; the countries scroll under it.
+        pinned = {
+            Box(Modifier.padding(start = Space.screen, end = Space.screen, bottom = Space.inline)) {
+                KeyholeTextField(query, { query = it }, stringResource(R.string.search_countries), stringResource(R.string.search_countries), icon = painterResource(R.drawable.ic_search))
+            }
+        },
+    ) {
         Column(Modifier.selectableGroup()) {
             if (q.isEmpty()) {
                 val phone = s.phoneCountry?.let { code -> s.all.firstOrNull { it.country == code } }
@@ -184,8 +189,8 @@ fun HelpNumbersSheet(s: HelpState, onDismiss: () -> Unit, onChoose: (String?) ->
             }
             shown.forEach { e -> ChoiceRow(countryName(e.country), s.chosen == e.country, { onChoose(e.country) }, line = e.emergency) }
         }
-        if (shown.isEmpty()) SheetLine(stringResource(R.string.no_countries_found))
-        Spacer(Modifier.height(Space.block))
+        if (shown.isEmpty()) SheetEmpty(stringResource(R.string.no_countries_found), stringResource(R.string.emergency_unknown_line, HelpNumbers.FALLBACK))
+        else Spacer(Modifier.height(Space.block))
     }
 }
 

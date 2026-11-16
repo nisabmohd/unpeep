@@ -31,9 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.core.content.FileProvider
@@ -142,8 +140,7 @@ fun FindingContent(f: Finding, onBack: () -> Unit, onShare: () -> Unit = {}, onR
 @Composable
 fun PhotoScreen(path: String, onBack: () -> Unit) {
     val context = LocalContext.current
-    val config = LocalConfiguration.current
-    val px = with(LocalDensity.current) { config.screenWidthDp.toFloat().let { (it * density).toInt() } }
+    val px = androidx.compose.ui.platform.LocalWindowInfo.current.containerSize.width
     var bitmap by remember(path) { mutableStateOf<ImageBitmap?>(null) }
     LaunchedEffect(path) { bitmap = withContext(Dispatchers.IO) { decodeScaled(path, px)?.asImageBitmap() } }
     app.keyhole.privacy.ui.theme.ViewfinderTheme {

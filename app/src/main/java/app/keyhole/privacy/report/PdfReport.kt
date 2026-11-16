@@ -9,6 +9,7 @@ import android.text.Layout
 import android.text.StaticLayout
 import android.text.TextPaint
 import androidx.compose.ui.graphics.toArgb
+import androidx.core.graphics.withClip
 import androidx.core.graphics.withTranslation
 import app.keyhole.privacy.R
 import app.keyhole.privacy.data.SavedReport
@@ -151,10 +152,7 @@ class PdfReport(private val words: ReportWords, private val res: android.content
             // The launcher foreground keeps its safe zone: draw it 1.5× and centred, as MarkTile does.
             val grow = MARK * (MARK_SCALE - 1f) / 2f
             mark?.setBounds((tile.left - grow).toInt(), (tile.top - grow).toInt(), (tile.right + grow).toInt(), (tile.bottom + grow).toInt())
-            c.save()
-            c.clipRect(tile)
-            mark?.draw(c)
-            c.restore()
+            c.withClip(tile) { mark?.draw(this) }
         }
         c.drawText(res.getString(R.string.app_name), MARGIN + MARK + SMALL_GAP * 1.5f, y + MARK / 2f + BRAND / 2.8f, brandName)
         val p = res.getString(R.string.pdf_page, pageNumber, pages)
@@ -231,18 +229,17 @@ class PdfReport(private val words: ReportWords, private val res: android.content
                 val l = MARGIN + i * (PHOTO + PHOTO_GAP)
                 val rect = RectF(l, y, l + PHOTO, y + PHOTO)
                 val clip = android.graphics.Path().apply { addRoundRect(rect, PHOTO_CORNER, PHOTO_CORNER, android.graphics.Path.Direction.CW) }
-                c.save()
-                c.clipPath(clip)
-                val bitmap = decodeScaled(path, PHOTO_PX)
-                if (bitmap == null) {
-                    c.drawRect(rect, Paint().apply { color = greyTag })
-                } else {
-                    val side = minOf(bitmap.width, bitmap.height)
-                    val src = android.graphics.Rect((bitmap.width - side) / 2, (bitmap.height - side) / 2, (bitmap.width + side) / 2, (bitmap.height + side) / 2)
-                    c.drawBitmap(bitmap, src, rect, Paint(Paint.FILTER_BITMAP_FLAG))
-                    bitmap.recycle()
+                c.withClip(clip) {
+                    val bitmap = decodeScaled(path, PHOTO_PX)
+                    if (bitmap == null) {
+                        drawRect(rect, Paint().apply { color = greyTag })
+                    } else {
+                        val side = minOf(bitmap.width, bitmap.height)
+                        val src = android.graphics.Rect((bitmap.width - side) / 2, (bitmap.height - side) / 2, (bitmap.width + side) / 2, (bitmap.height + side) / 2)
+                        drawBitmap(bitmap, src, rect, Paint(Paint.FILTER_BITMAP_FLAG))
+                        bitmap.recycle()
+                    }
                 }
-                c.restore()
             }
             y += PHOTO + PHOTO_GAP
         }

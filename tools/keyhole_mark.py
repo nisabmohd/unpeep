@@ -4,7 +4,8 @@ The mark: a lens ring with a glint, opening into two splayed legs, drawn with on
 stroke on Burrow's grid (512 canvas, content scaled 1.21318 about the centre). White on dark blue.
 
 usage: python3 tools/keyhole_mark.py            # writes everything below
-outputs: release/icon-512.svg (store), design/logo/keyhole-*.svg, and the Android vector drawables
+outputs: release/icon-512.svg (store, a full square; render it to icon-512.png with headless Chrome),
+         design/logo/keyhole-*.svg, and the Android vector drawables
          app/src/main/res/drawable/ic_launcher_foreground.xml, ic_launcher_monochrome.xml, ic_notification.xml
 """
 import os, re
@@ -46,7 +47,8 @@ def write(rel, text):
     open(path, "w").write(text); print("wrote", rel)
 
 if __name__ == "__main__":
-    write("release/icon-512.svg", svg())
+    # The store icon is a full square: Play applies its own rounded mask (as Burrow's and Weft's).
+    write("release/icon-512.svg", svg(rx=0))
     write("design/logo/keyhole-icon.svg", svg())
     write("design/logo/keyhole-icon-round.svg", svg(rx=256))
     write("design/logo/keyhole-mark-white.svg", svg(bg=None))

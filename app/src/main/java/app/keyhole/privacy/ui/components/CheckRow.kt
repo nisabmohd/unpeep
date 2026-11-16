@@ -20,12 +20,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -71,7 +73,7 @@ enum class CheckState { PLAIN, DONE, CURRENT, SKIPPED }
 @Composable
 fun CheckIcon(
     check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN, pressed: Boolean = false, focused: Boolean = false,
-    /** The circle's size: 44 dp, smaller only where a row of seven must fit a narrow width (the ring and badge follow). */
+    /** The circle's size: 44 dp on Home, 40 dp or less in a progress row (the ring and badge follow). */
     circle: Dp = Size.iconCircle,
 ) {
     val c = MaterialTheme.colorScheme
@@ -80,7 +82,8 @@ fun CheckIcon(
     val halo by animateFloatAsState(if (pressed) 1f else 0f, shortSpec(), label = "checkHalo")
     Box(modifier.widthIn(max = Size.checkSlot).size(Size.checkSlot), contentAlignment = Alignment.Center) {
         // Pressed (00-focus-states): a soft halo of the circle's own colour spreads out; the circle darkens a little.
-        val ringSize = circle + (Size.checkRing - Size.iconCircle)
+        // Home's 44 dp circle keeps its 54 dp ring; a progress row's smaller circle has its ring 2 dp outside it (03).
+        val ringSize = if (circle >= Size.iconCircle) Size.checkRing else circle + (Size.focusGap + Size.ring) * 2
         Box(Modifier.requiredSize(circle + Size.pressHalo * 2).graphicsLayer { alpha = halo * Alpha.halo }.clip(Shapes.pill).background(colors.container))
         // The current step, or keyboard focus: a primary ring a little outside the circle, fading in.
         Box(Modifier.requiredSize(ringSize).graphicsLayer { alpha = ring }.border(if (focused) Size.focusRing else Size.ring, c.primary, Shapes.pill))
@@ -95,8 +98,9 @@ fun CheckIcon(
             Icon(painterResource(check.icon), null, tint = if (state == CheckState.SKIPPED) c.onSurfaceVariant else colors.onContainer, modifier = Modifier.size(Size.iconInCircle * (circle / Size.iconCircle)))
         }
         Box(Modifier.requiredSize(circle), contentAlignment = Alignment.BottomEnd) {
-            AnimatedVisibility(state == CheckState.DONE, enter = scaleIn(shortSpec()), exit = scaleOut(shortSpec())) {
-                Box(Modifier.size(Size.badge).border(Size.ring, c.surfaceContainerLow, Shapes.pill).padding(Size.outline).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
+            AnimatedVisibility(state == CheckState.DONE, Modifier.offset(Size.badgeOut, Size.badgeOut), enter = scaleIn(shortSpec()), exit = scaleOut(shortSpec())) {
+                // A rim of the box's own colour, so the ✓ reads as cut out of the circle it hangs from.
+                Box(Modifier.size(Size.badge).clip(Shapes.pill).background(c.surfaceContainerLow).padding(Size.ring).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
                     Icon(painterResource(R.drawable.ic_check), null, tint = c.onPrimary, modifier = Modifier.size(Size.badgeIcon))
                 }
             }
@@ -114,11 +118,43 @@ private fun stateWord(state: CheckState): String? = when (state) {
 
 /**
  * The row of checks. With [onRun]: Home's "run one check" (labels under the icons, each 62 dp wide, scrolls
- * sideways so labels never squeeze). Without: the sweep's and the report's progress row (no labels).
+ * sideways so labels never squeeze). Without: a progress row with no labels, drawn as the sweep's steps or as the
+ * report's summary of what ran.
  */
 @Composable
-fun CheckRow(checks: List<Check>, modifier: Modifier = Modifier, state: (Check) -> CheckState = { CheckState.PLAIN }, onRun: ((Check) -> Unit)? = null) {
+fun CheckRow(
+    checks: List<Check>, modifier: Modifier = Modifier, state: (Check) -> CheckState = { CheckState.PLAIN }, onRun: ((Check) -> Unit)? = null,
+    /** The sweep's steps as it runs (03): 40 dp circles from edge to edge. Without it, the report's row of what ran (10): 44 dp in equal shares. */
+    steps: Boolean = false,
+) {
     val c = MaterialTheme.colorScheme
+    if (onRun == null && steps) {
+        // Progress (03): 40 dp circles spread edge to edge inside the box's 16 dp padding. On a narrow row they
+        // shrink evenly to 36 dp, keeping at least 6 dp between them (10l); narrower still, the row scrolls sideways.
+        val density = LocalDensity.current
+        var width by remember { mutableIntStateOf(0) }
+        val gaps = Size.checkGap * (checks.size - 1).coerceAtLeast(0)
+        val fit = if (width == 0 || checks.isEmpty()) Size.checkCircle else (with(density) { width.toDp() } - gaps) / checks.size
+        val circle = fit.coerceIn(Size.checkCircleMin, Size.checkCircle)
+        val scrolls = width > 0 && fit < Size.checkCircleMin
+        Row(
+            modifier.fillMaxWidth().padding(horizontal = Space.card).onSizeChanged { width = it.width }
+                .then(if (scrolls) Modifier.horizontalScroll(rememberScrollState()) else Modifier),
+            horizontalArrangement = when {
+                scrolls -> Arrangement.spacedBy(Size.checkGap)
+                checks.size > 1 -> Arrangement.SpaceBetween
+                else -> Arrangement.Center
+            },
+        ) {
+            checks.forEach { check ->
+                val name = stringResource(check.label)
+                val s = state(check)
+                val word = stateWord(s)
+                CheckIcon(check, Modifier.width(circle).height(Size.checkCircle).clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s, circle = circle)
+            }
+        }
+        return
+    }
     if (onRun == null) {
         // Progress: every check fits the width, each in an equal share with at least a gap between circles; the
         // circles shrink a little on a narrow row rather than touch (a large display size), never overlap.

@@ -58,6 +58,7 @@ import app.keyhole.privacy.ui.components.CheckRow
 import app.keyhole.privacy.ui.components.CheckState
 import app.keyhole.privacy.ui.components.DetailScreen
 import app.keyhole.privacy.ui.components.EmptyState
+import app.keyhole.privacy.ui.components.EmptyUnder
 import app.keyhole.privacy.ui.components.Grouped
 import app.keyhole.privacy.ui.components.LensProgress
 import app.keyhole.privacy.ui.components.PrimaryButton
@@ -185,7 +186,7 @@ fun SweepContent(
         val checkRow: @Composable () -> Unit = {
             val at = s.steps.indexOf(s.current)
             Box24 {
-                CheckRow(s.steps, state = { check ->
+                CheckRow(s.steps, steps = true, state = { check ->
                     val i = s.steps.indexOf(check)
                     when {
                         i == at -> CheckState.CURRENT
@@ -205,17 +206,17 @@ fun SweepContent(
             s.current == null -> Unit
             s.paused -> EmptyState(
                 painterResource(s.current.icon), stringResource(R.string.paused_at, stringResource(s.current.label)),
-                pluralStringResource(R.plurals.paused_line, s.steps.size, s.stepsDone, s.steps.size), hue = s.current.hue,
+                pluralStringResource(R.plurals.paused_line, s.steps.size, s.stepsDone, s.steps.size), hue = s.current.hue, under = if (showRow) EmptyUnder.CHECK_ROW else EmptyUnder.BAR,
             )
-            offline -> EmptyState(painterResource(s.current.icon), stringResource(R.string.aeroplane_title), stringResource(R.string.aeroplane_line), hue = s.current.hue)
-            notOnWifi -> EmptyState(painterResource(R.drawable.ic_wifi), stringResource(R.string.not_on_wifi_title), stringResource(R.string.not_on_wifi_line), hue = Check.WIFI.hue)
+            offline -> EmptyState(painterResource(s.current.icon), stringResource(R.string.aeroplane_title), stringResource(R.string.aeroplane_line), hue = s.current.hue, under = if (showRow) EmptyUnder.CHECK_ROW else EmptyUnder.BAR)
+            notOnWifi -> EmptyState(painterResource(R.drawable.ic_wifi), stringResource(R.string.not_on_wifi_title), stringResource(R.string.not_on_wifi_line), hue = Check.WIFI.hue, under = if (showRow) EmptyUnder.CHECK_ROW else EmptyUnder.BAR)
             s.current == Check.WIFI -> WifiStep(s.wifi, landscape, side)
             nearby != null && needsPermission -> {
                 val words = nearby.check.nearbyWords
                 val why = stringResource(words.permLine)
-                EmptyState(painterResource(nearby.check.icon), stringResource(words.permTitle), if (settingsOnly) why + " " + stringResource(R.string.perm_denied_line) else why, hue = nearby.check.hue)
+                EmptyState(painterResource(nearby.check.icon), stringResource(words.permTitle), if (settingsOnly) why + " " + stringResource(R.string.perm_denied_line) else why, hue = nearby.check.hue, under = if (showRow) EmptyUnder.CHECK_ROW else EmptyUnder.BAR)
             }
-            nearby != null && block != null -> EmptyState(painterResource(block.icon ?: nearby.check.icon), stringResource(block.title), stringResource(block.line), hue = nearby.check.hue)
+            nearby != null && block != null -> EmptyState(painterResource(block.icon ?: nearby.check.icon), stringResource(block.title), stringResource(block.line), hue = nearby.check.hue, under = if (showRow) EmptyUnder.CHECK_ROW else EmptyUnder.BAR)
             nearby != null -> NearbyStep(nearby, landscape, side)
             // Lens, Infrared, Magnet and the checklist open their own screens as soon as the sweep reaches them.
             else -> Unit
@@ -236,7 +237,7 @@ private fun ColumnScope.NearbyStep(n: NearbySnapshot, landscape: Boolean = false
         Text(stringResource(n.check.nearbyWords.checking), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
         Text(
             pluralStringResource(R.plurals.about_seconds_left, n.secondsLeft, n.secondsLeft),
-            style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset),
+            style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.row).padding(horizontal = Space.screen),
         )
     }
     }
@@ -286,7 +287,7 @@ private fun ColumnScope.WifiStep(w: WifiSnapshot, landscape: Boolean = false, si
         Text(stringResource(R.string.checking_wifi), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
         Text(
             w.ssid?.let { stringResource(R.string.two_parts, it, left) } ?: left,
-            style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset),
+            style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.row).padding(horizontal = Space.screen),
         )
     }
     }

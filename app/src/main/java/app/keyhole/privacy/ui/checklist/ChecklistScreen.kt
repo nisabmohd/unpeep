@@ -149,8 +149,9 @@ fun ChecklistContent(s: ChecklistState, onBack: () -> Unit, onItem: (ChecklistIt
         },
     ) {
         ProgressLine(if (s.total == 0) 0f else s.done.toFloat() / s.total, progress, Modifier.padding(horizontal = Space.headingInset))
-        s.sections.forEach { (section, items) ->
-            SectionLabel(stringResource(section.label))
+        Spacer(Modifier.height(Space.inline))
+        s.sections.forEachIndexed { i, (section, items) ->
+            SectionLabel(stringResource(section.label), first = i == 0)
             Grouped {
                 items.forEach { item ->
                     val look = item.look
@@ -241,7 +242,7 @@ fun AnswerSheet(item: ChecklistItem, current: ChecklistEntry?, onDismiss: () -> 
             )
         }
         if (notSure) {
-            Column(Modifier.padding(horizontal = Space.screen, vertical = Space.block)) {
+            Column(Modifier.padding(start = Space.screen, end = Space.screen, top = Space.block)) {
                 KeyholeTextField(note, { note = it }, stringResource(R.string.note_hint), stringResource(R.string.note_label), singleLine = false)
                 Spacer(Modifier.height(Space.block))
                 // The photo (09c): its thumbnail, then the dashed tile that takes one (or another), named beside it.

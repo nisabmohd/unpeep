@@ -1,9 +1,13 @@
 package app.keyhole.privacy.domain
 
-/** The seven checks, in the order a sweep runs them (docs/SCANNING.md). */
+import androidx.annotation.Keep
+
+/** The seven checks, in the order a sweep runs them (docs/SCANNING.md). Kept by name: it travels in navigation routes. */
+@Keep
 enum class Check { WIFI, HOTSPOTS, BLUETOOTH, LENS, INFRARED, MAGNET, CHECKLIST }
 
 /** Where the room is. Each place has its own checks and checklist (docs/PLAN.md § 2.6). */
+@Keep
 enum class Place {
     STAY, TRIAL_ROOM, WASHROOM, OFFICE, CAR;
 

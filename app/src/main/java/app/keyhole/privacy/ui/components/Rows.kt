@@ -39,6 +39,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
@@ -51,6 +52,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
+import app.keyhole.privacy.ui.theme.CountGap
 import app.keyhole.privacy.ui.theme.KeyholeType
 import app.keyhole.privacy.ui.theme.Shapes
 import app.keyhole.privacy.ui.theme.Size
@@ -131,7 +133,7 @@ fun ListRow(
     /** A result tag ("Likely camera"): at the end of the row, or under the line once text is large (00-decisions). */
     tag: (@Composable () -> Unit)? = null,
     onClick: (() -> Unit)? = null,
-    chevron: Boolean = onClick != null && trailing == null,
+    chevron: Boolean = onClick != null && trailing == null && tag == null,
     onLongClick: (() -> Unit)? = null,
     longClickLabel: String? = null,
     /** A destructive row (Delete all reports): its title in the error colour. */
@@ -201,8 +203,9 @@ fun ValueRow(label: String, value: String, modifier: Modifier = Modifier, shape:
         verticalArrangement = Arrangement.Center,
         itemVerticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(label, style = KeyholeType.body, color = c.onSurfaceVariant, modifier = Modifier.padding(end = Space.card))
-        Text(value, style = KeyholeType.cardTitle, color = c.onSurface, textAlign = TextAlign.End)
+        // Both 14 sp, the value in Medium (05: "Open ports · 80 · 554 · 8899").
+        Text(label, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.padding(end = Space.card))
+        Text(value, style = KeyholeType.label, color = c.onSurface, textAlign = TextAlign.End)
     }
 }
 
@@ -223,18 +226,30 @@ fun SignRow(icon: Painter?, text: String, modifier: Modifier = Modifier, shape: 
     }
 }
 
-/** The label above a group: sentence case, 24 dp from the screen edge, an optional count on the right. */
+/**
+ * The muted label above a group, with an optional count or one text action at its end. 24 dp above and 16 dp below
+ * its line (04, 05); [first]: the first thing under a top bar, where 12 dp above is enough (12, 13d).
+ */
 @Composable
-fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = null, action: String? = null, onAction: () -> Unit = {}) {
+fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = null, action: String? = null, onAction: () -> Unit = {}, first: Boolean = false) {
     val c = MaterialTheme.colorScheme
     Row(
-        modifier.fillMaxWidth().padding(start = Space.headingInset, end = Space.headingInset, top = Space.sectionTop, bottom = Space.sectionBottom),
+        modifier.fillMaxWidth().padding(start = Space.headingInset, end = Space.headingInset, top = if (first) Space.block else Space.sectionTop, bottom = Space.sectionBottom),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Text(text, style = KeyholeType.label, color = c.onSurfaceVariant, modifier = Modifier.weight(1f).semantics { heading() })
         if (meta != null) Text(meta, style = KeyholeType.supporting, color = c.onSurfaceVariant)
-        // A text action ("Change"): the accent colour, 48 dp to tap, the one way a section label acts.
-        if (action != null) TopBarAction(action, onAction)
+        // A text action ("Change"): the accent colour, 48 dp to tap, the one way a section label acts. Its target
+        // hangs over the label's line, so the label is no taller with it, and its words end at the 24 dp edge (11).
+        if (action != null) {
+            TopBarAction(action, onAction, Modifier.layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints.copy(minHeight = 0))
+                val over = Size.actionOverhang.roundToPx()
+                val inset = Space.block.roundToPx()
+                val height = (placeable.height - over).coerceAtLeast(0)
+                layout((placeable.width - inset).coerceAtLeast(0), height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+            })
+        }
     }
 }
 
@@ -269,7 +284,7 @@ fun String.keepTogether(): String = replace(' ', '\u00A0')
 fun QuietLine(text: String, modifier: Modifier = Modifier) {
     Text(
         text, style = KeyholeType.supporting, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = androidx.compose.ui.text.style.TextAlign.Center,
-        modifier = modifier.fillMaxWidth().padding(top = Space.heading, start = Space.heading, end = Space.heading),
+        modifier = modifier.fillMaxWidth().padding(top = Space.card, start = Space.heading, end = Space.heading),
     )
 }
 
@@ -321,7 +336,7 @@ fun Note(
         NoteTone.GOOD -> listOf(c.secondaryContainer, c.onSecondaryContainer, c.primary, c.onPrimary)
         NoteTone.WARNING -> listOf(w.container, w.onContainer, w.onContainer, w.container)
         NoteTone.ERROR -> listOf(c.errorContainer, c.onErrorContainer, c.error, c.onError)
-        NoteTone.HONESTY -> listOf(c.surfaceContainer, c.onSurface, c.onSurfaceVariant, c.surfaceContainer)
+        NoteTone.HONESTY -> listOf(c.surfaceContainerLow, c.onSurface, c.onSurfaceVariant, c.surfaceContainerLow)
     }
     val painter = icon ?: painterResource(
         when (tone) {
@@ -333,7 +348,7 @@ fun Note(
         },
     )
     Row(
-        modifier.fillMaxWidth().clip(Shapes.surface).background(bg).padding(start = Space.card, top = Space.card, bottom = Space.card, end = if (action != null) Space.headingInset else Space.card),
+        modifier.fillMaxWidth().clip(Shapes.surface).background(bg).padding(start = Space.card, top = Space.note, bottom = Space.note, end = if (action != null) Space.headingInset else Space.card),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Row(Modifier.weight(1f).semantics(mergeDescendants = true) {}, verticalAlignment = Alignment.CenterVertically) {
@@ -401,25 +416,35 @@ fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: 
         SummaryTone.WARNING -> warning
         SummaryTone.NEUTRAL -> c.surfaceContainerHighest
     }
-    val big = KeyholeType.display.toSpanStyle().copy(color = c.onSurface)
+    // The count is 30 sp in a 38 dp line; the words beside it are 14 sp, a little further off than a plain space (04).
+    val head = KeyholeType.headline
+    val big = androidx.compose.ui.text.SpanStyle(color = c.onSurface, fontSize = head.fontSize, fontWeight = head.fontWeight)
+    val gap = androidx.compose.ui.text.SpanStyle(letterSpacing = CountGap)
     val sentence = remember(text, count, big) {
         buildAnnotatedString {
             append(text)
             val at = text.indexOf(count)
-            if (count.isNotEmpty() && at >= 0) addStyle(big, at, at + count.length)
+            if (count.isNotEmpty() && at >= 0) {
+                addStyle(big, at, at + count.length)
+                val end = at + count.length
+                if (end < text.length && text[end] == ' ') addStyle(gap, end, end + 1)
+                else if (at > 0 && text[at - 1] == ' ') addStyle(gap, at - 1, at)
+            }
         }
     }
     Column(
-        modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(Space.card).semantics(mergeDescendants = true) {},
-        verticalArrangement = Arrangement.spacedBy(Space.block),
+        modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow)
+            .padding(start = Space.card, end = Space.card, top = Space.summaryTop, bottom = Space.card).semantics(mergeDescendants = true) {},
     ) {
-        Text(sentence, style = KeyholeType.body, color = c.onSurfaceVariant)
+        Text(sentence, style = KeyholeType.countLine, color = c.onSurfaceVariant)
+        Spacer(Modifier.height(Space.summaryBar))
         // One segment per colour: the grey ones (known, not recognised) are one stretch of the bar.
         val shown = parts.filter { it.count > 0 }.groupBy { it.tone }.map { (tone, same) -> SummaryPart(same.sumOf { it.count }, "", tone) }
-        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
-            if (shown.isEmpty()) Box(Modifier.weight(1f).height(Size.dot).clip(Shapes.pill).background(colour(SummaryTone.NEUTRAL)))
-            shown.forEach { Box(Modifier.weight(it.count.toFloat()).height(Size.dot).clip(Shapes.pill).background(colour(it.tone))) }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.barGap)) {
+            if (shown.isEmpty()) Box(Modifier.weight(1f).height(Size.summaryBar).clip(Shapes.pill).background(colour(SummaryTone.NEUTRAL)))
+            shown.forEach { Box(Modifier.weight(it.count.toFloat()).height(Size.summaryBar).clip(Shapes.pill).background(colour(it.tone))) }
         }
+        Spacer(Modifier.height(Space.summaryLegend))
         // The legend names only what is there; when nothing is, one quiet line says so.
         val legend = parts.filter { it.count > 0 }.ifEmpty { listOf(SummaryPart(0, stringResource(R.string.summary_nothing), SummaryTone.NEUTRAL)) }
         FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.card), verticalArrangement = Arrangement.spacedBy(Space.small)) {
@@ -427,7 +452,7 @@ fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: 
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Box(Modifier.size(Size.dot).clip(Shapes.pill).background(colour(part.tone)))
                     Spacer(Modifier.width(Space.inline))
-                    Text(part.label, style = KeyholeType.caption, color = c.onSurfaceVariant)
+                    Text(part.label, style = KeyholeType.small, color = c.onSurfaceVariant)
                 }
             }
         }

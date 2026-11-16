@@ -55,6 +55,9 @@ data class ScanUpdate(
 class WifiScanner(context: Context) {
     private val context = context.applicationContext
 
+    /** Whether the phone is on a Wi-Fi right now; asked before a scan starts, so "Not on Wi-Fi" shows without a scan. */
+    fun onWifi(): Boolean = WifiNetwork.current(context) != null
+
     fun scan(ports: Map<Int, PortKind>): Flow<ScanUpdate> = channelFlow {
         val link = WifiNetwork.current(context)
         if (link == null) {

@@ -21,7 +21,9 @@ Screens never write a raw colour, dp, sp or tween (`ProjectRulesTest`).
 
 Check hues: Wi-Fi 232 · Hotspots 150 · Bluetooth 268 · Lens 34 · Infrared 338 · Magnet 92 · Checklist 186
 (`checkColors(hue)`: container + onContainer).
-Brand: launcher background `#173782` (`Brand` in Color.kt: the mark's tile on Welcome and About).
+Brand: launcher background `#173782` (`Brand` in Color.kt: the launcher and the PDF). In the app the mark's tile
+(`MarkTile`: Welcome, About, the rail) is `primary` with the mark in `onPrimary`: the same blue with the default
+colours in light, and it follows the accent or dynamic colour.
 
 ## Type
 | Style | Size/line | Weight | Used for |
@@ -34,6 +36,12 @@ Brand: launcher background `#173782` (`Brand` in Color.kt: the mark's tile on We
 | supporting | 14/20 | 400 | second lines |
 | label | 14/20 | 500 | buttons, chips, section labels |
 | caption | 12/16 | 500 | nav, check row, tags |
+| small | 12/16 | 400 | a lens count's line, legends, a scale's step names |
+| button | 15/20 | 500 | button labels |
+| countLine | 14/38 | 400 | the words beside a SummaryBox's 30 sp count |
+
+A line of text is exactly its line height with the letters centred in it (`LineHeightStyle` Center, Trim.None), as
+the boards' CSS draws it, so spacing tokens are measured between line boxes.
 
 ## Space · Size · Shape
 Space: screen 16 · block 12 · row 2 · card 16 · heading 24 · inline 8 · small 4 · dock 28.

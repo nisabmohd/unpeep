@@ -163,7 +163,7 @@ private val Check.how: Int
 fun HowItWorksScreen(onBack: () -> Unit) {
     DetailScreen(onBack) {
         LensHeader(painterResource(R.drawable.ic_help), stringResource(R.string.how_keyhole_works), line = stringResource(R.string.how_keyhole_works_line))
-        Spacer(Modifier.height(Space.block))
+        Spacer(Modifier.height(Space.card))
         Grouped {
             Check.entries.forEach { check ->
                 row { shape -> ListRow(stringResource(check.label), shape = shape, line = stringResource(check.how), leading = { IconCircle(painterResource(check.icon), CircleTone.Hue(check.hue)) }) }
@@ -179,7 +179,7 @@ fun HowItWorksScreen(onBack: () -> Unit) {
 fun LimitsScreen(onBack: () -> Unit) {
     DetailScreen(onBack) {
         LensHeader(painterResource(R.drawable.ic_eye_closed), stringResource(R.string.what_keyhole_cant_find), line = stringResource(R.string.limits_intro))
-        Spacer(Modifier.height(Space.block))
+        Spacer(Modifier.height(Space.card))
         // The four limits as rows (final v2, 13g): a title, one line, and the thing itself in a grey circle.
         Grouped {
             listOf(
@@ -280,11 +280,12 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
         }
     }
     DetailScreen(onBack, title = stringResource(R.string.about)) {
-        Column(Modifier.fillMaxWidth().padding(vertical = Space.heading), horizontalAlignment = Alignment.CenterHorizontally) {
+        // 17: the 72 dp mark 4 dp under the bar, the name 12 dp under it, the version 2 dp under that, 20 dp to the rows.
+        Column(Modifier.fillMaxWidth().padding(top = Space.small, bottom = Space.lensBottom), horizontalAlignment = Alignment.CenterHorizontally) {
             MarkTile(Size.logo)
             Spacer(Modifier.height(Space.block))
             Text(stringResource(R.string.app_name), style = KeyholeType.title, color = c.onSurface, modifier = Modifier.semantics { heading() })
-            Text(stringResource(R.string.version_by, BuildConfig.VERSION_NAME), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
+            Text(stringResource(R.string.version_by, BuildConfig.VERSION_NAME), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.row))
         }
         Grouped {
             if (BuildConfig.GITHUB_UPDATES) row { shape ->
@@ -343,7 +344,7 @@ fun AboutScreen(onBack: () -> Unit, onPrivacy: () -> Unit, onLicences: () -> Uni
         )
         Text(
             stringResource(R.string.made_by), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center,
-            modifier = Modifier.fillMaxWidth().padding(vertical = Space.heading),
+            modifier = Modifier.fillMaxWidth().padding(top = Space.lensBottom, bottom = Space.heading),
         )
     }
     if (checking || update != null) {
@@ -418,7 +419,7 @@ private fun AppTile(@androidx.annotation.DrawableRes mark: Int, color: androidx.
     }
 }
 
-private const val APP_MARK_SCALE = 1.15f
+private const val APP_MARK_SCALE = 1.4f
 
 /**
  * Check for updates (17a–17d, github build): checking, with a moving line · on the latest version (Done) · a new

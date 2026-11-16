@@ -7,6 +7,8 @@ Tick it when built and tested; the owner reviews and commits.
 Weeks 0–6 (set-up, Wi-Fi, Hotspots, Bluetooth, Lens, Infrared, Magnet, Checklist, Report, More) and every design
 round up to **final v3** (`design/screens/`, `design/README.md`): screens 01–18 and their states, error states
 E01–E17, tablets and landscape T01–T06, PDF (10g), update sheet (17a–d), toasts for events and Notes for states.
+Boards updated 2026-11-16 (sweep check row, Language, Help numbers) are built, and every shared component was
+measured against its board at 412 × 892 dp (text lines are full line height now, as the boards draw them).
 Tests: unit and rule tests, plus 137 on-device tests (`ComponentsTest`, `ScreensTest`, `AccessibilityTest`, `SmokeTest`).
 
 ## On a real phone
@@ -30,13 +32,15 @@ Hotspots with Location, Bluetooth permission and "Bluetooth is off", Checklist, 
 
 ## Release (owner)
 - [ ] Baseline profile: regenerate on a real phone (`./gradlew :app:generateBaselineProfile`) and commit
-- [ ] Store graphics: feature graphic 1024 × 500 and phone screenshots (`tools/store_shots.py` doesn't exist yet)
+- [x] Store graphics: `release/` has the icon, the feature graphic and eight phone screenshots, made by
+      `tools/feature_graphic.py` and `tools/store_shots.py` (how: `release/README.md`); owner to look them over
 - [ ] Play Console: listing from `fastlane/`, data safety from `release/data-safety.md`, content rating
 - [ ] F-Droid: submit (metadata in `fastlane/`); CI checks the foss APK has no Google code
 - [ ] Tag v0.1.0 (the release workflow reads `CHANGELOG.md` § 0.1.0)
 - [ ] Once live: `PLAY_LISTED = true` so About shows "Rate on Google Play"; wire `PlayReview` (in `src/play`) to that row
 - [ ] About › More from mid apps: check the Burrow and Weft store links
-- [ ] Lint: dependency-update and AGP-version warnings (updating needs a decision)
+- [ ] Lint: dependency-update and AGP-version warnings (updating needs a decision); the German "das das" typo
+      warning is correct German. Everything else lint reported is fixed
 
 ## Next
 - [ ] "Enjoying Keyhole?" sheet, as Weft's `SupportPromptSheet` / Burrow's review ask: Rate (play), Star on GitHub,

@@ -1,0 +1,147 @@
+"""Builds the Play Store shots in release/phone-screenshots/ (1080 x 1920), in the look Burrow and Weft use:
+a flat page, a two-line caption and a plain phone frame around a raw 1080 x 2400 emulator screenshot. The phone
+sits under the tallest caption with 72 px left below it, so the navigation bar and the bezel are never cut. The
+status bar is pulled in from the edges so the frame's rounded corners never cut the clock or the battery.
+
+usage: python3 tools/store_shots.py <folder with the raw shots> [out folder]
+Raw shots are named home.png, sweep.png, results.png, device.png, lens.png, find-it.png, report.png and
+home-dark.png (the `StoreShots` test writes them; see release/README.md). It also copies the eight files to
+fastlane/metadata/android/en-US/images/phoneScreenshots/1-8.png when no out folder is given.
+Needs Pillow."""
+import os
+import shutil
+import sys
+from PIL import Image, ImageDraw, ImageFilter, ImageFont
+
+ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+RAW = sys.argv[1]
+OUT = sys.argv[2] if len(sys.argv) > 2 else os.path.join(ROOT, "release", "phone-screenshots")
+FASTLANE = None if len(sys.argv) > 2 else os.path.join(ROOT, "fastlane", "metadata", "android", "en-US", "images", "phoneScreenshots")
+os.makedirs(OUT, exist_ok=True)
+FONT = os.path.join(ROOT, "app", "src", "main", "res", "font", "lexend.ttf")
+
+# Captions follow docs/COPY.md: short plain words, no fear words, and never "safe" or "detects all".
+shots = [
+    ("home", "01-home.png", "Check a room for cameras", "Seven checks in one calm sweep.", False),
+    ("sweep", "02-sweep.png", "See what is on the Wi-Fi", "Keyhole asks every device and lists what answers.", False),
+    ("results", "03-results.png", "Likely cameras come first", "Known devices are set aside, so the list stays short.", False),
+    ("device", "04-device.png", "Every finding says why", "The signs Keyhole saw, in plain words.", False),
+    ("lens", "05-lens.png", "Find a lens by its glint", "The torch and the camera ring what shines back.", False),
+    ("find-it", "06-find-it.png", "Walk towards a signal", "A meter leads you to a hotspot or a tracker.", False),
+    ("report", "07-report.png", "An honest report", "What was checked, and what couldn't be.", False),
+    ("home-dark", "08-home-dark.png", "Private. Yours.", "Keyhole never sends your data anywhere.", True),
+]
+
+W, H = 1080, 1920
+TOP, GAP, BOTTOM = 150, 56, 72                        # caption top; caption → phone; phone → edge
+BEZEL, OUTER_R, INNER_R = 14, 62, 48
+RAW_W, RAW_H = 1080, 2400                             # emulator screenshot size
+TITLE_SIZE, TITLE_LINE, SUB_SIZE, SUB_LINE = 68, 82, 36, 48
+
+
+def font(size, weight):
+    f = ImageFont.truetype(FONT, size)
+    f.set_variation_by_axes([weight])
+    return f
+
+
+def wrap(draw, text, f, width):
+    lines, cur = [], ""
+    for word in text.split():
+        t = (cur + " " + word).strip()
+        if draw.textlength(t, font=f) <= width or not cur:
+            cur = t
+        else:
+            lines.append(cur)
+            cur = word
+    return lines + [cur]
+
+
+def screen(raw, sw, sh):
+    """The raw shot at screen size, status bar pulled in from the corners so they never cut it."""
+    s = Image.open(raw).convert("RGB")
+    # The emulator's display has rounded corners drawn black into every screenshot: paint them with the
+    # status bar's or the navigation bar's own colour, or they showed as black arcs inside the frame.
+    px = s.load()
+    w, h = s.size
+    r = 140
+    for (cx, cy, ys) in ((0, 0, 8), (w - 1, 0, 8), (0, h - 1, h - 9), (w - 1, h - 1, h - 9)):
+        fill = s.getpixel((w // 2, ys))
+        for y in range(r):
+            for x in range(r):
+                X = cx + x if cx == 0 else cx - x
+                Y = cy + y if cy == 0 else cy - y
+                if sum(px[X, Y]) < 60:
+                    px[X, Y] = fill
+    k = sw / RAW_W
+    out = s.resize((sw, sh), Image.LANCZOS)
+    bar = round(110 * k)                                   # status bar, tall enough for the clock
+    clock = s.crop((0, 0, 360, 110)).resize((round(360 * k), bar), Image.LANCZOS)
+    icons = s.crop((720, 0, RAW_W, 110)).resize((round(360 * k), bar), Image.LANCZOS)
+    ImageDraw.Draw(out).rectangle((0, 0, sw, bar), fill=s.getpixel((540, 8)))
+    inset, drop = 14, 8
+    out.paste(clock, (inset, drop))
+    out.paste(icons, (sw - icons.width - inset, drop))
+    return out
+
+
+def caption(d, title, sub, tf, sf, tc, sc, dry=False):
+    """Draws the title and line; returns the y under them."""
+    y = TOP
+    for line in wrap(d, title, tf, 960):
+        if not dry:
+            d.text((W / 2, y), line, font=tf, fill=tc, anchor="mt")
+        y += TITLE_LINE
+    y += 12
+    for line in wrap(d, sub, sf, 920):
+        if not dry:
+            d.text((W / 2, y), line, font=sf, fill=sc, anchor="mt")
+        y += SUB_LINE
+    return y
+
+
+tf, sf = font(TITLE_SIZE, 540), font(SUB_SIZE, 400)   # Lexend drawn a step heavier, as in the app
+probe = ImageDraw.Draw(Image.new("RGB", (W, H)))
+# One phone size for every shot: under the tallest caption, with room below for the shadow.
+FY = max(caption(probe, t, s, tf, sf, None, None, dry=True) for _, _, t, s, _ in shots) + GAP
+FH = H - BOTTOM - FY
+SH = FH - 2 * BEZEL
+SW = round(SH * RAW_W / RAW_H)
+FW = SW + 2 * BEZEL
+FX = (W - FW) // 2
+SX, SY = FX + BEZEL, FY + BEZEL
+
+for raw, out, title, sub, dark in shots:
+    if not os.path.exists(os.path.join(RAW, raw + ".png")):
+        print(f"skip {out}: no {raw}.png")  # re-shoot one caption without the other seven
+        continue
+    bg = (18, 22, 34) if dark else (224, 232, 251)   # Keyhole blue, from the 222 seed
+    tc = (233, 238, 250) if dark else (16, 27, 62)
+    sc = (172, 182, 206) if dark else (72, 84, 118)
+    img = Image.new("RGB", (W, H), bg)
+    d = ImageDraw.Draw(img)
+    caption(d, title, sub, tf, sf, tc, sc)
+
+    # soft shadow under the phone
+    sh = Image.new("L", (W, H), 0)
+    ImageDraw.Draw(sh).rounded_rectangle((FX, FY + 12, FX + FW, FY + FH + 12), OUTER_R, fill=90 if not dark else 160)
+    sh = sh.filter(ImageFilter.GaussianBlur(28))
+    img.paste((0, 0, 0) if dark else (60, 80, 140), (0, 0), sh)
+
+    d = ImageDraw.Draw(img)
+    d.rounded_rectangle((FX, FY, FX + FW - 1, FY + FH - 1), OUTER_R, fill=(50, 54, 62) if dark else (18, 20, 24))
+    if dark:  # a thin light rim so the dark phone reads on the dark page
+        d.rounded_rectangle((FX, FY, FX + FW - 1, FY + FH - 1), OUTER_R, outline=(60, 66, 82), width=2)
+        d.rounded_rectangle((FX + 2, FY + 2, FX + FW - 3, FY + FH - 3), OUTER_R - 2, fill=(12, 13, 16))
+
+    scr = screen(f"{RAW}/{raw}.png", SW, SH)
+    k = 4
+    m = Image.new("L", (SW * k, SH * k), 0)
+    ImageDraw.Draw(m).rounded_rectangle((0, 0, SW * k - 1, SH * k - 1), INNER_R * k, fill=255)
+    img.paste(scr, (SX, SY), m.resize((SW, SH), Image.LANCZOS))
+    img.save(f"{OUT}/{out}", optimize=True)
+    if FASTLANE:
+        os.makedirs(FASTLANE, exist_ok=True)
+        shutil.copyfile(f"{OUT}/{out}", f"{FASTLANE}/{int(out[:2])}.png")
+    print(out)
+print(f"phone {FW} x {FH} at y {FY}, {H - FY - FH} px below")

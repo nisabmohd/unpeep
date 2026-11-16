@@ -42,6 +42,10 @@ fun seedColorScheme(hue: Float, dark: Boolean): ColorScheme = if (dark) {
         onBackground = text,
         surface = bg,
         onSurface = text,
+        // The Toast: the light theme's ink as its pill, the light page as its words.
+        inverseSurface = tone(hue, 24, 92f),
+        inverseOnSurface = tone(hue, 34, 11f),
+        inversePrimary = tone(hue, 70, 30f),
         surfaceVariant = tone(hue, 16, 15.5f),
         onSurfaceVariant = tone(hue, 12, 72f),
         surfaceContainerLowest = bg,
@@ -73,6 +77,10 @@ fun seedColorScheme(hue: Float, dark: Boolean): ColorScheme = if (dark) {
         onBackground = text,
         surface = bg,
         onSurface = text,
+        // The Toast: the page's ink as its pill (10h), the dark theme's accent for its action.
+        inverseSurface = text,
+        inverseOnSurface = bg,
+        inversePrimary = tone(hue, 86, 79f),
         surfaceVariant = tone(hue, 30, 91.5f),
         onSurfaceVariant = tone(hue, 12, 37f),
         surfaceContainerLowest = bg,
@@ -130,7 +138,7 @@ object Hues {
     const val ITEM_BLUE = 221f
 }
 
-/** The launcher's background: the mark's tile on Welcome and About (TOKENS.md › Brand). */
+/** The launcher's background, and the mark's tile in the PDF. In the app the tile follows the theme (`MarkTile`). */
 val Brand = Color(0xFF173782)
 
 /** The other mid apps' launcher colours, behind their marks in About › More from mid apps. */
@@ -151,6 +159,9 @@ val Viewfinder = ViewfinderColors(
     page = Color(0xFF05070B), content = Color(0xFFF1F3F9), muted = Color(0xFFAEB4C4),
     control = Color(0x33FFFFFF), ring = Color(0xFFFFC94D),
 )
+
+/** The progress lens's core in light: white, a step above the page (03). In dark it is the page's own colour. */
+val LensCore = Color.White
 
 /** The red filter of the lens finder: what multiplies the preview so glints stand out. */
 val RedFilter = Color(0xFFFF2A2A)

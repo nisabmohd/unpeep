@@ -37,6 +37,7 @@ sealed interface OpenFromOutside {
 /** A More row's screen. */
 @Serializable data class MoreItemRoute(val item: MoreItem)
 
+@androidx.annotation.Keep
 enum class MoreItem { APPEARANCE, LANGUAGE, SWEEP_STEPS, MARKED_KNOWN, HOW_IT_WORKS, LIMITS, PRIVACY, ABOUT, LICENCES, FOUND_CAMERA }
 
 /** Hotspot or Bluetooth results. [sweep]: part of a sweep (then "Next" goes on), or the check run alone. */

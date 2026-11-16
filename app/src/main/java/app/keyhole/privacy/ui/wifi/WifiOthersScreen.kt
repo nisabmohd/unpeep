@@ -38,11 +38,11 @@ fun WifiOthersContent(w: WifiSnapshot, onBack: () -> Unit, onDevice: (String) ->
             EmptyState(painterResource(R.drawable.ic_wifi), null, stringResource(R.string.nothing_answered_yet))
         }
         if (other.isNotEmpty()) {
-            SectionLabel(stringResource(R.string.risk_not_recognised), meta = other.size.toString())
+            SectionLabel(stringResource(R.string.risk_not_recognised), meta = other.size.toString(), first = true)
             Grouped { other.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
         }
         if (known.isNotEmpty()) {
-            SectionLabel(stringResource(R.string.risk_known), meta = known.size.toString())
+            SectionLabel(stringResource(R.string.risk_known), meta = known.size.toString(), first = other.isEmpty())
             Grouped { known.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
         }
     }

@@ -27,6 +27,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -49,6 +50,7 @@ import app.keyhole.privacy.ui.theme.LensSize
 import app.keyhole.privacy.ui.theme.Shapes
 import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.Space
+import app.keyhole.privacy.ui.theme.lensCore
 import app.keyhole.privacy.ui.theme.progressSpec
 import kotlin.math.cos
 import kotlin.math.sin
@@ -90,14 +92,16 @@ fun LensRings(
             drawCircle(c.outline.copy(alpha = Alpha.ringFaint), outer, style = Stroke(stroke))
             if (middleRing || progress != null) drawCircle(c.outline.copy(alpha = Alpha.ringOuter), middle, style = Stroke(stroke))
             // The progress lens has a white core of its own (with a shadow), so no ring hugs it.
-            if (progress == null) drawCircle(c.outline.copy(alpha = Alpha.ringMiddle), inner, style = Stroke(stroke))
+            if (progress == null) drawCircle(c.outline.copy(alpha = Alpha.ringMiddle), if (size <= LensSize.header) core.toPx() / 2 + LensSize.headerRing.toPx() else inner, style = Stroke(stroke))
             if (glint) drawCircle(c.primary, LensSize.glint.toPx() / 2, onRing(outer, GLINT_ANGLE))
             if (progress != null) {
                 val arc = LensSize.arcStroke.toPx()
-                val topLeft = Offset(center.x - middle, center.y - middle)
-                val box = androidx.compose.ui.geometry.Size(middle * 2, middle * 2)
+                // The arc runs just inside the middle ring's line (03: r 87 in a 220 lens), its dot on the arc's end.
+                val track = if (size >= LensSize.progressLarge) LensSize.progressLargeArc.toPx() else middle - stroke
+                val topLeft = Offset(center.x - track, center.y - track)
+                val box = androidx.compose.ui.geometry.Size(track * 2, track * 2)
                 if (shown > 0f) drawArc(c.primary, ARC_START, 360f * shown, false, topLeft, box, style = Stroke(arc, cap = StrokeCap.Round))
-                val dot = onRing(middle, ARC_START + 360f * shown)
+                val dot = onRing(track, ARC_START + 360f * shown)
                 drawCircle(c.primary, LensSize.arcDot.toPx() / 2, dot)
                 drawCircle(c.background, LensSize.arcDotHole.toPx() / 2, dot)
             }
@@ -149,7 +153,15 @@ fun LensProgress(progress: Float, value: String, line: String, modifier: Modifie
     LensRings(ring, core, modifier.clearAndSetSemantics { contentDescription = description }, progress = progress) {
         Column(
             Modifier.size(core).shadow(LensSize.coreShadow, Shapes.pill, ambientColor = c.primary, spotColor = c.primary)
-                .clip(Shapes.pill).background(c.surfaceContainerLowest).padding(Space.inline),
+                .clip(Shapes.pill).background(lensCore())
+                
+                // The core's own ring, the lens rings' line (03).
+                .drawWithContent {
+                    drawContent()
+                    val line = LensSize.ringStroke.toPx()
+                    drawCircle(c.surfaceContainerHigh, size.minDimension / 2 - line / 2, style = Stroke(line))
+                }
+                .padding(Space.inline),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
         ) {
@@ -157,15 +169,17 @@ fun LensProgress(progress: Float, value: String, line: String, modifier: Modifie
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     if (icon != null) {
                         icon()
-                        Spacer(Modifier.height(Space.small))
+                        Spacer(Modifier.height(Space.inline))
                     }
                     // One line that shrinks to fit the core, never clipped: "Right here", "+14 µT", long translations.
-                    val style = if (icon != null) KeyholeType.title else KeyholeType.display
+                    // A count is 30/38 over a 12/16 line, 2 dp apart (03).
+                    val style = if (icon != null) KeyholeType.title else KeyholeType.headline
                     BasicText(
                         value, style = style.copy(color = c.onSurface, textAlign = TextAlign.Center), maxLines = 1, softWrap = false,
                         autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = style.fontSize),
                     )
-                    val lineStyle = if (icon != null) KeyholeType.caption else KeyholeType.supporting
+                    val lineStyle = KeyholeType.small
+                    if (icon == null) Spacer(Modifier.height(Space.row))
                     BasicText(
                         line, style = lineStyle.copy(color = c.onSurfaceVariant, textAlign = TextAlign.Center), maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
                         autoSize = TextAutoSize.StepBased(minFontSize = KeyholeType.caption.fontSize * MIN_LINE, maxFontSize = lineStyle.fontSize),
@@ -194,18 +208,23 @@ fun LensHeader(
     tags: (@Composable () -> Unit)? = null,
 ) {
     val c = MaterialTheme.colorScheme
-    Column(modifier.fillMaxWidth().padding(top = Space.lensTop), horizontalAlignment = Alignment.CenterHorizontally) {
+    // 12 dp under the top bar on every detail board (05, 10, 11, 13f).
+    Column(modifier.fillMaxWidth().padding(top = Space.block), horizontalAlignment = Alignment.CenterHorizontally) {
         LensRings(LensSize.header, LensSize.headerCore) {
             Box(Modifier.size(LensSize.headerCore).clip(Shapes.pill).background(container ?: c.primaryContainer), contentAlignment = Alignment.Center) {
-                Icon(icon, null, tint = onContainer ?: c.onPrimaryContainer, modifier = Modifier.size(Size.icon))
+                Icon(icon, null, tint = onContainer ?: c.onPrimaryContainer, modifier = Modifier.size(Size.headerIcon))
             }
         }
-        Spacer(Modifier.height(Space.lensBottom))
+        Spacer(Modifier.height(Space.card))
         if (title != null) {
             Text(title, style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
         }
         if (line != null) {
-            Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.heading).widthIn(max = Size.emptyLine))
+            Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, 
+                // 4 dp under the title; 2 dp when tags follow (05, 10), so title, line and tags read as one block.
+                // Without a title the line takes the title's place (04e).
+                modifier = Modifier.padding(top = if (title == null) Space.none else if (tags != null) Space.row else Space.small).padding(horizontal = Space.heading).widthIn(max = Size.emptyLine),
+            )
         }
         if (tags != null) {
             Spacer(Modifier.height(Space.block))
@@ -218,12 +237,27 @@ fun LensHeader(
     }
 }
 
+/** What sits above an [EmptyState], which sets how far down its lens starts (as the boards draw each). */
+enum class EmptyUnder {
+    /** A top bar: 56 dp (04e, 12a, 13e). */
+    BAR,
+    /** The sweep's check row: 48 dp (03b, 03c). */
+    CHECK_ROW,
+    /** A results summary box: 40 dp (04h). */
+    SUMMARY,
+}
+
 /**
- * Every empty list and every state a check can't run in: the lens header and one line, a little lower on the page.
+ * A list or a check with nothing to show: the lens header, lower on the page.
  * [hue]: the check it belongs to, which colours the core (Bluetooth is off → Bluetooth's purple).
  */
 @Composable
-fun EmptyState(icon: Painter, title: String?, line: String, modifier: Modifier = Modifier, hue: Float? = null) {
+fun EmptyState(icon: Painter, title: String?, line: String, modifier: Modifier = Modifier, hue: Float? = null, under: EmptyUnder = EmptyUnder.BAR) {
     val colors = hue?.let { checkColors(it) }
-    LensHeader(icon, title, modifier.padding(top = Space.empty), line = line, container = colors?.container, onContainer = colors?.onContainer)
+    val top = when (under) {
+        EmptyUnder.BAR -> Space.empty
+        EmptyUnder.CHECK_ROW -> Space.emptyUnderRow
+        EmptyUnder.SUMMARY -> Space.emptyUnderSummary
+    }
+    LensHeader(icon, title, modifier.padding(top = top), line = line, container = colors?.container, onContainer = colors?.onContainer)
 }

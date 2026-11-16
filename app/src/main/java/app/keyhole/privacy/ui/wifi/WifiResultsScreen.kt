@@ -133,7 +133,7 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
                 painterResource(R.drawable.ic_check_circle), stringResource(R.string.wifi_none_title),
                 line = pluralStringResource(R.plurals.devices_answered, count, count) + " " + stringResource(if (other.isEmpty()) R.string.all_known_kinds else R.string.none_like_camera),
             )
-            Spacer(Modifier.height(Space.lensBottom))
+            Spacer(Modifier.height(Space.heading))
         }
         val summaryBox: @Composable () -> Unit = {
             if (!nothing) SummaryBox(
@@ -159,7 +159,7 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
         }
         val othersBlock: @Composable ColumnScope.() -> Unit = {
             if (known.isNotEmpty() || other.isNotEmpty()) {
-                if (!nothing) Spacer(Modifier.height(Space.block))
+                if (!nothing) Spacer(Modifier.height(Space.card))
                 Grouped {
                     if (known.isNotEmpty()) row { shape ->
                         ListRow(

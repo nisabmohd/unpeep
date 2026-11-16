@@ -55,6 +55,11 @@ class WifiSession(
     fun start(scope: CoroutineScope): Int {
         job?.cancel()
         val run = raw.value.run + 1
+        // Not on Wi-Fi: say so at once. Starting first showed the scan for a blink before "Not on Wi-Fi" came back.
+        if (!scanner.onWifi()) {
+            raw.value = Raw(run, WifiStatus.NOT_ON_WIFI)
+            return run
+        }
         val started = now()
         raw.value = Raw(run, WifiStatus.RUNNING, secondsLeft = (BUDGET_MS / 1_000).toInt(), at = started)
         job = scope.launch {

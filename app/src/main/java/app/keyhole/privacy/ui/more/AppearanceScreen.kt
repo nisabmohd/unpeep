@@ -59,6 +59,7 @@ import app.keyhole.privacy.ui.components.ReorderList
 import app.keyhole.privacy.ui.components.SectionLabel
 import app.keyhole.privacy.ui.components.Segment
 import app.keyhole.privacy.ui.components.Segmented
+import app.keyhole.privacy.ui.components.SwitchLine
 import app.keyhole.privacy.ui.components.SwitchRow
 import app.keyhole.privacy.ui.components.TopBarAction
 import app.keyhole.privacy.ui.hue
@@ -139,18 +140,16 @@ fun AppearanceContent(
         Box24 {
             // Wallpaper colours exist from Android 12; before, only the accents.
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
-                SwitchRow(stringResource(R.string.colour_wallpaper_title), s.theme.dynamicColor, onDynamic, line = stringResource(R.string.colour_wallpaper_line))
+                SwitchLine(stringResource(R.string.colour_wallpaper_title), stringResource(R.string.colour_wallpaper_line), s.theme.dynamicColor, onDynamic)
+                Spacer(Modifier.height(Space.card))
             }
-            // Each swatch has an equal share of the row, centred in it: they fit any width without touching.
-            Row(Modifier.fillMaxWidth().padding(horizontal = Space.card).selectableGroup(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
+            // The swatches run from edge to edge of the box's padding, as 14 draws them.
+            Row(Modifier.fillMaxWidth().padding(horizontal = Space.card).selectableGroup(), horizontalArrangement = Arrangement.SpaceBetween) {
                 AccentHues.forEachIndexed { i, hue ->
-                    Box(Modifier.weight(1f), contentAlignment = Alignment.Center) {
-                        ColorSwatch(seedColorScheme(hue, dark).primary, stringResource(ACCENT_NAMES[i]), !s.theme.dynamicColor && s.theme.accentHue == hue, { onAccent(hue) })
-                    }
+                    ColorSwatch(seedColorScheme(hue, dark).primary, stringResource(ACCENT_NAMES[i]), !s.theme.dynamicColor && s.theme.accentHue == hue, { onAccent(hue) })
                 }
             }
         }
-        Spacer(Modifier.height(Space.block))
         // Font (as Burrow): each one written in itself, with what it is for; the picked one has a ✓.
         SectionLabel(stringResource(R.string.font))
         Grouped(Modifier.selectableGroup()) {

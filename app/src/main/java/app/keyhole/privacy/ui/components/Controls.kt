@@ -46,6 +46,8 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.layout
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
@@ -88,9 +90,9 @@ private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, c
             Spacer(Modifier.width(Space.inline))
         }
         BasicText(
-            text, style = KeyholeType.cardTitle.copy(color = LocalContentColor.current, textAlign = TextAlign.Center),
+            text, style = KeyholeType.button.copy(color = LocalContentColor.current, textAlign = TextAlign.Center),
             maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
-            autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.cardTitle.fontSize),
+            autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.button.fontSize),
             modifier = Modifier.weight(1f, fill = false),
         )
         if (trailing != null) {
@@ -104,6 +106,11 @@ private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, c
 @Composable
 fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: Painter? = null, enabled: Boolean = true, trailing: Painter? = null) =
     KeyholeButton(text, onClick, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, modifier, icon, enabled, trailing)
+
+/** The main action when it can't be undone (Delete): the error red, no icon (12d, 16a). Only ever in a confirm sheet. */
+@Composable
+fun DestructiveButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) =
+    KeyholeButton(text, onClick, MaterialTheme.colorScheme.error, MaterialTheme.colorScheme.onError, modifier, null, true)
 
 /** The quiet action beside it (Cancel, Skip step, Found it?). */
 @Composable
@@ -170,7 +177,7 @@ fun Tag(text: String, kind: TagKind, modifier: Modifier = Modifier, icon: Painte
         TagKind.GOOD -> c.primaryContainer to c.onPrimaryContainer
     }
     Row(
-        modifier.heightIn(min = Size.tag).clip(Shapes.pill).background(bg).padding(horizontal = Space.block, vertical = Space.small),
+        modifier.heightIn(min = Size.tag).clip(Shapes.pill).background(bg).padding(start = if (icon != null) Space.tagIcon else Space.tag, end = Space.tag, top = Space.small, bottom = Space.small),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (icon != null) {
@@ -227,7 +234,11 @@ private fun Radio(selected: Boolean) {
     }
 }
 
-/** A pick-one row in a sheet: circle, title, one line, the radio on the right. The picked row is tinted edge to edge. */
+/**
+ * A pick-one row in a sheet: circle, title, one line, the radio on the right. The picked row is tinted edge to edge.
+ * With a circle it is 64 dp, 82 dp with a line that wraps (06, 09b). Without one it is a line of a long list (Language, Help numbers)
+ * and sits closer: 52 dp, 56 dp with a line under the title (13c, 15).
+ */
 @Composable
 fun ChoiceRow(title: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, line: String? = null, leading: (@Composable () -> Unit)? = null) {
     val c = MaterialTheme.colorScheme
@@ -240,8 +251,12 @@ fun ChoiceRow(title: String, selected: Boolean, onClick: () -> Unit, modifier: M
                 if (!selected) haptics.buzz(Buzz.TICK)
                 onClick()
             }
-            .heightIn(min = if (line == null) Size.rowOneLine else Size.row)
-            .padding(horizontal = Space.heading, vertical = Space.block),
+            .heightIn(min = when {
+                leading != null -> if (line == null) Size.rowOneLine else Size.choiceRowCircle
+                line == null -> Size.choiceRow
+                else -> Size.choiceRowLines
+            })
+            .padding(horizontal = Space.heading, vertical = if (leading != null) Space.choiceCircle else Space.choice),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         if (leading != null) {
@@ -265,6 +280,39 @@ fun KeyholeSwitch(checked: Boolean, modifier: Modifier = Modifier) {
         checked = checked, onCheckedChange = null, modifier = modifier,
         colors = SwitchDefaults.colors(checkedTrackColor = c.primary, checkedThumbColor = c.onPrimary, uncheckedTrackColor = c.surfaceContainerHigh, uncheckedBorderColor = c.outline, uncheckedThumbColor = c.outline),
     )
+}
+
+/**
+ * A title, a line and the switch, with no box of its own: the first line of a box that holds more (Appearance ›
+ * Colours from wallpaper). The whole line toggles; its 48 dp target hangs a little over its words.
+ */
+@Composable
+fun SwitchLine(title: String, line: String, checked: Boolean, onToggle: (Boolean) -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val haptics = rememberHaptics()
+    Row(
+        modifier.fillMaxWidth()
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints.copy(minHeight = 0))
+                val height = (placeable.height - Size.switchRowOver.roundToPx()).coerceAtLeast(0)
+                layout(placeable.width, height) { placeable.placeRelative(0, (height - placeable.height) / 2) }
+            }
+            .heightIn(min = Size.iconButton)
+            .clip(Shapes.surface)
+            .toggleable(checked, role = Role.Switch) {
+                haptics.buzz(if (it) Buzz.TOGGLE_ON else Buzz.TOGGLE_OFF)
+                onToggle(it)
+            }
+            .padding(horizontal = Space.card),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Column(Modifier.weight(1f)) {
+            Text(title, style = KeyholeType.cardTitle, color = c.onSurface)
+            Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+        }
+        Spacer(Modifier.width(Space.card))
+        KeyholeSwitch(checked)
+    }
 }
 
 /** A row with a switch: the whole row toggles. */
@@ -293,7 +341,7 @@ data class Segment(
 
 /**
  * Two or three ways of doing one thing, side by side in one pill (Lens · Infrared): the picked one is a filled pill.
- * Each is 48 dp tall and reads as a radio button.
+ * Each is 44 dp tall inside a 52 dp pill (the whole height is its target) and reads as a radio button.
  */
 @Composable
 fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier, fill: Boolean = false) {
@@ -302,23 +350,28 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
     // A fixed pill of two or three: its words stop growing at 130 %, as the nav bar's do (00-decisions).
     CappedFontScale {
         Row(
-            modifier.then(if (fill) Modifier.fillMaxWidth() else Modifier).clip(Shapes.pill).background(c.surfaceContainerHigh).padding(Space.small).selectableGroup(),
-            horizontalArrangement = Arrangement.spacedBy(Space.small),
+            // Filling a box (14) the segments touch, on the box's lighter track; floating over the viewfinder they sit 4 dp apart.
+            modifier.then(if (fill) Modifier.fillMaxWidth() else Modifier).clip(Shapes.pill).background(if (fill) c.surfaceContainer else c.surfaceContainerHigh)
+                .padding(horizontal = Space.small).selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(if (fill) Size.none else Space.small),
         ) {
             segments.forEachIndexed { i, s ->
                 val picked = i == selected
                 Row(
                     Modifier
-                        .heightIn(min = Size.iconButton)
-                        .focusRing(Shapes.pill)
+                        // The target is the pill's full 52 dp; the picked colour is the 44 dp inside it.
                         .clip(Shapes.pill)
-                        .background(if (picked) c.onSurface else Color.Transparent)
                         .selectable(picked, role = Role.RadioButton) {
                             if (!picked) haptics.buzz(Buzz.TICK)
                             onSelect(i)
                         }
                         .then(if (s.description != null) Modifier.semantics { contentDescription = s.description } else Modifier)
-                        .padding(horizontal = if (isLargeText()) Space.block else Space.card)
+                        .padding(vertical = Space.small)
+                        .heightIn(min = Size.segment)
+                        .focusRing(Shapes.pill)
+                        .clip(Shapes.pill)
+                        .background(if (picked) c.onSurface else Color.Transparent)
+                        .padding(horizontal = if (isLargeText()) Space.block else if (fill) Space.card else Space.heading)
                         // Filling the width (Appearance), each segment takes an equal share; otherwise each hugs its
                         // label (a weight, even unfilled, would cap every segment at an equal share and cut "Infrared").
                         .then(if (fill) Modifier.weight(1f) else Modifier),
@@ -346,16 +399,34 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
 fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     val haptics = rememberHaptics()
-    // At most 48 dp, and smaller when the row is narrow (a large display size), so swatches never overlap.
+    // 44 dp, the same picked or not; the picked one's ring is drawn 2 dp outside it, over the gap to its neighbours.
+    val ring = c.onSurface
+    // Its target is 48 dp, hanging 2 dp over each side of the 44 dp it takes in the row.
     Box(
-        modifier.widthIn(max = Size.swatch).fillMaxWidth().aspectRatio(1f)
-            .focusRing(Shapes.pill).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
+        modifier
+            .layout { measurable, constraints ->
+                val placeable = measurable.measure(constraints.copy(minWidth = 0, minHeight = 0))
+                val side = Size.swatch.roundToPx()
+                layout(side, side) { placeable.placeRelative((side - placeable.width) / 2, (side - placeable.height) / 2) }
+            }
+            .size(Size.iconButton)
+            .focusRing(Shapes.pill)
+            .clip(Shapes.pill)
             .selectable(selected, role = Role.RadioButton) { if (!selected) haptics.buzz(Buzz.TICK); onClick() }
             .semantics { contentDescription = label },
         contentAlignment = Alignment.Center,
     ) {
-        // The picked one: the colour a ring's width inside its ring.
-        Box(Modifier.fillMaxSize().padding(if (selected) Size.swatchInset else Size.none).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
+        Box(
+            Modifier.size(Size.swatch)
+                .drawBehind {
+                    if (selected) {
+                        val line = Size.ring.toPx()
+                        drawCircle(ring, size.minDimension / 2 + Size.focusGap.toPx() + line / 2, style = androidx.compose.ui.graphics.drawscope.Stroke(line))
+                    }
+                }
+                .clip(Shapes.pill).background(color),
+            contentAlignment = Alignment.Center,
+        ) {
             if (selected) Icon(painterResource(R.drawable.ic_check), null, tint = c.surface, modifier = Modifier.size(Size.swatchCheck))
         }
     }

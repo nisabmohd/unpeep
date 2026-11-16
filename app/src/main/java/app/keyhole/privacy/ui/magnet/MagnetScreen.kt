@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -220,14 +221,14 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
         } } else null,
     ) {
         if (!s.available) {
-            EmptyState(painterResource(R.drawable.ic_magnet), stringResource(R.string.no_magnet_title), stringResource(R.string.block_no_bluetooth_line))
+            EmptyState(painterResource(R.drawable.ic_magnet), stringResource(R.string.no_magnet_title), stringResource(R.string.block_no_bluetooth_line), hue = app.keyhole.privacy.ui.theme.Hues.MAGNET)
             return@DetailScreen
         }
         if (s.stopped) {
             Note(stringResource(R.string.magnet_stopped_text), title = stringResource(R.string.magnet_stopped_title), tone = NoteTone.ERROR)
             Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-                Spacer(Modifier.height(Space.lensTop))
-                LensProgress(0f, stringResource(R.string.magnet_no_value), stringResource(R.string.magnet_no_reading_unit), icon = { CheckIcon(Check.MAGNET, Modifier.height(Size.iconCircle)) })
+                Spacer(Modifier.height(Space.block))
+                LensProgress(0f, stringResource(R.string.magnet_no_value), stringResource(R.string.magnet_no_reading_unit), icon = { CheckIcon(Check.MAGNET, Modifier.size(Size.checkCircleMin), circle = Size.checkCircleMin) })
                 Spacer(Modifier.height(Space.lensBottom))
                 Text(stringResource(R.string.magnet_no_reading_title), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
                 Text(stringResource(R.string.magnet_last_line, s.normal, s.now), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center)
@@ -235,14 +236,14 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
             return@DetailScreen
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(Space.lensTop))
-            val icon: @Composable () -> Unit = { CheckIcon(Check.MAGNET, Modifier.height(Size.iconCircle)) }
+            Spacer(Modifier.height(Space.block))
+            val icon: @Composable () -> Unit = { CheckIcon(Check.MAGNET, Modifier.size(Size.checkCircleMin), circle = Size.checkCircleMin) }
             if (s.learning) {
                 LensProgress(s.learned, stringResource(R.string.magnet_learning_value, (s.learned * PERCENT).roundToInt()), stringResource(R.string.magnet_learning_unit), icon = icon)
             } else {
                 LensProgress(s.above.toFloat() / MagnetViewModel.FULL, stringResource(R.string.magnet_above_value, s.above), stringResource(R.string.magnet_above_line), icon = icon)
             }
-            Spacer(Modifier.height(Space.lensBottom))
+            Spacer(Modifier.height(Space.card))
             val title = when {
                 s.learning -> R.string.magnet_learning_title
                 s.jumped -> R.string.magnet_jumped_title
@@ -251,10 +252,10 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
             Text(stringResource(title), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
             Text(
                 if (s.learning) stringResource(R.string.magnet_learning_line) else stringResource(R.string.magnet_now_line, s.normal, s.now),
-                style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset),
+                style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.row).padding(horizontal = Space.headingInset),
             )
         }
-        Spacer(Modifier.height(Space.block))
+        Spacer(Modifier.height(Space.lensBottom))
         Box24 {
             Row(Modifier.fillMaxWidth().padding(horizontal = Space.card), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(R.string.last_10_seconds), style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })

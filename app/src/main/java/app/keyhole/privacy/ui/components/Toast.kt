@@ -33,6 +33,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -149,7 +150,7 @@ private fun Toast(toast: ToastData, onDismiss: () -> Unit) {
     val haptics = rememberHaptics()
     val scope = rememberCoroutineScope()
     val offset = remember { Animatable(0f) }
-    var width by remember { mutableStateOf(1) }
+    var width by remember { mutableIntStateOf(1) }
     Row(
         Modifier.fillMaxWidth()
             .onSizeChanged { width = it.width.coerceAtLeast(1) }
@@ -175,10 +176,10 @@ private fun Toast(toast: ToastData, onDismiss: () -> Unit) {
             }
             .heightIn(min = Size.toast).clip(Shapes.pill).background(c.inverseSurface)
             .semantics(mergeDescendants = false) { liveRegion = LiveRegionMode.Polite }
-            .padding(start = Space.card + Space.small, end = if (toast.onAction != null) Space.headingInset else Space.heading),
+            .padding(start = Space.card, end = if (toast.onAction != null) Space.headingInset else Space.heading),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Icon(painterResource(toast.icon), null, tint = c.inverseOnSurface, modifier = Modifier.size(Size.buttonIcon))
+        Icon(painterResource(toast.icon), null, tint = c.inverseOnSurface, modifier = Modifier.size(Size.iconInCircle))
         Spacer(Modifier.width(Space.block))
         Text(toast.text, style = KeyholeType.label, color = c.inverseOnSurface, modifier = Modifier.weight(1f).padding(vertical = Space.block))
         val act = toast.onAction

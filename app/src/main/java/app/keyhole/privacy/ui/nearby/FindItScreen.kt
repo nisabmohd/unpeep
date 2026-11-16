@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -178,16 +179,16 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
             Note(stringResource(R.string.find_lost_text), title = stringResource(R.string.find_lost_title), tone = NoteTone.WARNING)
         }
         Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally) {
-            Spacer(Modifier.height(Space.lensTop))
-            LensProgress(signalLevel(s.rssi), near, distance, icon = { CheckIcon(device.check, Modifier.height(Size.iconCircle)) })
-            Spacer(Modifier.height(Space.lensBottom))
+            Spacer(Modifier.height(Space.block))
+            LensProgress(signalLevel(s.rssi), near, distance, icon = { CheckIcon(device.check, Modifier.size(Size.checkCircleMin), circle = Size.checkCircleMin) })
+            Spacer(Modifier.height(Space.card))
             Text(device.title(), style = KeyholeType.title, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset).semantics { heading() })
             Text(
                 stringResource(R.string.two_parts, stringResource(device.kind.label), stringResource(R.string.signal_dbm, s.rssi).replace("-", "\u2212")),
-                style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset),
+                style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.row).padding(horizontal = Space.headingInset),
             )
         }
-        Spacer(Modifier.height(Space.block))
+        Spacer(Modifier.height(Space.lensBottom))
         Box24 {
             Row(Modifier.fillMaxWidth().padding(horizontal = Space.card), verticalAlignment = Alignment.CenterVertically) {
                 Text(stringResource(if (s.lost) R.string.last_signal else s.trend.heading), style = KeyholeType.cardTitle, color = c.onSurface, modifier = Modifier.weight(1f).semantics { heading() })
@@ -197,7 +198,7 @@ fun FindItContent(s: FindItState, onBack: () -> Unit, onNotACamera: () -> Unit, 
                     Trend.STEADY -> Tag(stringResource(R.string.trend_steady), TagKind.KNOWN)
                 }
             }
-            Spacer(Modifier.height(Space.block))
+            Spacer(Modifier.height(Space.card))
             SegmentMeter(s.level, METER_SEGMENTS, stringResource(R.string.nearness_far), stringResource(R.string.nearness_very_close), description = stringResource(R.string.two_parts, near, distance))
         }
         Spacer(Modifier.height(Space.block))

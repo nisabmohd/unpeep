@@ -85,7 +85,8 @@ fun BackTopBar(onBack: () -> Unit, modifier: Modifier = Modifier, title: String?
                 stringResource(if (close) R.string.close else R.string.back), onBack,
             )
         }
-        Box(Modifier.weight(1f).padding(start = Space.inline)) {
+        // The title starts 8 dp after the round button: 72 dp from the screen edge on every board.
+        Box(Modifier.weight(1f)) {
             if (title != null) {
                 BasicText(
                     title, style = KeyholeType.title.copy(color = MaterialTheme.colorScheme.onSurface), maxLines = 1, overflow = TextOverflow.Ellipsis,

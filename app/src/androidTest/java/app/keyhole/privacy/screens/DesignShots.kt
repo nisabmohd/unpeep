@@ -102,19 +102,29 @@ class DesignShots {
     @get:Rule val rule = createComposeRule()
     private val screen = mutableStateOf<@Composable () -> Unit>({})
     private var dark = mutableStateOf(false)
+    private var lightBars = mutableStateOf(true)
 
     @Before fun onlyWhenAsked() {
         assumeTrue(InstrumentationRegistry.getArguments().getString("shots") != null)
         rule.setContent {
             KeyholeTheme(ThemeSettings(mode = if (dark.value) ThemeMode.DARK else ThemeMode.LIGHT)) {
+                // Dark status-bar icons on a light page, light ones on a dark page or the viewfinder, as the app sets them.
+                val view = androidx.compose.ui.platform.LocalView.current
+                val light = lightBars.value
+                androidx.compose.runtime.SideEffect {
+                    var context = view.context
+                    while (context is android.content.ContextWrapper && context !is android.app.Activity) context = context.baseContext
+                    (context as? android.app.Activity)?.window?.let { androidx.core.view.WindowCompat.getInsetsController(it, view).isAppearanceLightStatusBars = light }
+                }
                 Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) { screen.value() }
             }
         }
     }
 
     /** Draws [content], lets it settle, and saves the whole screen (sheets included) as shots/[name].png. */
-    private fun shot(name: String, isDark: Boolean = false, fontScale: Float = 1f, content: @Composable () -> Unit) {
+    private fun shot(name: String, isDark: Boolean = false, fontScale: Float = 1f, lightBars: Boolean = !isDark, content: @Composable () -> Unit) {
         dark.value = isDark
+        this.lightBars.value = lightBars
         screen.value = if (fontScale == 1f) content else { ->
             val d = androidx.compose.ui.platform.LocalDensity.current
             androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalDensity provides androidx.compose.ui.unit.Density(d.density, fontScale), content = content)
@@ -181,12 +191,12 @@ class DesignShots {
 
     private val backCamera = app.keyhole.privacy.optics.CameraSpec("0", app.keyhole.privacy.optics.Facing.BACK, 90, true, android.util.Size(1440, 1080), android.util.Size(320, 240), 8f, null, 2)
 
-    @Composable private fun lens(s: LensState, settingsOnly: Boolean = false, photoFailed: Boolean = false) = app.keyhole.privacy.ui.theme.ViewfinderTheme {
+    @Composable private fun Lens(s: LensState, settingsOnly: Boolean = false, photoFailed: Boolean = false) = app.keyhole.privacy.ui.theme.ViewfinderTheme {
         LensContent(s, onBack = {}, onNext = {}, onMode = {}, onFilter = {}, onZoom = {}, onTorch = {}, onTips = {}, onShutter = {}, onAllow = {}, settingsOnly = settingsOnly, onRetry = {}, photoFailed = photoFailed)
     }
 
     /** [content] as a 892 × 412 dp phone on its side, scaled down to fit the shot's width (T05). */
-    @Composable private fun sideways(content: @Composable () -> Unit) {
+    @Composable private fun Sideways(content: @Composable () -> Unit) {
         val cfg = android.content.res.Configuration(androidx.compose.ui.platform.LocalConfiguration.current).apply { screenWidthDp = 892; screenHeightDp = 412 }
         val scale = 412f / 892f
         androidx.compose.foundation.layout.Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.TopStart) {
@@ -194,12 +204,18 @@ class DesignShots {
                 Modifier.wrapContentSize(androidx.compose.ui.Alignment.TopStart, unbounded = true).requiredSize(892.dp, 412.dp)
                     .graphicsLayer { scaleX = scale; scaleY = scale; transformOrigin = androidx.compose.ui.graphics.TransformOrigin(0f, 0f) },
             ) {
-                androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalConfiguration provides cfg) { content() }
+                // The app reads the window's size from LocalWindowInfo (Window.kt): give it the same 892 × 412 dp.
+                val d = androidx.compose.ui.platform.LocalDensity.current
+                val info = androidx.compose.ui.platform.LocalWindowInfo.current
+                val window = object : androidx.compose.ui.platform.WindowInfo by info {
+                    override val containerSize get() = with(d) { androidx.compose.ui.unit.IntSize(892.dp.roundToPx(), 412.dp.roundToPx()) }
+                }
+                androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalConfiguration provides cfg, androidx.compose.ui.platform.LocalWindowInfo provides window) { content() }
             }
         }
     }
 
-    @Composable private fun magnet(s: MagnetState) = MagnetContent(s, onBack = {}, onNext = {}, onBeep = {}, onSetNormal = {}, onAdd = {})
+    @Composable private fun Magnet(s: MagnetState) = MagnetContent(s, onBack = {}, onNext = {}, onBeep = {}, onSetNormal = {}, onAdd = {})
 
     @Test fun findersAndSheets() {
         shot("06-not-a-camera-sheet") { DeviceContent(camera, {}, {}, {}, {}, {}); NotACameraSheet(null, {}, {}, {}) }
@@ -213,43 +229,43 @@ class DesignShots {
         shot("07d-find-it-200", fontScale = 2f) { FindItContent(FindItState(v380, -58, Nearness.CLOSE, 4, Trend.STRONGER, 12, loaded = true), {}, {}, {}) }
 
         val spot = app.keyhole.privacy.optics.Spot(0.55f, 0.42f, 0.01f, 250)
-        shot("08-lens-finder") { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 0)) }
-        shot("T05-lens-landscape") { sideways { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 1)) } }
-        shot("T05a-infrared-landscape-sweep") { sideways { lens(LensState(status = CameraStatus.RUNNING, mode = Check.INFRARED, sweep = true, spec = backCamera, spots = listOf(spot), photos = 0)) } }
-        shot("08a-lens-permission") { lens(LensState(status = CameraStatus.NEEDS_PERMISSION)) }
-        shot("08b-lens-camera-in-use") { lens(LensState(status = CameraStatus.IN_USE, spec = backCamera)) }
-        shot("08c-lens-camera-failed") { lens(LensState(status = CameraStatus.FAILED, spec = backCamera)) }
-        shot("08d-lens-no-camera") { lens(LensState(status = CameraStatus.NO_CAMERA)) }
-        shot("08e-lens-starting") { lens(LensState(status = CameraStatus.STARTING, spec = backCamera)) }
-        shot("08f-lens-infrared") { lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), seesInfrared = true)) }
-        shot("08g-infrared-may-not-see") { lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera, seesInfrared = false)) }
-        shot("08h-lens-photo-failed") { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera), photoFailed = true) }
-        shot("08i-lens-sweep") { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, torch = false, photos = 2, sweep = true, next = Check.INFRARED)) }
-        shot("08j-lens-tips-sheet") { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera)); app.keyhole.privacy.ui.lens.LensTipsSheet(Check.LENS, {}, {}) }
-        shot("08k-lens-tv-remote-sheet") { lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera)); app.keyhole.privacy.ui.lens.InfraredTestSheet({}, {}) }
+        shot("08-lens-finder") { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 0)) }
+        shot("T05-lens-landscape") { Sideways { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), photos = 1)) } }
+        shot("T05a-infrared-landscape-sweep") { Sideways { Lens(LensState(status = CameraStatus.RUNNING, mode = Check.INFRARED, sweep = true, spec = backCamera, spots = listOf(spot), photos = 0)) } }
+        shot("08a-lens-permission") { Lens(LensState(status = CameraStatus.NEEDS_PERMISSION)) }
+        shot("08b-lens-camera-in-use") { Lens(LensState(status = CameraStatus.IN_USE, spec = backCamera)) }
+        shot("08c-lens-camera-failed") { Lens(LensState(status = CameraStatus.FAILED, spec = backCamera)) }
+        shot("08d-lens-no-camera") { Lens(LensState(status = CameraStatus.NO_CAMERA)) }
+        shot("08e-lens-starting") { Lens(LensState(status = CameraStatus.STARTING, spec = backCamera)) }
+        shot("08f-lens-infrared") { Lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(spot), seesInfrared = true)) }
+        shot("08g-infrared-may-not-see") { Lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera, seesInfrared = false)) }
+        shot("08h-lens-photo-failed") { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera), photoFailed = true) }
+        shot("08i-lens-sweep") { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, torch = false, photos = 2, sweep = true, next = Check.INFRARED)) }
+        shot("08j-lens-tips-sheet") { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera)); app.keyhole.privacy.ui.theme.ViewfinderTheme { app.keyhole.privacy.ui.lens.LensTipsSheet(Check.LENS, {}, {}) } }
+        shot("08k-lens-tv-remote-sheet") { Lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera)); app.keyhole.privacy.ui.theme.ViewfinderTheme { app.keyhole.privacy.ui.lens.InfraredTestSheet({}, {}) } }
 
-        shot("08m-magnet-learning") { magnet(MagnetState(learned = 0.4f)) }
-        shot("08n-magnet-reading") { magnet(MagnetState(learning = false, learned = 1f, above = 2, normal = 48, now = 50, bars = listOf(1, 2, 1, 0, 2, 1, 2, 1, 1, 2))) }
-        shot("08o-magnet-jump") { magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 0, 1, 0, 1, 2, 9, 11, 14, 13))) }
-        shot("08p-magnet-added-sweep") { magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14), added = true, sweep = true, next = Check.CHECKLIST)) }
-        shot("08q-magnet-no-sensor") { magnet(MagnetState(available = false)) }
-        shot("08r-magnet-200", fontScale = 2f) { magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14))) }
+        shot("08m-magnet-learning") { Magnet(MagnetState(learned = 0.4f)) }
+        shot("08n-magnet-reading") { Magnet(MagnetState(learning = false, learned = 1f, above = 2, normal = 48, now = 50, bars = listOf(1, 2, 1, 0, 2, 1, 2, 1, 1, 2))) }
+        shot("08o-magnet-jump") { Magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 0, 1, 0, 1, 2, 9, 11, 14, 13))) }
+        shot("08p-magnet-added-sweep") { Magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14), added = true, sweep = true, next = Check.CHECKLIST)) }
+        shot("08q-magnet-no-sensor") { Magnet(MagnetState(available = false)) }
+        shot("08r-magnet-200", fontScale = 2f) { Magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14))) }
     }
 
     /** The report with a toast over its dock, as the app shows an export's result. */
-    @Composable private fun reportWithToast(r: app.keyhole.privacy.data.SavedReport, text: Int, action: Int, icon: Int) {
+    @Composable private fun ReportWithToast(r: app.keyhole.privacy.data.SavedReport, text: Int, action: Int, icon: Int) {
         val toasts = androidx.compose.runtime.remember { app.keyhole.privacy.ui.components.ToastState() }
         val ctx = androidx.compose.ui.platform.LocalContext.current
         androidx.compose.runtime.LaunchedEffect(Unit) { toasts.show(ctx.getString(text), action = ctx.getString(action), onAction = {}, icon = icon) }
         androidx.compose.runtime.CompositionLocalProvider(app.keyhole.privacy.ui.components.LocalToasts provides toasts) {
             androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) {
-                reportScreen(r)
+                ReportScreen(r)
                 ToastHost(toasts, overNav = false)
             }
         }
     }
 
-    @Composable private fun reportScreen(r: app.keyhole.privacy.data.SavedReport = app.keyhole.privacy.ui.report.previewReport()) =
+    @Composable private fun ReportScreen(r: app.keyhole.privacy.data.SavedReport = app.keyhole.privacy.ui.report.previewReport()) =
         ReportContent(r, app.keyhole.privacy.ui.report.rememberReportWords(), {}, {}, {}, {}, {}, {}, {})
 
     @Test fun checklistReportsAndHelp() {
@@ -264,15 +280,15 @@ class DesignShots {
         shot("09d-checklist-200", fontScale = 2f) { ChecklistContent(ChecklistState(Place.TRIAL_ROOM, answers = answers, sweep = true), {}, {}, {}) }
 
         val r = app.keyhole.privacy.ui.report.previewReport()
-        shot("10-report") { reportScreen(r) }
-        shot("10a-report-nothing-found") { reportScreen(r.copy(findings = emptyList(), toLookAt = 0)) }
-        shot("10c-report-rename-sheet") { reportScreen(r); app.keyhole.privacy.ui.report.RenameSheet(r.name, {}, {}) }
-        shot("10d-report-undo-sheet") { reportScreen(r); app.keyhole.privacy.ui.report.UndoSheet("Living-room TV", {}, {}) }
+        shot("10-report") { ReportScreen(r) }
+        shot("10a-report-nothing-found") { ReportScreen(r.copy(findings = emptyList(), toLookAt = 0)) }
+        shot("10c-report-rename-sheet") { ReportScreen(r); app.keyhole.privacy.ui.report.RenameSheet(r.name, {}, {}) }
+        shot("10d-report-undo-sheet") { ReportScreen(r); app.keyhole.privacy.ui.report.UndoSheet("Living-room TV", {}, {}) }
         shot("10e-finding-detail") { app.keyhole.privacy.ui.report.FindingContent(r.findings.first().finding, {}) }
-        shot("10h-report-export-saved") { reportWithToast(r, R.string.export_done, R.string.open, R.drawable.ic_check_circle) }
-        shot("10i-report-export-failed") { reportWithToast(r, R.string.export_failed, R.string.try_again, R.drawable.ic_info) }
-        shot("10k-report-200", fontScale = 2f) { reportScreen(r) }
-        shot("E12-no-checks-ran") { reportScreen(r.copy(findings = emptyList(), toLookAt = 0, ran = emptyList())) }
+        shot("10h-report-export-saved") { ReportWithToast(r, R.string.export_done, R.string.open, R.drawable.ic_check_circle) }
+        shot("10i-report-export-failed") { ReportWithToast(r, R.string.export_failed, R.string.try_again, R.drawable.ic_info) }
+        shot("10k-report-200", fontScale = 2f) { ReportScreen(r) }
+        shot("E12-no-checks-ran") { ReportScreen(r.copy(findings = emptyList(), toLookAt = 0, ran = emptyList())) }
 
         val de = app.keyhole.privacy.data.HelpEntry("DE", "112", "110")
         val inEntry = app.keyhole.privacy.data.HelpEntry("IN", "112", "112", "https://cybercrime.gov.in/", "1930")
@@ -321,29 +337,90 @@ class DesignShots {
     }
 
     /** A narrow phone (360 dp) with larger text: every screen whose words could overflow. */
-    @Composable private fun narrow(content: @Composable () -> Unit) =
+    @Composable private fun Narrow(content: @Composable () -> Unit) =
         androidx.compose.foundation.layout.Box(Modifier.fillMaxSize()) {
             androidx.compose.foundation.layout.Box(Modifier.align(androidx.compose.ui.Alignment.TopStart).requiredWidth(360.dp).fillMaxHeight()) { content() }
         }
+
+    /**
+     * The eight raw Play Store shots (release/README.md): real screens with made-up state, saved as home.png …
+     * home-dark.png for `tools/store_shots.py`. Run on a 1080 × 2400 phone with the status bar in demo mode:
+     * `-Pandroid.testInstrumentationRunnerArguments.class=app.keyhole.privacy.screens.DesignShots#storeShots`.
+     */
+    @Test fun storeShots() {
+        val tabs = @Composable { content: @Composable () -> Unit ->
+            Column(Modifier.fillMaxSize()) {
+                androidx.compose.foundation.layout.Box(Modifier.weight(1f)) { content() }
+                app.keyhole.privacy.ui.components.KeyholeNavBar(
+                    listOf(
+                        app.keyhole.privacy.ui.components.NavItem(text(R.string.tab_check), R.drawable.ic_radar),
+                        app.keyhole.privacy.ui.components.NavItem(text(R.string.tab_reports), R.drawable.ic_reports),
+                        app.keyhole.privacy.ui.components.NavItem(text(R.string.tab_more), R.drawable.ic_more),
+                    ),
+                    0, {},
+                )
+            }
+        }
+        val home = @Composable { tabs { app.keyhole.privacy.ui.home.HomeContent(app.keyhole.privacy.ui.home.HomeState(loaded = true), {}, {}, { _, _ -> }, {}) } }
+        shot("home") { home() }
+        val pixel = WifiDevice(DeviceEvidence("192.168.1.14", name = "Pixel 8"), Verdict(Risk.KNOWN, listOf(Sign.KnownKind("phone")), kind = "phone"), 0)
+        shot("sweep") { SweepContent(SweepState(Place.STAY, Check.entries, Check.WIFI, wifi = WifiSnapshot(1, WifiStatus.RUNNING, "SeaView_Guest", 0.61f, 11, 18, 10, listOf(camera, tv, pixel))), {}, {}, {}) }
+        val many = (1..15).map { tv.copy(evidence = tv.evidence.copy(ip = "192.168.1.${100 + it}")) }
+        shot("results") { WifiResultsContent(WifiResultsState(wifi(camera, web, web2, *many.toTypedArray()), Check.HOTSPOTS, true), {}, {}, {}, {}, {}) }
+        shot("device") { DeviceContent(camera, {}, {}, {}, {}, {}) }
+        val spots = listOf(app.keyhole.privacy.optics.Spot(0.4f, 0.3f, 0.012f, 250), app.keyhole.privacy.optics.Spot(0.73f, 0.6f, 0.006f, 230))
+        shot("lens", lightBars = false) {
+            app.keyhole.privacy.ui.theme.ViewfinderTheme {
+                LensContent(
+                    LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = spots, photos = 0), onBack = {}, onNext = {}, onMode = {}, onFilter = {}, onZoom = {},
+                    onTorch = {}, onTips = {}, onShutter = {}, onAllow = {}, settingsOnly = false, onRetry = {}, preview = { m -> DimRoom(m) },
+                )
+            }
+        }
+        shot("find-it") { FindItContent(FindItState(v380, -58, Nearness.CLOSE, 4, Trend.STRONGER, 12, loaded = true), {}, {}, {}) }
+        shot("report") { ReportScreen() }
+        shot("home-dark", isDark = true) { home() }
+    }
+
+    /** A dim room for the lens finder's store shot (the emulator has no camera picture): a wall, a shelf and two things on it. */
+    @Composable private fun DimRoom(modifier: Modifier) = androidx.compose.foundation.Canvas(modifier) {
+        val wall = androidx.compose.ui.graphics.Color(0xFF1A1D26)
+        val floor = androidx.compose.ui.graphics.Color(0xFF0E1016)
+        val thing = androidx.compose.ui.graphics.Color(0xFF0A0B10)
+        val edge = androidx.compose.ui.graphics.Color(0xFF242833)
+        drawRect(androidx.compose.ui.graphics.Brush.radialGradient(listOf(androidx.compose.ui.graphics.Color(0xFF3A3F4E), wall), center = androidx.compose.ui.geometry.Offset(size.width * 0.35f, size.height * 0.2f), radius = size.width * 0.9f))
+        drawRect(floor, topLeft = androidx.compose.ui.geometry.Offset(0f, size.height * 0.74f))
+        fun box(x: Float, y: Float, w: Float, h: Float) {
+            val at = androidx.compose.ui.geometry.Offset(size.width * x, size.height * y)
+            val sz = androidx.compose.ui.geometry.Size(size.width * w, size.height * h)
+            val r = androidx.compose.ui.geometry.CornerRadius(size.width * 0.012f)
+            drawRoundRect(thing, at, sz, r)
+            drawRoundRect(edge, at, sz, r, style = androidx.compose.ui.graphics.drawscope.Stroke(size.width * 0.003f))
+        }
+        box(0.06f, 0.61f, 0.3f, 0.13f)
+        box(0.11f, 0.53f, 0.1f, 0.08f)
+        box(0.56f, 0.48f, 0.34f, 0.26f)
+        box(0.6f, 0.52f, 0.26f, 0.15f)
+    }
 
     @Test fun overflowAudit() {
         val longName = camera.copy(evidence = camera.evidence.copy(name = "Hikvision-DS-2CD2143G2-IU-Office-Corridor-East"))
         val longSsid = "SeaView_Guest_5G_Floor3_Wing_B_Extended"
         val many = (1..15).map { tv.copy(evidence = tv.evidence.copy(ip = "192.168.1.${100 + it}")) }
         for ((tag, scale) in listOf("130" to 1.3f, "200" to 2f)) {
-            shot("A-$tag-wifi-results", fontScale = scale) { narrow { WifiResultsContent(WifiResultsState(wifi(longName, web, *many.toTypedArray(), ssid = longSsid), Check.HOTSPOTS, true), {}, {}, {}, {}, {}) } }
-            shot("A-$tag-bt-results", fontScale = scale) { narrow { NearbyResultsContent(NearbyResultsState(nearby(Check.BLUETOOTH, tile, buds), Check.LENS, 28, true), {}, {}, {}, {}, {}) } }
-            shot("A-$tag-hotspot-results", fontScale = scale) { narrow { NearbyResultsContent(NearbyResultsState(nearby(Check.HOTSPOTS, v380, smartLife, cafe), Check.BLUETOOTH, 28, true, scanWait = 48), {}, {}, {}, {}, {}) } }
-            shot("A-$tag-sweep", fontScale = scale) { narrow { SweepContent(SweepState(Place.STAY, Check.entries, Check.WIFI, wifi = WifiSnapshot(1, WifiStatus.RUNNING, longSsid, 0.6f, 11, 18, 10, listOf(longName, tv))), {}, {}, {}) } }
-            shot("A-$tag-device", fontScale = scale) { narrow { DeviceContent(longName, {}, {}, {}, {}, {}) } }
-            shot("A-$tag-find-it", fontScale = scale) { narrow { FindItContent(FindItState(v380.copy(name = "DIRECT-HP-LaserJet-Pro-M404dn-Office"), -58, Nearness.CLOSE, 4, Trend.STRONGER, 28, loaded = true), {}, {}, {}) } }
-            shot("A-$tag-magnet", fontScale = scale) { narrow { magnet(MagnetState(learning = false, learned = 1f, above = 140, normal = 48, now = 188, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14))) } }
-            shot("A-$tag-report", fontScale = scale) { narrow { reportScreen(app.keyhole.privacy.ui.report.previewReport().copy(name = "Sea View Hotel and Residences, room 304, east wing")) } }
-            shot("A-$tag-checklist", fontScale = scale) { narrow { ChecklistContent(ChecklistState(Place.STAY), {}, {}, {}) } }
-            shot("A-$tag-lens", fontScale = scale) { narrow { lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, photos = 12, sweep = true, next = Check.INFRARED)) } }
-            shot("A-$tag-appearance", fontScale = scale) { narrow { app.keyhole.privacy.ui.more.AppearanceContent(app.keyhole.privacy.data.Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) } }
-            shot("A-$tag-about", fontScale = scale) { narrow { app.keyhole.privacy.ui.more.AboutScreen({}, {}, {}) } }
-            shot("A-$tag-stop-sheet", fontScale = scale) { narrow { SweepContent(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH, nearby = nearby(Check.BLUETOOTH, status = NearbyStatus.RUNNING)), {}, {}, {}); app.keyhole.privacy.ui.sweep.StopSweepSheet(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH), {}, {}, {}) } }
+            shot("A-$tag-wifi-results", fontScale = scale) { Narrow { WifiResultsContent(WifiResultsState(wifi(longName, web, *many.toTypedArray(), ssid = longSsid), Check.HOTSPOTS, true), {}, {}, {}, {}, {}) } }
+            shot("A-$tag-bt-results", fontScale = scale) { Narrow { NearbyResultsContent(NearbyResultsState(nearby(Check.BLUETOOTH, tile, buds), Check.LENS, 28, true), {}, {}, {}, {}, {}) } }
+            shot("A-$tag-hotspot-results", fontScale = scale) { Narrow { NearbyResultsContent(NearbyResultsState(nearby(Check.HOTSPOTS, v380, smartLife, cafe), Check.BLUETOOTH, 28, true, scanWait = 48), {}, {}, {}, {}, {}) } }
+            shot("A-$tag-sweep", fontScale = scale) { Narrow { SweepContent(SweepState(Place.STAY, Check.entries, Check.WIFI, wifi = WifiSnapshot(1, WifiStatus.RUNNING, longSsid, 0.6f, 11, 18, 10, listOf(longName, tv))), {}, {}, {}) } }
+            shot("A-$tag-device", fontScale = scale) { Narrow { DeviceContent(longName, {}, {}, {}, {}, {}) } }
+            shot("A-$tag-find-it", fontScale = scale) { Narrow { FindItContent(FindItState(v380.copy(name = "DIRECT-HP-LaserJet-Pro-M404dn-Office"), -58, Nearness.CLOSE, 4, Trend.STRONGER, 28, loaded = true), {}, {}, {}) } }
+            shot("A-$tag-magnet", fontScale = scale) { Narrow { Magnet(MagnetState(learning = false, learned = 1f, above = 140, normal = 48, now = 188, jumped = true, bars = listOf(0, 1, 2, 9, 11, 14))) } }
+            shot("A-$tag-report", fontScale = scale) { Narrow { ReportScreen(app.keyhole.privacy.ui.report.previewReport().copy(name = "Sea View Hotel and Residences, room 304, east wing")) } }
+            shot("A-$tag-checklist", fontScale = scale) { Narrow { ChecklistContent(ChecklistState(Place.STAY), {}, {}, {}) } }
+            shot("A-$tag-lens", fontScale = scale) { Narrow { Lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, photos = 12, sweep = true, next = Check.INFRARED)) } }
+            shot("A-$tag-appearance", fontScale = scale) { Narrow { app.keyhole.privacy.ui.more.AppearanceContent(app.keyhole.privacy.data.Settings(), {}, {}, {}, {}, {}, {}, { _, _ -> }, { _, _ -> }) } }
+            shot("A-$tag-about", fontScale = scale) { Narrow { app.keyhole.privacy.ui.more.AboutScreen({}, {}, {}) } }
+            shot("A-$tag-stop-sheet", fontScale = scale) { Narrow { SweepContent(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH, nearby = nearby(Check.BLUETOOTH, status = NearbyStatus.RUNNING)), {}, {}, {}); app.keyhole.privacy.ui.sweep.StopSweepSheet(SweepState(Place.STAY, Check.entries, Check.BLUETOOTH), {}, {}, {}) } }
         }
     }
 

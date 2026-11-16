@@ -151,7 +151,7 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
                 painterResource(R.drawable.ic_check_circle), stringResource(words.noneTitle),
                 line = pluralStringResource(if (n.check == Check.BLUETOOTH) R.plurals.bluetooth_heard else R.plurals.networks_heard, count, count) + " " + stringResource(R.string.none_like_camera),
             )
-            Spacer(Modifier.height(Space.lensBottom))
+            Spacer(Modifier.height(Space.heading))
             ListRow(
                 pluralStringResource(words.others, other.size, other.size), line = stringResource(words.othersLine),
                 leading = { IconCircle(painterResource(n.check.icon), CircleTone.Neutral) }, onClick = onOthers,
@@ -172,10 +172,10 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
         NearbySection(stringResource(R.string.risk_worth_a_look), look, onFind)
         NearbySection(stringResource(R.string.marked_as_known), known, onFind)
         if (count == 0) {
-            EmptyState(painterResource(n.check.icon), stringResource(R.string.nothing_flagged_yet), stringResource(words.noneText), hue = n.check.hue)
+            EmptyState(painterResource(n.check.icon), stringResource(R.string.nothing_flagged_yet), stringResource(words.noneText), hue = n.check.hue, under = app.keyhole.privacy.ui.components.EmptyUnder.SUMMARY)
         }
         if (other.isNotEmpty()) {
-            Spacer(Modifier.height(Space.block))
+            Spacer(Modifier.height(Space.card))
             ListRow(
                 pluralStringResource(words.others, other.size, other.size), line = stringResource(words.othersLine),
                 leading = { IconCircle(painterResource(n.check.icon), CircleTone.Neutral) }, onClick = onOthers,

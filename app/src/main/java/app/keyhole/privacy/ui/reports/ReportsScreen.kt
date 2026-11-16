@@ -34,6 +34,7 @@ import app.keyhole.privacy.domain.Place
 import app.keyhole.privacy.ui.components.Buzz
 import app.keyhole.privacy.ui.components.ButtonPair
 import app.keyhole.privacy.ui.components.CircleTone
+import app.keyhole.privacy.ui.components.DestructiveButton
 import app.keyhole.privacy.ui.components.EmptyState
 import app.keyhole.privacy.ui.components.Grouped
 import app.keyhole.privacy.ui.components.IconCircle
@@ -197,8 +198,8 @@ fun ReportsContent(s: ReportsState, onOpen: (Long) -> Unit, onDelete: (Long) -> 
                 val year = java.util.Calendar.getInstance().apply { timeInMillis = at }.get(java.util.Calendar.YEAR)
                 (if (year == thisYear) month else monthYear).format(Date(at))
             }
-            groupByWhen(shown, now, stringResource(R.string.this_week), monthOf).forEach { (title, group) ->
-                SectionLabel(title, meta = group.size.toString())
+            groupByWhen(shown, now, stringResource(R.string.this_week), monthOf).forEachIndexed { i, (title, group) ->
+                SectionLabel(title, meta = group.size.toString(), first = i == 0 && !searching)
                 Grouped {
                     group.forEach { r ->
                         row { shape ->
@@ -213,7 +214,7 @@ fun ReportsContent(s: ReportsState, onOpen: (Long) -> Unit, onDelete: (Long) -> 
                 }
             }
             if (shown.isNotEmpty()) {
-                Spacer(Modifier.height(Space.heading))
+                Spacer(Modifier.height(Space.lensBottom))
                 Text(stringResource(R.string.reports_footer), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth().padding(horizontal = Space.heading))
             }
             Spacer(Modifier.height(Space.screen))
@@ -229,10 +230,10 @@ fun DeleteSheet(onDismiss: () -> Unit, onDelete: () -> Unit, title: Int = R.stri
         footer = {
             ButtonPair(
                 secondary = { m -> SecondaryButton(stringResource(R.string.cancel), onDismiss, m) },
-                primary = { m -> PrimaryButton(stringResource(R.string.delete), onDelete, m, icon = painterResource(R.drawable.ic_trash)) },
+                primary = { m -> DestructiveButton(stringResource(R.string.delete), onDelete, m) },
             )
         },
-    ) { Spacer(Modifier.height(Space.small)) }
+    ) { }
 }
 
 @Preview
