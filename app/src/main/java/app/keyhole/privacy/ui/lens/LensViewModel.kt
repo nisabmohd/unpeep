@@ -53,6 +53,8 @@ data class LensState(
     val photos: Int = 0,
     /** Null until the TV-remote test was done once. */
     val seesInfrared: Boolean? = null,
+    /** The TV-remote question was closed once without an answer: only Tips › Test again asks it again. */
+    val infraredAsked: Boolean = false,
     val sweep: Boolean = false,
     /** The step after this one in a sweep; null when it is the last or the check ran alone. */
     val next: Check? = null,
@@ -93,6 +95,7 @@ class LensViewModel(
         i.copy(
             photos = photos.count { it.check == i.mode },
             seesInfrared = s.seesInfrared,
+            infraredAsked = s.infraredAsked,
             next = if (sweep) steps.getOrNull(steps.indexOf(i.mode) + 1) else null,
         )
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), inner.value)
@@ -176,6 +179,11 @@ class LensViewModel(
     /** The TV-remote test's answer; kept, so it is asked once. */
     fun setSeesInfrared(sees: Boolean) {
         viewModelScope.launch { settings.setSeesInfrared(sees) }
+    }
+
+    /** The TV-remote question was closed without an answer: don't ask again on every visit. */
+    fun skipInfraredTest() {
+        viewModelScope.launch { settings.setInfraredAsked() }
     }
 
     /** "Test again": forget the answer, so the TV-remote question comes back. */

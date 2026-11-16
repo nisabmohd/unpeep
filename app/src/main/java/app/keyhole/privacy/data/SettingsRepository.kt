@@ -37,6 +37,8 @@ data class Settings(
     val magnetBeep: Boolean = false,
     /** True once the TV-remote test showed this phone sees infrared; null = not tried. */
     val seesInfrared: Boolean? = null,
+    /** True once the TV-remote question was shown and closed without an answer: it isn't asked again by itself. */
+    val infraredAsked: Boolean = false,
 )
 
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore("settings")
@@ -62,7 +64,8 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     suspend fun setHelpRegion(code: String?) = store.edit { if (code == null) it.remove(HELP_REGION) else it[HELP_REGION] = code }
     suspend fun setMagnetBeep(on: Boolean) = store.edit { it[MAGNET_BEEP] = on }
     suspend fun setSeesInfrared(sees: Boolean) = store.edit { it[SEES_IR] = sees }
-    suspend fun clearSeesInfrared() = store.edit { it.remove(SEES_IR) }
+    suspend fun clearSeesInfrared() = store.edit { it.remove(SEES_IR); it.remove(IR_ASKED) }
+    suspend fun setInfraredAsked() = store.edit { it[IR_ASKED] = true }
 
     companion object {
         private val THEME = stringPreferencesKey("theme")
@@ -77,6 +80,7 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
         private val HELP_REGION = stringPreferencesKey("help_region")
         private val MAGNET_BEEP = booleanPreferencesKey("magnet_beep")
         private val SEES_IR = booleanPreferencesKey("sees_infrared")
+        private val IR_ASKED = booleanPreferencesKey("infrared_asked")
 
         private inline fun <reified E : Enum<E>> enumOr(name: String?, default: E): E =
             enumValues<E>().firstOrNull { it.name == name } ?: default
@@ -103,6 +107,7 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
             helpRegion = p[HELP_REGION],
             magnetBeep = p[MAGNET_BEEP] ?: false,
             seesInfrared = p[SEES_IR],
+            infraredAsked = p[IR_ASKED] ?: false,
         )
     }
 }

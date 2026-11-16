@@ -168,8 +168,10 @@ fun LensScreen(vm: LensViewModel, onBack: () -> Unit, onNext: (Check?) -> Unit) 
     }
 
     var tips by rememberSaveable { mutableStateOf(false) }
+    // The TV-remote question opens by itself once, the first time Infrared runs. Answered or closed, it stays closed;
+    // Tips › Test again asks it again.
     var testDismissed by rememberSaveable { mutableStateOf(false) }
-    val askTest = s.mode == Check.INFRARED && s.seesInfrared == null && !testDismissed && s.status == CameraStatus.RUNNING
+    val askTest = s.mode == Check.INFRARED && s.seesInfrared == null && !s.infraredAsked && !testDismissed && s.status == CameraStatus.RUNNING
 
     ViewfinderTheme {
         LensContent(
@@ -186,7 +188,7 @@ fun LensScreen(vm: LensViewModel, onBack: () -> Unit, onNext: (Check?) -> Unit) 
             preview = { modifier -> if (spec != null) CameraPreview(spec.uprightWidth, spec.uprightHeight, { texture = it }, modifier, stringResource(R.string.camera_preview)) },
         )
         if (tips) LensTipsSheet(s.mode, onDismiss = { tips = false }, onTestAgain = { tips = false; testDismissed = false; vm.resetInfraredTest() })
-        if (askTest) InfraredTestSheet(onDismiss = { testDismissed = true }, onAnswer = { sees -> haptics.buzz(Buzz.TICK); vm.setSeesInfrared(sees); testDismissed = true })
+        if (askTest) InfraredTestSheet(onDismiss = { testDismissed = true; vm.skipInfraredTest() }, onAnswer = { sees -> haptics.buzz(Buzz.TICK); vm.setSeesInfrared(sees); testDismissed = true })
     }
 }
 
