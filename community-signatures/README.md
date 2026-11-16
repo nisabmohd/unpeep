@@ -1,6 +1,6 @@
 # Community signatures
 
-Keyhole recognises devices from small JSON lists bundled in the app: `app/src/main/assets/signatures/`.
+Unpeep recognises devices from small JSON lists bundled in the app: `app/src/main/assets/signatures/`.
 There are no online updates: a new list ships with the next version.
 
 | File | What it holds |
@@ -21,4 +21,4 @@ Open a pull request with:
 Keep words specific. "hikvision" is good; "cam" would match "camera app" and phones named "Cameron".
 A device wrongly flagged as a camera goes into `known.json`.
 
-Never add anything that would make Keyhole log in to a device, try a password or open a stream.
+Never add anything that would make Unpeep log in to a device, try a password or open a stream.

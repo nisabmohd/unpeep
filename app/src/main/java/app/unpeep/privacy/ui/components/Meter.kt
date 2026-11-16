@@ -1,0 +1,95 @@
+package app.unpeep.privacy.ui.components
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.text.style.TextAlign
+import app.unpeep.privacy.ui.theme.Alpha
+import app.unpeep.privacy.ui.theme.UnpeepType
+import app.unpeep.privacy.ui.theme.Shapes
+import app.unpeep.privacy.ui.theme.Size
+import app.unpeep.privacy.ui.theme.Space
+
+/*
+ * Meters (docs/COMPONENTS.md): how strong something is, drawn, always with its meaning in words beside it.
+ */
+
+/**
+ * The Find it meter: [segments] pills, the first [level] lit, each a step stronger than the one before, with what
+ * the two ends mean underneath ("Far" · "Right here"). [description] is what TalkBack says for the whole meter.
+ */
+@Composable
+fun SegmentMeter(level: Int, segments: Int, startLabel: String, endLabel: String, description: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val lit = level.coerceIn(0, segments)
+    Column(modifier.fillMaxWidth().padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description }, verticalArrangement = Arrangement.spacedBy(Space.meterLabels)) {
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
+            repeat(segments) { i ->
+                val strength = if (segments <= 1) 1f else Alpha.meterFaint + (1f - Alpha.meterFaint) * i / (segments - 1)
+                Box(Modifier.weight(1f).height(Size.dot).clip(Shapes.pill).background(if (i < lit) c.primary.copy(alpha = strength) else c.surfaceContainerHighest))
+            }
+        }
+        Row(Modifier.fillMaxWidth()) {
+            Text(startLabel, style = UnpeepType.small, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
+            Text(endLabel, style = UnpeepType.small, color = c.onSurfaceVariant, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+/**
+ * The magnet's bars: one per reading, oldest first, as tall as it is above normal (up to [max]). Bars at or past
+ * [jump] are the accent; the rest are faint. [description] is what TalkBack says for the whole chart.
+ */
+@Composable
+fun BarMeter(values: List<Int>, slots: Int, jump: Int, max: Int, description: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val shown = values.takeLast(slots)
+    Row(
+        modifier.fillMaxWidth().height(Size.meter).padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description },
+        horizontalArrangement = Arrangement.spacedBy(Space.meterGap),
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        // Empty slots on the left until there are enough readings: the newest is always on the right.
+        repeat(slots - shown.size) { Box(Modifier.weight(1f).height(Size.meterBar).clip(Shapes.pill).background(c.surfaceContainerHighest.copy(alpha = Alpha.track))) }
+        shown.forEach { v ->
+            val share = if (max <= 0) 0f else (v.toFloat() / max).coerceIn(0f, 1f)
+            Box(
+                Modifier.weight(1f).height(Size.meterBar + (Size.meter - Size.meterBar) * share).clip(Shapes.pill)
+                    .background(if (v >= jump) c.primary else c.surfaceContainerHighest),
+            )
+        }
+    }
+}
+
+/** How far along a list is (the checklist): a thin accent line on its track. [description] for TalkBack ("4 of 7"). */
+@Composable
+fun ProgressLine(progress: Float, description: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val shown = progress.coerceIn(0f, 1f)
+    Box(modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill).background(c.surfaceContainerHigh).clearAndSetSemantics { contentDescription = description }) {
+        if (shown > 0f) Box(Modifier.fillMaxWidth(shown).height(Size.progressLine).clip(Shapes.pill).background(c.primary))
+    }
+}
+
+/** Something is on its way with no knowable end (asking GitHub, 17a): a thin line that keeps moving. No spinners. */
+@Composable
+fun MovingLine(modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    androidx.compose.material3.LinearProgressIndicator(
+        modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill),
+        color = c.primary, trackColor = c.surfaceContainerHighest,
+    )
+}

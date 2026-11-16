@@ -1,10 +1,10 @@
-# Keyhole — project rules
+# Unpeep — project rules
 
-Keyhole is an open-source Android app that helps you check a room for hidden cameras and trackers. It scans the Wi-Fi,
+Unpeep is an open-source Android app that helps you check a room for hidden cameras and trackers. It scans the Wi-Fi,
 nearby hotspots and Bluetooth, finds lenses and infrared lights with the camera, checks the magnetic field, walks you through a checklist and
 tells you plainly what it checked and what it couldn't. **It never sends your data anywhere.**
-Package `app.keyhole.privacy` · by **mid apps** · GNU GPL v3 · Play title "Keyhole: Hidden Camera Finder".
-**Logo:** one geometry, `tools/keyhole_mark.py`, writes every copy (launcher, monochrome, `ic_notification`, store icon,
+Package `app.unpeep.privacy` · by **mid apps** · GNU GPL v3 · Play title "Unpeep: Hidden Camera Finder".
+**Logo:** one geometry, `tools/unpeep_mark.py`, writes every copy (launcher, monochrome, `ic_notification`, store icon,
 feature graphic, site), each centred on its canvas. Never hand-edit those files; change the script and run it.
 
 Read before working: `docs/PLAN.md`, `docs/DESIGN.md`, `docs/TOKENS.md`, `docs/COMPONENTS.md`, `docs/SCREENS.md`
@@ -39,7 +39,7 @@ AI detection, cloud sync, accounts, online signature updates.
 - **One look per element:** the same thing on two screens uses one shared component with no per-screen look options.
 - Screens use only components in `docs/COMPONENTS.md`. Missing one? Add it there first. UI without a PNG goes on
   TODO.md as "Design review: …".
-- Sheets first: every choice, picker and confirm is a bottom sheet (`KeyholeSheet`). No dialogs.
+- Sheets first: every choice, picker and confirm is a bottom sheet (`UnpeepSheet`). No dialogs.
 - Every finding can be marked "Not a camera?"; the report lists what was marked, with Undo.
 - Icons: Solar Linear vector drawables only (`tools/solar_icon.py`, CC BY 4.0, credited in About › Licences).
 - Release: R8 full, minify + shrink resources, baseline profile committed. **APK < 5 MB.**
@@ -50,7 +50,7 @@ AI detection, cloud sync, accounts, online signature updates.
 - Seed hue 222 dark blue in `Color.kt`, dynamic colour optional, Lexend default (Outfit, Atkinson, Space Grotesk), weights 400/500,
   4 dp grid, 16 dp margin, 24 dp surfaces, circles/pills for small tappable things.
 - Family patterns from Burrow/Weft (tab title + tonal buttons, nav Check · Reports · More, grouped rows, sheets, About order).
-- Keyhole's identity is the lens (rings + glint): Start button, scan progress, Find it, detail headers. The seven checks (Wi-Fi 232, Hotspots 150, Bluetooth 268, Lens 34, Infrared 338, Magnet 92, Checklist 186) are one icon row.
+- Unpeep's identity is the lens (rings + glint): Start button, scan progress, Find it, detail headers. The seven checks (Wi-Fi 232, Hotspots 150, Bluetooth 268, Lens 34, Infrared 338, Magnet 92, Checklist 186) are one icon row.
 - Every detail screen (device, report, privacy, help) opens with the same small lens header.
 - Result colours: red only for "Likely camera" and errors, amber for "Check this", neutral for known devices.
   Never tint a whole screen red.

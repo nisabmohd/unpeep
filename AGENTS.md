@@ -1,6 +1,6 @@
 # Agents
 
-Read `CLAUDE.md` first: it holds every rule for this repo (what Keyhole is, hard rules, design rules, stack,
+Read `CLAUDE.md` first: it holds every rule for this repo (what Unpeep is, hard rules, design rules, stack,
 behaviour). This file exists so tools other than Claude Code find it.
 
 - Next work: `TODO.md`. The plan: `docs/PLAN.md`. Screens: `docs/SCREENS.md` + `design/screens/*.png`.

@@ -1,0 +1,175 @@
+package app.unpeep.privacy.ui.components
+
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.focusable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBars
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalWindowInfo
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Velocity
+import app.unpeep.privacy.R
+import app.unpeep.privacy.ui.theme.UnpeepType
+import app.unpeep.privacy.ui.theme.Shapes
+import app.unpeep.privacy.ui.theme.Size
+import app.unpeep.privacy.ui.theme.Space
+
+/** The share of the screen a sheet may take; the rest stays visible above it. */
+private const val MAX_SHEET_FRACTION = 0.9f
+
+/**
+ * Every choice, picker and confirm in the app (no dialogs): opens fully, sits on the bottom edge, and leaves the
+ * top 10% of the screen visible however much it holds. Handle, [title] on the left with one muted [line], a round
+ * close button; long content scrolls inside. The same sheet as Weft and Burrow.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun UnpeepSheet(
+    title: String, onDismiss: () -> Unit, line: String? = null, footer: (@Composable ColumnScope.() -> Unit)? = null,
+    /** Stays under the title while the content scrolls beneath it: a search field (15). */
+    pinned: (@Composable ColumnScope.() -> Unit)? = null,
+    content: @Composable ColumnScope.() -> Unit,
+) {
+    val c = MaterialTheme.colorScheme
+    val density = LocalDensity.current
+    val screen = with(density) { LocalWindowInfo.current.containerSize.height.toDp() }
+    val navBar = with(density) { WindowInsets.navigationBars.getBottom(density).toDp() }
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
+        containerColor = c.background,
+        scrimColor = c.scrim,
+        shape = Shapes.sheet,
+        dragHandle = { Box(Modifier.padding(top = Space.block).size(width = Size.handle, height = Space.grid).clip(Shapes.pill).background(c.outline)) },
+    ) {
+        // heightIn keeps within the room the sheet is given too, so the smaller of the two wins.
+        val max = screen * MAX_SHEET_FRACTION - Size.handleArea - navBar
+        Box {
+            // The sheet takes focus itself, so opening one never pops up the keyboard.
+            // imePadding: a sheet with a text field (Rename) lifts above the keyboard.
+            Column(Modifier.heightIn(max = max).imePadding().nestedScroll(remember { ScrollStaysInside() }).focusable()) {
+                Row(
+                    Modifier.fillMaxWidth().padding(start = Space.heading, end = Space.screen, top = Space.card, bottom = Space.card),
+                    verticalAlignment = Alignment.Top,
+                ) {
+                    // The title's line starts 4 dp under the close button's top edge (13c, 15, E07).
+                    Column(Modifier.weight(1f).padding(top = Space.small, end = Space.card)) {
+                        Text(title, style = UnpeepType.title, color = c.onSurface, modifier = Modifier.semantics { heading() })
+                        if (line != null) Text(line, style = UnpeepType.supporting, color = c.onSurfaceVariant, modifier = Modifier.padding(top = Space.small))
+                    }
+                    RoundIconButton(painterResource(R.drawable.ic_close), stringResource(R.string.close), onDismiss)
+                }
+                if (pinned != null) Column(Modifier.fillMaxWidth(), content = pinned)
+                Column(Modifier.weight(1f, fill = false).verticalScroll(rememberScrollState()), content = content)
+                if (footer != null) {
+                    Column(
+                        Modifier.fillMaxWidth().padding(start = Space.screen, end = Space.screen, top = Space.card, bottom = Space.block),
+                        verticalArrangement = Arrangement.spacedBy(Space.inline), content = footer,
+                    )
+                }
+            }
+        }
+    }
+}
+
+/**
+ * The sheet scroll rule (from Weft): a scroll or fling that moved the sheet's content stops when the content
+ * reaches its top or end, so it never drags or closes the sheet. A new drag that starts with the content already
+ * at its top still moves the sheet, so it can be pulled down on purpose.
+ */
+private class ScrollStaysInside : NestedScrollConnection {
+    private var scrolledContent = false
+
+    override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+        if (consumed.y != 0f) scrolledContent = true
+        return when {
+            source == NestedScrollSource.SideEffect -> available
+            scrolledContent -> available
+            else -> Offset.Zero
+        }
+    }
+
+    override suspend fun onPreFling(available: Velocity): Velocity = Velocity.Zero
+
+    override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+        val keep = scrolledContent || consumed.y != 0f
+        scrolledContent = false
+        return if (keep) available else Velocity.Zero
+    }
+}
+
+/** A sheet's list with nothing to show (15a: no country matches): what happened, and one muted line that still helps. */
+@Composable
+fun SheetEmpty(title: String, line: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    Column(
+        modifier.fillMaxWidth().padding(start = Space.heading, end = Space.heading, top = Space.dock, bottom = Space.sheetEmpty),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(title, style = UnpeepType.cardTitle, color = c.onSurface, textAlign = TextAlign.Center)
+        Text(line, style = UnpeepType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(top = Space.small))
+    }
+}
+
+/**
+ * A quiet line inside a sheet, under its rows ("Unpeep got it wrong? Report it…"); tappable when [onClick] is set.
+ * [leaves]: it opens something outside Unpeep (the browser), shown by ↗ at the end (06).
+ */
+@Composable
+fun SheetLine(text: String, modifier: Modifier = Modifier, icon: Painter? = null, onClick: (() -> Unit)? = null, leaves: Boolean = false) {
+    val c = MaterialTheme.colorScheme
+    Row(
+        modifier.fillMaxWidth().padding(horizontal = Space.inline)
+            .then(if (onClick != null) Modifier.focusRing(Shapes.surface, inside = true) else Modifier)
+            .clip(Shapes.surface)
+            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .heightIn(min = Size.iconButton).padding(horizontal = Space.card, vertical = Space.inline),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        if (icon != null) {
+            Icon(icon, null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.icon))
+            Spacer(Modifier.width(Space.card))
+        }
+        Text(text, style = UnpeepType.supporting, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
+        if (leaves) {
+            Spacer(Modifier.width(Space.block))
+            Icon(painterResource(R.drawable.ic_open), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.chevron))
+        }
+    }
+}

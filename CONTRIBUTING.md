@@ -1,6 +1,6 @@
 # Contributing
 
-Thanks for helping. Keyhole stays small, private and honest, so a few rules:
+Thanks for helping. Unpeep stays small, private and honest, so a few rules:
 
 - **Device lists** (the most useful help): see `community-signatures/README.md`.
 - **Translations:** `app/src/main/res/values-<lang>/strings.xml`. Short plain words, sentence case, no exclamation

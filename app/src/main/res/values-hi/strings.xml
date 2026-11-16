@@ -81,10 +81,10 @@
         <item quantity="one">%1$d डिवाइस जिसे आपने कैमरा नहीं बताया</item>
         <item quantity="other">%1$d डिवाइस जिन्हें आपने कैमरा नहीं बताया</item>
     </plurals>
-    <string name="how_keyhole_works">Keyhole कैसे काम करता है</string>
-    <string name="how_keyhole_works_line">हर जाँच क्या ढूँढती है</string>
-    <string name="what_keyhole_cant_find">Keyhole क्या नहीं ढूँढ सकता</string>
-    <string name="what_keyhole_cant_find_line">और हाथ से कैसे जाँचें</string>
+    <string name="how_unpeep_works">Unpeep कैसे काम करता है</string>
+    <string name="how_unpeep_works_line">हर जाँच क्या ढूँढती है</string>
+    <string name="what_unpeep_cant_find">Unpeep क्या नहीं ढूँढ सकता</string>
+    <string name="what_unpeep_cant_find_line">और हाथ से कैसे जाँचें</string>
     <string name="if_you_find_a_camera">अगर आपको कैमरा मिले</string>
     <string name="if_you_find_a_camera_line">क्या करें, एक-एक कदम</string>
     <string name="privacy">निजता</string>
@@ -160,8 +160,8 @@
     <string name="not_a_camera_line">इसे अपना या कमरे का बताएँ</string>
     <string name="found_it">मिल गया?</string>
     <string name="find_its_lens">इसका लेंस ढूँढें</string>
-    <string name="share_footer">Keyhole से जाँचा गया। कुछ भी कहीं नहीं भेजा गया।</string>
-    <string name="not_a_camera_sheet_line">Keyhole को बताएँ कि यह क्या है। यह आपके फ़ोन पर ही रहता है।</string>
+    <string name="share_footer">Unpeep से जाँचा गया। कुछ भी कहीं नहीं भेजा गया।</string>
+    <string name="not_a_camera_sheet_line">Unpeep को बताएँ कि यह क्या है। यह आपके फ़ोन पर ही रहता है।</string>
     <string name="its_mine">यह मेरा है</string>
     <string name="its_mine_line">फ़ोन, लैपटॉप या कुछ जो मैं लाया</string>
     <string name="part_of_the_room">कमरे का हिस्सा</string>
@@ -218,7 +218,7 @@
     <string name="allow">अनुमति दें</string>
     <string name="open_settings">सेटिंग खोलें</string>
     <string name="perm_hotspots_title">लोकेशन की अनुमति दें</string>
-    <string name="perm_hotspots_line">Android इसी से वाई-फ़ाई नाम दिखाता है। Keyhole कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
+    <string name="perm_hotspots_line">Android इसी से वाई-फ़ाई नाम दिखाता है। Unpeep कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
     <string name="perm_bluetooth_title">आसपास के डिवाइस की अनुमति दें</string>
     <string name="perm_bluetooth_line">ट्रैकर और ब्लूटूथ कैमरे ढूँढने के लिए।</string>
     <string name="perm_denied_line">सेटिंग में अनुमति दें, फिर लौटें।</string>
@@ -317,9 +317,9 @@
     <string name="perm_camera_line">कुछ रिकॉर्ड नहीं होता। सिर्फ़ आपकी फ़ोटो रहती हैं।</string>
     <string name="camera_problem_title">कैमरा नहीं खुल रहा</string>
     <string name="camera_in_use_line">शायद कोई और ऐप इसे इस्तेमाल कर रहा है। उसे बंद करके फिर कोशिश करें।</string>
-    <string name="camera_failed_line">इस बार Android ने Keyhole को कैमरा इस्तेमाल नहीं करने दिया।</string>
+    <string name="camera_failed_line">इस बार Android ने Unpeep को कैमरा इस्तेमाल नहीं करने दिया।</string>
     <string name="try_again">फिर कोशिश करें</string>
-    <string name="no_camera_title">इस फ़ोन में ऐसा कैमरा नहीं जिसे Keyhole इस्तेमाल कर सके</string>
+    <string name="no_camera_title">इस फ़ोन में ऐसा कैमरा नहीं जिसे Unpeep इस्तेमाल कर सके</string>
     <string name="tips_title">लेंस कैसे ढूँढें</string>
     <string name="tips_line">संभावित लेंस घेरता है। पक्का करने के लिए पास से देखें।</string>
     <string name="tip_dark">लाइट बंद करें और पर्दे खींच दें</string>
@@ -472,7 +472,7 @@
     <string name="export_failed">PDF सेव नहीं हो सकी</string>
     <string name="magnet_finding">आस-पास इलेक्ट्रॉनिक्स</string>
     <string name="magnet_finding_line">%2$d µT के सामान्य से +%1$d µT ऊपर</string>
-    <string name="report_pdf_footer">Keyhole से बना। कुछ भी कहीं नहीं भेजा गया।</string>
+    <string name="report_pdf_footer">Unpeep से बना। कुछ भी कहीं नहीं भेजा गया।</string>
     <string name="photo">फ़ोटो</string>
     <string name="delete">हटाएँ</string>
     <string name="delete_report_title">यह रिपोर्ट हटाएँ?</string>
@@ -556,7 +556,7 @@
     <string name="move_up">ऊपर ले जाएँ</string>
     <string name="move_down">नीचे ले जाएँ</string>
     <string name="sweep_steps_note">जाँच चालू चरणों को इसी क्रम में चलाती है।</string>
-    <string name="language_line">फ़ोन से अलग, Keyhole की अपनी भाषा</string>
+    <string name="language_line">फ़ोन से अलग, Unpeep की अपनी भाषा</string>
     <string name="marked_known_note">जिन्हें आपने कैमरा नहीं बताया। हटाने के लिए टैप करें।</string>
     <string name="marked_mine">आपका बताया गया</string>
     <string name="marked_room">कमरे का हिस्सा बताया गया</string>
@@ -569,14 +569,14 @@
     <string name="how_magnet">इलेक्ट्रॉनिक्स के पास चुंबकीय क्षेत्र उछले तो दिखाता है।</string>
     <string name="how_checklist">वे जगहें जिन्हें हाथ से देखना चाहिए।</string>
     <string name="how_note">जाँच तभी चलती है जब आप शुरू करें। कुछ भी फ़ोन से बाहर नहीं जाता।</string>
-    <string name="limits_intro">कोई जाँच वादा नहीं कर सकती कि कमरा सुरक्षित है। Keyhole इन्हें नहीं देख सकता।</string>
+    <string name="limits_intro">कोई जाँच वादा नहीं कर सकती कि कमरा सुरक्षित है। Unpeep इन्हें नहीं देख सकता।</string>
     <string name="limit_memory_card">ये कार्ड पर रिकॉर्ड करते हैं और कुछ नहीं भेजते। लेंस फ़ाइंडर, इन्फ़्रारेड, चुंबक और चेकलिस्ट इस्तेमाल करें।</string>
     <string name="limit_other_network">दूसरे वाई-फ़ाई, मोबाइल डेटा, या ऐसे वाई-फ़ाई पर कैमरे जो फ़ोन नहीं देखता</string>
     <string name="limit_isolation">दूसरे डिवाइस जवाब नहीं देते</string>
-    <string name="limit_trackers">जो संकेत नहीं भेजते, या ऐसे भेजते हैं जो Keyhole अभी नहीं जानता</string>
+    <string name="limit_trackers">जो संकेत नहीं भेजते, या ऐसे भेजते हैं जो Unpeep अभी नहीं जानता</string>
     <string name="limit_infrared">इनका कैमरा इसे रोकता है; टीवी-रिमोट टेस्ट बताता है।</string>
     <string name="privacy_header_line">न खाता, न विज्ञापन, न ट्रैकिंग।</string>
-    <string name="why_keyhole_asks">Keyhole क्यों पूछता है</string>
+    <string name="why_unpeep_asks">Unpeep क्यों पूछता है</string>
     <string name="perm_row_wifi_line">किसी अनुमति की ज़रूरत नहीं।</string>
     <string name="perm_row_location">लोकेशन, हॉटस्पॉट के लिए</string>
     <string name="perm_row_location_line">सिर्फ़ वाई-फ़ाई नामों के लिए। आप कहाँ हैं, कभी नहीं।</string>
@@ -596,9 +596,9 @@
     <string name="source_code">सोर्स कोड</string>
     <string name="data_stays">आपका डेटा आपका ही रहता है</string>
     <string name="rate_play">Google Play पर रेटिंग दें</string>
-    <string name="rate_play_line">इससे दूसरों को Keyhole ढूँढने में मदद मिलती है</string>
+    <string name="rate_play_line">इससे दूसरों को Unpeep ढूँढने में मदद मिलती है</string>
     <string name="report_problem">समस्या बताएँ</string>
-    <string name="licences_line">Keyhole में ओपन-सोर्स सॉफ़्टवेयर</string>
+    <string name="licences_line">Unpeep में ओपन-सोर्स सॉफ़्टवेयर</string>
     <string name="update_checking">अपडेट जाँच रहे हैं</string>
     <string name="update_latest_title">आपके पास सबसे नया वर्शन है</string>
     <string name="update_open">रिलीज़ पेज खोलें</string>
@@ -661,7 +661,7 @@
     <string name="more_from_mid_apps">mid apps के और ऐप</string>
     <string name="app_burrow_line">पैसा जो खुद का हिसाब रखे</string>
     <string name="app_weft_line">छोटी आदतें, ईमानदारी से निभाई</string>
-    <string name="results_cleared">Keyhole बंद होने पर वे नतीजे हटा दिए गए</string>
+    <string name="results_cleared">Unpeep बंद होने पर वे नतीजे हटा दिए गए</string>
     <string name="report_gone">वह रिपोर्ट हटा दी गई थी</string>
     <string name="stop_sweep_title">यह जाँच रोकें?</string>
     <string name="stop_sweep_line">आप %2$d में से जाँच %1$d पर हैं।</string>
@@ -676,8 +676,8 @@
     <string name="carry_on">जारी रखें</string>
     <string name="paused_at">%1$s पर रुका है</string>
     <plurals name="paused_line">
-        <item quantity="one">%2$d में से %1$d जाँच पूरी। Keyhole के बैकग्राउंड में रहते कुछ नहीं खोया।</item>
-        <item quantity="other">%2$d में से %1$d जाँचें पूरी। Keyhole के बैकग्राउंड में रहते कुछ नहीं खोया।</item>
+        <item quantity="one">%2$d में से %1$d जाँच पूरी। Unpeep के बैकग्राउंड में रहते कुछ नहीं खोया।</item>
+        <item quantity="other">%2$d में से %1$d जाँचें पूरी। Unpeep के बैकग्राउंड में रहते कुछ नहीं खोया।</item>
     </plurals>
     <string name="aeroplane_title">एयरप्लेन मोड चालू है</string>
     <string name="aeroplane_line">इसे बंद करें, या बिना सिग्नल वाली जाँचों पर जाएँ।</string>

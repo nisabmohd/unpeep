@@ -1,0 +1,53 @@
+package app.unpeep.privacy.ui.wifi
+
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import app.unpeep.privacy.R
+import app.unpeep.privacy.domain.Risk
+import app.unpeep.privacy.domain.WifiSnapshot
+import app.unpeep.privacy.scan.WifiSession
+import app.unpeep.privacy.ui.components.DetailScreen
+import app.unpeep.privacy.ui.components.EmptyState
+import app.unpeep.privacy.ui.components.Grouped
+import app.unpeep.privacy.ui.components.SectionLabel
+import app.unpeep.privacy.ui.theme.UnpeepTheme
+import kotlinx.coroutines.flow.StateFlow
+
+class WifiOthersViewModel(session: WifiSession) : ViewModel() {
+    val state: StateFlow<WifiSnapshot> = session.state
+}
+
+/** The devices behind "15 known devices" and "3 devices not recognised": each opens like any other device. */
+@Composable
+fun WifiOthersScreen(vm: WifiOthersViewModel, onBack: () -> Unit, onDevice: (String) -> Unit) {
+    val w by vm.state.collectAsStateWithLifecycle()
+    WifiOthersContent(w, onBack, onDevice)
+}
+
+@Composable
+fun WifiOthersContent(w: WifiSnapshot, onBack: () -> Unit, onDevice: (String) -> Unit) {
+    val known = w.devices.filter { it.risk == Risk.KNOWN }
+    val other = w.devices.filter { it.risk == Risk.UNKNOWN }
+    DetailScreen(onBack, title = stringResource(R.string.other_devices_title)) {
+        if (known.isEmpty() && other.isEmpty()) {
+            EmptyState(painterResource(R.drawable.ic_wifi), null, stringResource(R.string.nothing_answered_yet))
+        }
+        if (other.isNotEmpty()) {
+            SectionLabel(stringResource(R.string.risk_not_recognised), meta = other.size.toString(), first = true)
+            Grouped { other.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+        }
+        if (known.isNotEmpty()) {
+            SectionLabel(stringResource(R.string.risk_known), meta = known.size.toString(), first = other.isEmpty())
+            Grouped { known.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+        }
+    }
+}
+
+@Preview
+@Composable
+private fun WifiOthersPreview() = UnpeepTheme { WifiOthersContent(previewWifi(), {}, {}) }

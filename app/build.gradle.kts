@@ -9,11 +9,11 @@ plugins {
 }
 
 android {
-    namespace = "app.keyhole.privacy"
+    namespace = "app.unpeep.privacy"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "app.keyhole.privacy"
+        applicationId = "app.unpeep.privacy"
         minSdk = 26
         targetSdk = 36
 
@@ -21,9 +21,9 @@ android {
         versionName = "0.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // About screen links. They open in the browser.
-        buildConfigField("String", "REPO_URL", "\"https://github.com/nisabmohd/keyhole\"")
+        buildConfigField("String", "REPO_URL", "\"https://github.com/nisabmohd/unpeep\"")
         buildConfigField("String", "CONTACT_EMAIL", "\"hello.midapps@gmail.com\"")
-        buildConfigField("String", "PLAY_STORE_URL", "\"https://play.google.com/store/apps/details?id=app.keyhole.privacy\"")
+        buildConfigField("String", "PLAY_STORE_URL", "\"https://play.google.com/store/apps/details?id=app.unpeep.privacy\"")
     }
 
     flavorDimensions += "distribution"
@@ -63,14 +63,14 @@ android {
 
     signingConfigs {
         // CI sets the env vars; locally the gitignored keystore/keystore.properties. Otherwise debug key.
-        val keystore = System.getenv("KEYHOLE_KEYSTORE_PATH")
+        val keystore = System.getenv("UNPEEP_KEYSTORE_PATH")
         val local = rootProject.file("keystore/keystore.properties")
         if (keystore != null) {
             create("release") {
                 storeFile = file(keystore)
-                storePassword = System.getenv("KEYHOLE_KEYSTORE_PASSWORD")
-                keyAlias = System.getenv("KEYHOLE_KEY_ALIAS")
-                keyPassword = System.getenv("KEYHOLE_KEY_PASSWORD")
+                storePassword = System.getenv("UNPEEP_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("UNPEEP_KEY_ALIAS")
+                keyPassword = System.getenv("UNPEEP_KEY_PASSWORD")
             }
         } else if (local.exists()) {
             val props = Properties().apply { local.inputStream().use { load(it) } }

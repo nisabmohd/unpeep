@@ -4,7 +4,7 @@ short lines under it.
 
 usage: python3 tools/feature_graphic.py [out file]
 Writes release/feature-graphic-1024x500.png and the fastlane copy. Needs Pillow; the mark is taken
-from release/icon-512.png (tools/keyhole_mark.py), so it is the store icon's drawing."""
+from release/icon-512.png (tools/unpeep_mark.py), so it is the store icon's drawing."""
 import os
 import sys
 
@@ -41,7 +41,7 @@ def mark(px, color):
     m = icon.point(lambda v: max(0, min(255, round((v - lo) * 255 / (hi - lo)))))
     # The mark's own box (it is centred on the icon), so it can be sized on its own.
     m = m.crop(m.getbbox())
-    # The keyhole is taller than it is wide: keep its shape, `px` tall.
+    # The mark is square; any other shape would keep its own, `px` tall.
     m = m.resize((round(px * m.width / m.height), px), Image.LANCZOS)
     out = Image.new("RGBA", m.size, color + (0,))
     out.putalpha(m)
@@ -59,7 +59,7 @@ size = round(TILE_SIZE * 0.56) * SS
 m = mark(size, BLUE)
 img.alpha_composite(m, (TILE_X * SS + (TILE_SIZE * SS - m.width) // 2, TILE_Y * SS + (TILE_SIZE * SS - m.height) // 2))
 d = ImageDraw.Draw(img)
-d.text((TEXT_X * SS, 235 * SS), "Keyhole", font=font(96, 600), fill=NAME, anchor="ls")
+d.text((TEXT_X * SS, 235 * SS), "Unpeep", font=font(96, 600), fill=NAME, anchor="ls")
 d.text((TEXT_X * SS, 297 * SS), "Check a room for hidden cameras.", font=font(32, 400), fill=LINES, anchor="ls")
 d.text((TEXT_X * SS, 341 * SS), "Private. Honest. Open source.", font=font(32, 400), fill=LINES, anchor="ls")
 

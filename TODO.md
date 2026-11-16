@@ -30,6 +30,14 @@ Hotspots with Location, Bluetooth permission and "Bluetooth is off", Checklist, 
 - [ ] Update check (github build) against a real release; play and foss never show the row
 - [ ] `DesignShots` on a real tablet and in landscape on a phone
 
+## Rename to Unpeep (2026-11-16)
+The app, the package (`app.unpeep.privacy`), the docs, the store text and the logo (`tools/unpeep_mark.py`) are renamed.
+- [ ] Design review: the boards in `design/screens/` and the canvas still say Keyhole and show the old mark
+      (`00-logo.png`, Welcome, About, the rail, the PDF); redraw them
+- [ ] Owner: rename the GitHub repo to `nisabmohd/unpeep` (the app's links and the update check point there) and name
+      the signing secrets `UNPEEP_KEYSTORE_BASE64`, `UNPEEP_KEYSTORE_PASSWORD`, `UNPEEP_KEY_ALIAS`, `UNPEEP_KEY_PASSWORD`
+- [ ] Owner: the logo zip's blue is #233782; the mark is drawn in the app's own #173782 (`BLUE` in the script, `Brand`)
+
 ## Release (owner)
 - [ ] Baseline profile: regenerate on a real phone (`./gradlew :app:generateBaselineProfile`) and commit
 - [x] Store graphics: `release/` has the icon, the feature graphic and eight phone screenshots, made by
@@ -43,7 +51,7 @@ Hotspots with Location, Bluetooth permission and "Bluetooth is off", Checklist, 
       warning is correct German. Everything else lint reported is fixed
 
 ## Next
-- [ ] "Enjoying Keyhole?" sheet, as Weft's `SupportPromptSheet` / Burrow's review ask: Rate (play), Star on GitHub,
+- [ ] "Enjoying Unpeep?" sheet, as Weft's `SupportPromptSheet` / Burrow's review ask: Rate (play), Star on GitHub,
       Sponsor, Maybe later. Shown at a calm moment (a report just saved), never during a scan; after a few reports and
       7+ days of use, at most weekly, never again after 4 × Maybe later, not for 180 days after Rate / Star / Sponsor
       (rule `SupportPrompt.shouldShow`, unit-tested). Play build opens Play's own rating card (`PlayReview`); foss and

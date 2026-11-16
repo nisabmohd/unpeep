@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "app.keyhole.privacy.baselineprofile"
+    namespace = "app.unpeep.privacy.baselineprofile"
     compileSdk = 36
 
     defaultConfig {

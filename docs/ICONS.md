@@ -8,7 +8,7 @@ npm pack @iconify-json/solar && tar xzf iconify-json-solar-*.tgz   # outside the
 python3 tools/solar_icon.py <path>/package
 ```
 Custom glyphs drawn in Solar style live in `CUSTOM` (the dotted drag grip).
-Brand marks (launcher, monochrome, notification, store icon) come from `tools/keyhole_mark.py` only.
+Brand marks (launcher, monochrome, notification, store icon) come from `tools/unpeep_mark.py` only.
 
 Sizes: 22 dp in 44 dp circles, 24 dp in header buttons and nav, 20 dp chevrons, 14–16 dp in tags and chips.
 

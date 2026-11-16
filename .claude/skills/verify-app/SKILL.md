@@ -1,6 +1,6 @@
 ---
 name: verify-app
-description: Check a Keyhole build end to end before calling work done or releasing. Use after finishing a screen or feature, and before every release.
+description: Check an Unpeep build end to end before calling work done or releasing. Use after finishing a screen or feature, and before every release.
 ---
 
 # Verify the app

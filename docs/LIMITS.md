@@ -1,4 +1,4 @@
-# What Keyhole can't do (and says so)
+# What Unpeep can't do (and says so)
 
 The report's **Couldn't check** section draws from this list.
 - Cameras that record to a memory card and send nothing: no scan can see them. The lens, infrared, magnet and

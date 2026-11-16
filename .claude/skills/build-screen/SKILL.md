@@ -1,6 +1,6 @@
 ---
 name: build-screen
-description: Build one Keyhole screen from its design PNG so it matches exactly. Use when implementing or redoing any screen listed in docs/SCREENS.md.
+description: Build one Unpeep screen from its design PNG so it matches exactly. Use when implementing or redoing any screen listed in docs/SCREENS.md.
 ---
 
 # Build a screen from its PNG
@@ -10,7 +10,7 @@ description: Build one Keyhole screen from its design PNG so it matches exactly.
    - tab: `TabTopBar` → content → nothing docked (Home's lens Start is the hero)
    - detail: `BackTopBar` → `LensHeader` (+ tags) → `SectionLabel` + `Grouped(ListRow…)` → `Dock` with `ButtonPair`
    - check: `BackTopBar` → lens/meter → `Note` (honesty line) → docked pair
-   - choice: `KeyholeSheet` with `ChoiceRow`s (never a dialog)
+   - choice: `UnpeepSheet` with `ChoiceRow`s (never a dialog)
 3. Missing a component? Add it to `ui/components` and COMPONENTS.md first, no per-screen look options.
 4. UI state (immutable data class) → ViewModel (StateFlow) → composable. Previews light and dark with fake state.
 5. Strings in `strings.xml` (all 7 languages; English first, then translate short). Plurals for counts.

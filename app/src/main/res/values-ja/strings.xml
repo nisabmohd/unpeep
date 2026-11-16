@@ -73,10 +73,10 @@
     <plurals name="marked_known_count">
         <item quantity="other">カメラではないとマークしたデバイス %1$d 台</item>
     </plurals>
-    <string name="how_keyhole_works">Keyhole のしくみ</string>
-    <string name="how_keyhole_works_line">各チェックが探すもの</string>
-    <string name="what_keyhole_cant_find">Keyhole が見つけられないもの</string>
-    <string name="what_keyhole_cant_find_line">手で確かめる方法</string>
+    <string name="how_unpeep_works">Unpeep のしくみ</string>
+    <string name="how_unpeep_works_line">各チェックが探すもの</string>
+    <string name="what_unpeep_cant_find">Unpeep が見つけられないもの</string>
+    <string name="what_unpeep_cant_find_line">手で確かめる方法</string>
     <string name="if_you_find_a_camera">カメラを見つけたら</string>
     <string name="if_you_find_a_camera_line">すべきことを順番に</string>
     <string name="privacy">プライバシー</string>
@@ -152,8 +152,8 @@
     <string name="not_a_camera_line">自分のもの、または部屋の備品としてマーク</string>
     <string name="found_it">見つけた？</string>
     <string name="find_its_lens">レンズを探す</string>
-    <string name="share_footer">Keyhole でチェックしました。データはどこにも送信されていません。</string>
-    <string name="not_a_camera_sheet_line">これが何かを Keyhole に教えてください。この情報は端末内に保存されます。</string>
+    <string name="share_footer">Unpeep でチェックしました。データはどこにも送信されていません。</string>
+    <string name="not_a_camera_sheet_line">これが何かを Unpeep に教えてください。この情報は端末内に保存されます。</string>
     <string name="its_mine">自分のもの</string>
     <string name="its_mine_line">持ち込んだスマートフォンやノートパソコンなど</string>
     <string name="part_of_the_room">部屋の備品</string>
@@ -200,7 +200,7 @@
     <string name="allow">許可</string>
     <string name="open_settings">設定を開く</string>
     <string name="perm_hotspots_title">位置情報を許可</string>
-    <string name="perm_hotspots_line">Wi-Fi名の表示に必要です。Keyholeは現在地を取得しません。</string>
+    <string name="perm_hotspots_line">Wi-Fi名の表示に必要です。Unpeepは現在地を取得しません。</string>
     <string name="perm_bluetooth_title">付近のデバイスを許可</string>
     <string name="perm_bluetooth_line">トラッカーとBluetoothカメラを見つけるためです。</string>
     <string name="perm_denied_line">設定で許可してから戻ってください。</string>
@@ -295,7 +295,7 @@
     <string name="camera_in_use_line">別のアプリが使用中の可能性があります。そのアプリを閉じてもう一度お試しください。</string>
     <string name="camera_failed_line">今回は Android がカメラの使用を許可しませんでした。</string>
     <string name="try_again">もう一度試す</string>
-    <string name="no_camera_title">この端末には Keyhole が使えるカメラがありません</string>
+    <string name="no_camera_title">この端末には Unpeep が使えるカメラがありません</string>
     <string name="tips_title">レンズの探し方</string>
     <string name="tips_line">レンズの可能性がある箇所を囲みます。近くでよく確認してください。</string>
     <string name="tip_dark">照明を消してカーテンを閉める</string>
@@ -444,7 +444,7 @@
     <string name="export_failed">PDFを保存できませんでした</string>
     <string name="magnet_finding">近くに電子機器</string>
     <string name="magnet_finding_line">通常値 %2$d µT より +%1$d µT</string>
-    <string name="report_pdf_footer">Keyholeで作成。どこにも送信していません。</string>
+    <string name="report_pdf_footer">Unpeepで作成。どこにも送信していません。</string>
     <string name="photo">写真</string>
     <string name="delete">削除</string>
     <string name="delete_report_title">このレポートを削除しますか？</string>
@@ -524,7 +524,7 @@
     <string name="move_up">上へ移動</string>
     <string name="move_down">下へ移動</string>
     <string name="sweep_steps_note">オンのステップをこの順番で行います。</string>
-    <string name="language_line">端末とは別の、Keyhole の表示言語</string>
+    <string name="language_line">端末とは別の、Unpeep の表示言語</string>
     <string name="marked_known_note">カメラではないとマークしたデバイスです。タップで取り消し。</string>
     <string name="marked_mine">自分のものとしてマーク</string>
     <string name="marked_room">部屋の備品としてマーク</string>
@@ -537,14 +537,14 @@
     <string name="how_magnet">電子機器の近くで磁場が急上昇すると知らせます。</string>
     <string name="how_checklist">手で確かめたい場所です。</string>
     <string name="how_note">チェックは始めたときだけ動きます。データは端末の外に出ません。</string>
-    <string name="limits_intro">どのチェックも部屋が安全だと約束はできません。Keyholeには次のものが見えません。</string>
+    <string name="limits_intro">どのチェックも部屋が安全だと約束はできません。Unpeepには次のものが見えません。</string>
     <string name="limit_memory_card">カードに記録し何も送信しません。レンズファインダー・赤外線・磁気・チェックリストを使ってください。</string>
     <string name="limit_other_network">別のWi-Fi、モバイルデータ、または端末から見えないWi-Fiのカメラ</string>
     <string name="limit_isolation">他のデバイスは応答しません</string>
-    <string name="limit_trackers">電波を出さない、またはKeyholeが未対応の方式のもの</string>
+    <string name="limit_trackers">電波を出さない、またはUnpeepが未対応の方式のもの</string>
     <string name="limit_infrared">カメラが遮ります。リモコンテストで分かります。</string>
     <string name="privacy_header_line">アカウントなし、広告なし、追跡なし。</string>
-    <string name="why_keyhole_asks">Keyhole が許可を求める理由</string>
+    <string name="why_unpeep_asks">Unpeep が許可を求める理由</string>
     <string name="perm_row_wifi_line">許可は不要です。</string>
     <string name="perm_row_location">位置情報（ホットスポット用）</string>
     <string name="perm_row_location_line">Wi-Fi名のためだけ。現在地は取得しません。</string>
@@ -564,9 +564,9 @@
     <string name="source_code">ソースコード</string>
     <string name="data_stays">データはあなたのもの</string>
     <string name="rate_play">Google Play で評価</string>
-    <string name="rate_play_line">ほかの人が Keyhole を見つける助けになります</string>
+    <string name="rate_play_line">ほかの人が Unpeep を見つける助けになります</string>
     <string name="report_problem">問題を報告</string>
-    <string name="licences_line">Keyhole のオープンソースソフトウェア</string>
+    <string name="licences_line">Unpeep のオープンソースソフトウェア</string>
     <string name="update_checking">アップデートを確認中</string>
     <string name="update_latest_title">最新バージョンです</string>
     <string name="update_open">リリースページを開く</string>
@@ -619,7 +619,7 @@
     <string name="more_from_mid_apps">mid apps のほかのアプリ</string>
     <string name="app_burrow_line">自動で記録される家計簿</string>
     <string name="app_weft_line">小さな習慣を、正直に続ける</string>
-    <string name="results_cleared">Keyholeを閉じたときにその結果は消去されました</string>
+    <string name="results_cleared">Unpeepを閉じたときにその結果は消去されました</string>
     <string name="report_gone">そのレポートは削除されています</string>
     <string name="stop_sweep_title">このチェックを止めますか？</string>
     <string name="stop_sweep_line">%2$d件中%1$d件目のチェックです。</string>

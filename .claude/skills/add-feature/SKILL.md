@@ -1,6 +1,6 @@
 ---
 name: add-feature
-description: Add a new feature or check to Keyhole the right way (plan, rules, design, code, tests, docs). Use for anything not already a screen in docs/SCREENS.md.
+description: Add a new feature or check to Unpeep the right way (plan, rules, design, code, tests, docs). Use for anything not already a screen in docs/SCREENS.md.
 ---
 
 # Add a feature

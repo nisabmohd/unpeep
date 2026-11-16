@@ -23,13 +23,13 @@ FONT = os.path.join(ROOT, "app", "src", "main", "res", "font", "lexend.ttf")
 # Captions follow docs/COPY.md: short plain words, no fear words, and never "safe" or "detects all".
 shots = [
     ("home", "01-home.png", "Check a room for cameras", "Seven checks in one calm sweep.", False),
-    ("sweep", "02-sweep.png", "See what is on the Wi-Fi", "Keyhole asks every device and lists what answers.", False),
+    ("sweep", "02-sweep.png", "See what is on the Wi-Fi", "Unpeep asks every device and lists what answers.", False),
     ("results", "03-results.png", "Likely cameras come first", "Known devices are set aside, so the list stays short.", False),
-    ("device", "04-device.png", "Every finding says why", "The signs Keyhole saw, in plain words.", False),
+    ("device", "04-device.png", "Every finding says why", "The signs Unpeep saw, in plain words.", False),
     ("lens", "05-lens.png", "Find a lens by its glint", "The torch and the camera ring what shines back.", False),
     ("find-it", "06-find-it.png", "Walk towards a signal", "A meter leads you to a hotspot or a tracker.", False),
     ("report", "07-report.png", "An honest report", "What was checked, and what couldn't be.", False),
-    ("home-dark", "08-home-dark.png", "Private. Yours.", "Keyhole never sends your data anywhere.", True),
+    ("home-dark", "08-home-dark.png", "Private. Yours.", "Unpeep never sends your data anywhere.", True),
 ]
 
 W, H = 1080, 1920
@@ -115,7 +115,7 @@ for raw, out, title, sub, dark in shots:
     if not os.path.exists(os.path.join(RAW, raw + ".png")):
         print(f"skip {out}: no {raw}.png")  # re-shoot one caption without the other seven
         continue
-    bg = (18, 22, 34) if dark else (224, 232, 251)   # Keyhole blue, from the 222 seed
+    bg = (18, 22, 34) if dark else (224, 232, 251)   # Unpeep blue, from the 222 seed
     tc = (233, 238, 250) if dark else (16, 27, 62)
     sc = (172, 182, 206) if dark else (72, 84, 118)
     img = Image.new("RGB", (W, H), bg)

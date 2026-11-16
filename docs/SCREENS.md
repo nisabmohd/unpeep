@@ -1,6 +1,6 @@
 # Screens
 
-PNG per screen in `design/screens/` (light; `HomeDark` for dark). Routes in `ui/nav/KeyholeNav.kt`.
+PNG per screen in `design/screens/` (light; `HomeDark` for dark). Routes in `ui/nav/UnpeepNav.kt`.
 
 | # | Screen | Route | Status | Notes / edge cases |
 |---|---|---|---|---|

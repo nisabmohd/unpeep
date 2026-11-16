@@ -1,0 +1,228 @@
+package app.unpeep.privacy.ui.wifi
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.ColumnScope
+import app.unpeep.privacy.ui.isWide
+import app.unpeep.privacy.ui.components.keepTogether
+import app.unpeep.privacy.ui.components.LocalToasts
+import app.unpeep.privacy.ui.components.QuietLine
+import app.unpeep.privacy.ui.components.LensHeader
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewModelScope
+import app.unpeep.privacy.R
+import app.unpeep.privacy.data.SettingsRepository
+import app.unpeep.privacy.domain.Check
+import app.unpeep.privacy.domain.DeviceEvidence
+import app.unpeep.privacy.domain.Place
+import app.unpeep.privacy.domain.Risk
+import app.unpeep.privacy.domain.Sign
+import app.unpeep.privacy.domain.Verdict
+import app.unpeep.privacy.domain.WifiDevice
+import app.unpeep.privacy.domain.WifiSnapshot
+import app.unpeep.privacy.domain.WifiStatus
+import app.unpeep.privacy.domain.sweepSteps
+import app.unpeep.privacy.scan.WifiSession
+import app.unpeep.privacy.ui.components.CircleTone
+import app.unpeep.privacy.ui.components.DetailScreen
+import app.unpeep.privacy.ui.components.Grouped
+import app.unpeep.privacy.ui.components.IconCircle
+import app.unpeep.privacy.ui.components.ListRow
+import app.unpeep.privacy.ui.components.Note
+import app.unpeep.privacy.ui.components.NoteTone
+import app.unpeep.privacy.ui.components.PrimaryButton
+import app.unpeep.privacy.ui.components.SectionLabel
+import app.unpeep.privacy.ui.components.SummaryBox
+import app.unpeep.privacy.ui.components.SummaryPart
+import app.unpeep.privacy.ui.components.SummaryTone
+import app.unpeep.privacy.ui.components.TopBarAction
+import app.unpeep.privacy.ui.label
+import app.unpeep.privacy.ui.next
+import app.unpeep.privacy.ui.theme.UnpeepTheme
+import app.unpeep.privacy.ui.theme.Space
+import app.unpeep.privacy.ui.theme.ThemeMode
+import app.unpeep.privacy.ui.theme.ThemeSettings
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+
+@Immutable
+data class WifiResultsState(
+    val wifi: WifiSnapshot = WifiSnapshot(),
+    /** The step after Wi-Fi when this is part of a sweep; null when the check ran alone or was the last step. */
+    val next: Check? = null,
+    val loaded: Boolean = false,
+    /** Part of a sweep: the last step ends on "See report". */
+    val sweep: Boolean = false,
+)
+
+class WifiResultsViewModel(place: Place, sweep: Boolean, settings: SettingsRepository, session: WifiSession) : ViewModel() {
+    val state: StateFlow<WifiResultsState> = combine(session.state, settings.settings) { w, s ->
+        val steps = sweepSteps(place, s.stepOrder, s.stepsOff)
+        WifiResultsState(w, if (sweep) steps.getOrNull(steps.indexOf(Check.WIFI) + 1) else null, loaded = true, sweep = sweep)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WifiResultsState(session.state.value))
+}
+
+/**
+ * 04 Wi-Fi results: the note first (only the router answered, or nothing looks like a camera) · the count ·
+ * Likely camera · Worth a look · the known and unrecognised devices behind one row each · Next.
+ */
+@Composable
+fun WifiResultsScreen(vm: WifiResultsViewModel, onBack: () -> Unit, onScanAgain: () -> Unit, onDevice: (String) -> Unit, onOthers: () -> Unit, onNext: (Check?) -> Unit) {
+    val s by vm.state.collectAsStateWithLifecycle()
+    // The results live in memory: after the app was closed there is nothing to show, so go back.
+    val gone = s.loaded && s.wifi.status != WifiStatus.DONE
+    val toasts = LocalToasts.current
+    val cleared = stringResource(R.string.results_cleared)
+    LaunchedEffect(gone) {
+        if (gone) {
+            // Nothing ran since the app started (E06): say why the results went, on the screen it goes back to.
+            if (s.wifi.status == WifiStatus.IDLE) toasts.show(cleared)
+            onBack()
+        }
+    }
+    WifiResultsContent(s, onBack, onScanAgain, onDevice, onOthers, onNext)
+}
+
+@Composable
+fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () -> Unit, onDevice: (String) -> Unit, onOthers: () -> Unit, onNext: (Check?) -> Unit) {
+    val w = s.wifi
+    val likely = w.devices.filter { it.risk == Risk.LIKELY_CAMERA }
+    val look = w.devices.filter { it.risk == Risk.CHECK_THIS }
+    val known = w.devices.filter { it.risk == Risk.KNOWN }
+    val other = w.devices.filter { it.risk == Risk.UNKNOWN }
+    val wide = isWide()
+    DetailScreen(
+        onBack,
+        panes = wide,
+        title = stringResource(R.string.check_wifi),
+        actions = { TopBarAction(stringResource(R.string.scan_again), onScanAgain) },
+        dock = {
+            if (s.next != null) {
+                PrimaryButton(stringResource(s.next.next), { onNext(s.next) }, Modifier.fillMaxWidth(), trailing = painterResource(R.drawable.ic_arrow_right))
+            } else {
+                PrimaryButton(stringResource(if (s.sweep) R.string.see_report else R.string.done), { onNext(null) }, Modifier.fillMaxWidth())
+            }
+        },
+    ) {
+        val count = w.devices.size
+        // Nothing found (00-decisions): the plain result in a lens header, one row for what was seen, one quiet line for
+        // what the scan can't see. No count box, no second Note.
+        val nothing = !w.isolated && likely.isEmpty() && look.isEmpty()
+        if (w.isolated) {
+            Note(stringResource(R.string.isolation_text), title = stringResource(R.string.isolation_title), tone = NoteTone.WARNING)
+            Spacer(Modifier.height(Space.block))
+        }
+        if (nothing) {
+            LensHeader(
+                painterResource(R.drawable.ic_check_circle), stringResource(R.string.wifi_none_title),
+                line = pluralStringResource(R.plurals.devices_answered, count, count) + " " + stringResource(if (other.isEmpty()) R.string.all_known_kinds else R.string.none_like_camera),
+            )
+            Spacer(Modifier.height(Space.heading))
+        }
+        val summaryBox: @Composable () -> Unit = {
+            if (!nothing) SummaryBox(
+            w.ssid?.let { pluralStringResource(R.plurals.devices_on_wifi, count, count, it.keepTogether()) } ?: pluralStringResource(R.plurals.devices_on_this_wifi, count, count),
+            count.toString(),
+            buildList {
+                add(SummaryPart(likely.size, pluralStringResource(R.plurals.likely_cameras_count, likely.size, likely.size), SummaryTone.ALERT))
+                add(SummaryPart(look.size, pluralStringResource(R.plurals.worth_a_look_count, look.size, look.size), SummaryTone.WARNING))
+                add(SummaryPart(known.size, pluralStringResource(R.plurals.known_count, known.size, known.size), SummaryTone.NEUTRAL))
+                if (other.isNotEmpty()) add(SummaryPart(other.size, pluralStringResource(R.plurals.not_recognised_count, other.size, other.size), SummaryTone.NEUTRAL))
+            },
+        )
+        }
+        val groupsBlock: @Composable ColumnScope.() -> Unit = {
+            if (likely.isNotEmpty()) {
+                SectionLabel(stringResource(R.string.risk_likely_camera), meta = likely.size.toString())
+                Grouped { likely.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+            }
+            if (look.isNotEmpty()) {
+                SectionLabel(stringResource(R.string.risk_worth_a_look), meta = look.size.toString())
+                Grouped { look.forEach { d -> row { shape -> DeviceListRow(d, shape = shape, onClick = { onDevice(d.ip) }) } } }
+            }
+        }
+        val othersBlock: @Composable ColumnScope.() -> Unit = {
+            if (known.isNotEmpty() || other.isNotEmpty()) {
+                if (!nothing) Spacer(Modifier.height(Space.card))
+                Grouped {
+                    if (known.isNotEmpty()) row { shape ->
+                        ListRow(
+                            pluralStringResource(R.plurals.known_devices, known.size, known.size), shape = shape, line = kindsLine(known),
+                            leading = { IconCircle(painterResource(R.drawable.ic_smartphone), CircleTone.Neutral) }, onClick = onOthers,
+                        )
+                    }
+                    if (other.isNotEmpty()) row { shape ->
+                        ListRow(
+                            pluralStringResource(R.plurals.other_devices, other.size, other.size), shape = shape, line = stringResource(R.string.other_devices_line),
+                            leading = { IconCircle(painterResource(R.drawable.ic_help), CircleTone.Neutral) }, onClick = onOthers,
+                        )
+                    }
+                }
+            }
+        }
+        if (wide && !nothing) {
+            // T03: the count and everything known on the left, what to look at on the right.
+            Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.screen)) {
+                Column(Modifier.weight(1f)) {
+                    summaryBox()
+                    othersBlock()
+                }
+                Column(Modifier.weight(1f)) { groupsBlock() }
+            }
+        } else {
+            summaryBox()
+            groupsBlock()
+            othersBlock()
+        }
+        if (nothing) QuietLine(stringResource(R.string.wifi_none_text))
+    }
+}
+
+/** "Phone · TV · Router": the kinds among the known devices, each once, in the order they are listed. */
+@Composable
+private fun kindsLine(known: List<WifiDevice>): String? {
+    val kinds = known.map { it.kind ?: R.string.risk_known }.distinct().take(MAX_KINDS).map { stringResource(it) }
+    return kinds.takeIf { it.isNotEmpty() }?.joinToString(" · ")
+}
+
+private const val MAX_KINDS = 4
+
+internal fun previewWifi(): WifiSnapshot = WifiSnapshot(
+    1, WifiStatus.DONE, "SeaView_Guest", 1f, 6, 6, 0,
+    listOf(
+        WifiDevice(DeviceEvidence("192.168.1.23", name = "IPC-3F2A", openPorts = setOf(80, 554, 8899)), Verdict(Risk.LIKELY_CAMERA, listOf(Sign.Onvif, Sign.Rtsp(554), Sign.CameraMaker("Xiongmai")), "Xiongmai"), 0),
+        WifiDevice(DeviceEvidence("192.168.1.41", openPorts = setOf(8080)), Verdict(Risk.CHECK_THIS, listOf(Sign.WebPage)), 0),
+        WifiDevice(DeviceEvidence("192.168.1.52", name = "Tuya device", openPorts = setOf(6668, 554)), Verdict(Risk.CHECK_THIS, listOf(Sign.Rtsp(554))), 0),
+        WifiDevice(DeviceEvidence("192.168.1.9"), Verdict(Risk.UNKNOWN, emptyList()), 0),
+        WifiDevice(DeviceEvidence("192.168.1.19", name = "Living-room TV"), Verdict(Risk.KNOWN, listOf(Sign.KnownKind("tv")), kind = "tv"), 0),
+        WifiDevice(DeviceEvidence("192.168.1.1", isGateway = true), Verdict(Risk.KNOWN, listOf(Sign.Router)), 0),
+    ),
+)
+
+@Preview
+@Composable
+private fun WifiResultsPreview() = UnpeepTheme {
+    WifiResultsContent(WifiResultsState(previewWifi(), Check.HOTSPOTS, true), {}, {}, {}, {}, {})
+}
+
+@Preview
+@Composable
+private fun WifiResultsIsolatedDarkPreview() = UnpeepTheme(ThemeSettings(mode = ThemeMode.DARK)) {
+    WifiResultsContent(WifiResultsState(previewWifi().let { it.copy(devices = it.devices.takeLast(1), isolated = true) }, null, true), {}, {}, {}, {}, {})
+}

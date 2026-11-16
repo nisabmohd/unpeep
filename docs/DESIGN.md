@@ -1,14 +1,14 @@
 # Design rules
 
-The canvas "Keyhole — app design" and `design/screens/*.png` are the source of truth. This file is why it looks that way.
+The canvas "Unpeep — app design" and `design/screens/*.png` are the source of truth. This file is why it looks that way.
 
 ## 1. Family, not a copy
-Keyhole looks made by the same person as Burrow and Weft (mid apps), with its own face.
+Unpeep looks made by the same person as Burrow and Weft (mid apps), with its own face.
 - **Shared with the family:** big tab title on the left + round tonal header buttons · bottom nav of three
   (Check · Reports · More) · grouped tinted rows, 2 dp apart, 24 dp outside / 8 dp inside corners, no dividers ·
   sentence-case section labels · secondary + primary button pair docked at the bottom · Weft-style sheets
   (handle, title left, round close, radio choice rows) · Burrow's More tiles and About order · the same Welcome layout.
-- **Keyhole's own:** the **lens** (concentric rings + a glint, from the logo) on Start, the sweep progress, Find it,
+- **Unpeep's own:** the **lens** (concentric rings + a glint, from the logo) on Start, the sweep progress, Find it,
   Magnet and every detail header · the **seven check icons** in one row · dark blue · Lexend.
 
 ## 2. Colour
@@ -24,13 +24,13 @@ neutral grey for known devices. Never tint a whole screen.
 
 ## 4. Type
 Lexend (Outfit, Atkinson Hyperlegible, Space Grotesk in Appearance), weights 400/500 only, eight styles
-(`KeyholeType`): display 32 · headline 30 · title 22 · card title 16 · body 16 · supporting 14 · label 14 · caption 12.
+(`UnpeepType`): display 32 · headline 30 · title 22 · card title 16 · body 16 · supporting 14 · label 14 · caption 12.
 
 ## 5. Structure
 - **One hero:** the lens Start on Home. Everything else opens with the **lens header** (small rings, coloured core,
   title, one line, tags).
 - **One main action per screen**, docked at the bottom. **No buttons inside cards.**
-- **Sheets first:** every choice, picker and confirmation is a `KeyholeSheet`. No dialogs (`ProjectRulesTest`).
+- **Sheets first:** every choice, picker and confirmation is a `UnpeepSheet`. No dialogs (`ProjectRulesTest`).
 - **Notes go first**, in the one `Note`.
 - **Every list has an empty state** (lens header + line).
 
@@ -74,7 +74,7 @@ touch targets; every icon button has a TalkBack label.
   corners; on its side 272 dp on the trailing edge, with the hint and photos line). Spot count top-left on the picture. Hint is one line; "save a photo" is a tip.
 - `LensProgress` has two sizes set by content: 220/124 for a count, 248/152 with an icon, value and line (Find it, Magnet).
 - Not checked: grey circle with the thing itself (skipped check's icon, memory card, antenna, shield, tag); report rows have a title and a line.
-- What Keyhole can't find: four limits only (memory card, other networks, guest Wi-Fi, quiet trackers).
+- What Unpeep can't find: four limits only (memory card, other networks, guest Wi-Fi, quiet trackers).
 - PDF follows 10g: header with mark and "Page x of y", tags, Checks · Found · Photos · Marked as known · Couldn't check, grey dot for not checked.
 - Events are toasts, states are Notes: saved and not-saved PDF are both toasts (Open / Try again). The one exception is
   "photo not saved" on the viewfinder, since toasts never cover the camera picture.

@@ -1,4 +1,4 @@
-# Keyhole designs, final v3
+# Unpeep designs, final v3
 
 One PNG per screen or state, exported at 2× (412 × 892 dp → 824 × 1784 px unless the size column says otherwise). Light theme unless the name says dark. Lexend 400/500, Solar Linear.
 
@@ -15,7 +15,7 @@ Prefixes: `00` design system · `01`–`18` screens, numbered like the existing 
 | Lens finder | App is right | Switch camera left of the shutter, tips in the top bar, “Opening the camera”, gliding rings. All 08 boards redrawn. |
 | Lens finder: picture and panel | Change the app | The picture runs edge to edge from the top, behind the status bar and top bar, and stops at a rounded panel that holds every control, so no spot is ever covered. “2 spots” sits on the picture, top left. The hint is one line; the rest moves to tips. |
 | Lens finder on its side | Change the app | The same panel, on the trailing side, with everything portrait has: labelled Lens · Infrared, the filters and 2×, the hint, the photos-saved line, then Switch camera · shutter · torch. Tips and Next stay in the top bar. Lens and the torch share one icon, so they are never two round buttons in one rail. T05 redrawn. |
-| Report: couldn’t check | Change the app | The standard row with a grey circle is right. Swap the repeated closed eye for an icon of the thing itself: memory card, antenna, tag. A skipped check keeps its own icon. Same on What Keyhole can’t find. |
+| Report: couldn’t check | Change the app | The standard row with a grey circle is right. Swap the repeated closed eye for an icon of the thing itself: memory card, antenna, tag. A skipped check keeps its own icon. Same on What Unpeep can’t find. |
 | Report: check row | App is right | Circles shrink from 44 to 36 dp with at least 6 dp between them. 10l redrawn. |
 | Report: export | Change the app | Saying it worked is a Toast: “Saved as a PDF” with Open. Failing stays an error Note with Try again. Good-news Notes use the calm container with a ✓, as you built. |
 | Report: order | App is right | Header · check row · Found · Photos · Marked as known · Couldn’t check · note · dock. 10b draws it full length. |
@@ -183,8 +183,8 @@ File names are guesses; correct them to where each lives in the code.
 | `screens/13c-language-sheet.png` | Language sheet | 412 × 892 |
 | `screens/13d-marked-as-known.png` | Marked as known | 412 × 892 |
 | `screens/13e-marked-empty.png` | Marked as known: nothing marked yet | 412 × 892 |
-| `screens/13f-how-it-works.png` | How Keyhole works | 412 × 892 |
-| `screens/13g-cant-find.png` | What Keyhole can’t find | 412 × 892 |
+| `screens/13f-how-it-works.png` | How Unpeep works | 412 × 892 |
+| `screens/13g-cant-find.png` | What Unpeep can’t find | 412 × 892 |
 | `screens/14-appearance.png` | Appearance, full length: theme fills the width, font rows with System default, text-size slider | 412 × 1044 |
 | `screens/14a-text-size-large.png` | Appearance: text size dragged to Large | 412 × 892 |
 | `screens/14b-sweep-steps.png` | Sweep steps | 412 × 892 |

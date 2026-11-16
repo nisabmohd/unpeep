@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">Keyhole</string>
+    <string name="app_name" translatable="false">Unpeep</string>
 
     <!-- Chrome -->
     <string name="back">Back</string>
@@ -83,10 +83,10 @@
         <item quantity="one">%1$d device you said isn\'t a camera</item>
         <item quantity="other">%1$d devices you said aren\'t cameras</item>
     </plurals>
-    <string name="how_keyhole_works">How Keyhole works</string>
-    <string name="how_keyhole_works_line">What each check looks for</string>
-    <string name="what_keyhole_cant_find">What Keyhole can\'t find</string>
-    <string name="what_keyhole_cant_find_line">And how to check by hand</string>
+    <string name="how_unpeep_works">How Unpeep works</string>
+    <string name="how_unpeep_works_line">What each check looks for</string>
+    <string name="what_unpeep_cant_find">What Unpeep can\'t find</string>
+    <string name="what_unpeep_cant_find_line">And how to check by hand</string>
     <string name="if_you_find_a_camera">If you find a camera</string>
     <string name="if_you_find_a_camera_line">What to do, step by step</string>
     <string name="privacy">Privacy</string>
@@ -218,10 +218,10 @@
     <string name="not_a_camera_line">Mark it as yours or the room\'s</string>
     <string name="found_it">Found it?</string>
     <string name="find_its_lens">Find its lens</string>
-    <string name="share_footer">Checked with Keyhole. Nothing was sent anywhere.</string>
+    <string name="share_footer">Checked with Unpeep. Nothing was sent anywhere.</string>
 
     <!-- 06 Not a camera? -->
-    <string name="not_a_camera_sheet_line">Tell Keyhole what it is. This stays on your phone.</string>
+    <string name="not_a_camera_sheet_line">Tell Unpeep what it is. This stays on your phone.</string>
     <string name="its_mine">It\'s mine</string>
     <string name="its_mine_line">A phone, laptop or something I brought</string>
     <string name="part_of_the_room">Part of the room</string>
@@ -238,7 +238,7 @@
     <string name="allow">Allow</string>
     <string name="open_settings">Open settings</string>
     <string name="perm_hotspots_title">Allow Location</string>
-    <string name="perm_hotspots_line">Android only shows Wi-Fi names with it. Keyhole never reads where you are.</string>
+    <string name="perm_hotspots_line">Android only shows Wi-Fi names with it. Unpeep never reads where you are.</string>
     <string name="perm_bluetooth_title">Allow Nearby devices</string>
     <string name="perm_bluetooth_line">To find trackers and Bluetooth cameras.</string>
     <string name="perm_denied_line">Allow it in Settings, then come back.</string>
@@ -354,9 +354,9 @@
     <string name="perm_camera_line">Nothing is recorded. Only photos you take are kept.</string>
     <string name="camera_problem_title">Can\'t open the camera</string>
     <string name="camera_in_use_line">Another app may be using it. Close that app and try again.</string>
-    <string name="camera_failed_line">Android didn\'t let Keyhole use the camera this time.</string>
+    <string name="camera_failed_line">Android didn\'t let Unpeep use the camera this time.</string>
     <string name="try_again">Try again</string>
-    <string name="no_camera_title">This phone has no camera Keyhole can use</string>
+    <string name="no_camera_title">This phone has no camera Unpeep can use</string>
     <string name="tips_title">How to look for a lens</string>
     <string name="tips_line">Rings possible lenses. Look closely to be sure.</string>
     <string name="tip_dark">Turn the lights off and close the curtains</string>
@@ -513,7 +513,7 @@
     <string name="export_failed">The PDF couldn\'t be saved</string>
     <string name="magnet_finding">Electronics nearby</string>
     <string name="magnet_finding_line">+%1$d µT above a normal of %2$d µT</string>
-    <string name="report_pdf_footer">Made with Keyhole. Nothing was sent anywhere.</string>
+    <string name="report_pdf_footer">Made with Unpeep. Nothing was sent anywhere.</string>
     <string name="photo">Photo</string>
     <string name="delete">Delete</string>
     <string name="delete_report_title">Delete this report?</string>
@@ -598,7 +598,7 @@
     <string name="move_up">Move up</string>
     <string name="move_down">Move down</string>
     <string name="sweep_steps_note">A sweep runs the steps that are on, in this order.</string>
-    <string name="language_line">Keyhole\'s own language, apart from the phone\'s</string>
+    <string name="language_line">Unpeep\'s own language, apart from the phone\'s</string>
 
     <!-- Marked as known -->
     <string name="marked_known_note">Devices you said aren\'t cameras. Tap one to undo.</string>
@@ -606,7 +606,7 @@
     <string name="marked_room">Marked as part of the room</string>
     <string name="marked_known_empty_line">Mark a device with \"Not a camera?\" and it shows here.</string>
 
-    <!-- How Keyhole works, What Keyhole can't find -->
+    <!-- How Unpeep works, What Unpeep can't find -->
     <string name="how_wifi">Finds devices on this Wi-Fi that answer like cameras.</string>
     <string name="how_hotspots">Spots Wi-Fi names cheap cameras use for setup.</string>
     <string name="how_bluetooth">Hears trackers and camera-like Bluetooth names.</string>
@@ -615,16 +615,16 @@
     <string name="how_magnet">Shows when the magnetic field jumps near electronics.</string>
     <string name="how_checklist">The places worth a look by hand.</string>
     <string name="how_note">Checks only run when you start them. Nothing leaves your phone.</string>
-    <string name="limits_intro">No check can promise a room is safe. This is what Keyhole can\'t see.</string>
+    <string name="limits_intro">No check can promise a room is safe. This is what Unpeep can\'t see.</string>
     <string name="limit_memory_card">They record to a card and send nothing. Use the lens finder, infrared, magnet and checklist.</string>
     <string name="limit_other_network">Cameras on another Wi-Fi, on mobile data, or on a Wi-Fi the phone can\'t see</string>
     <string name="limit_isolation">Other devices don\'t answer</string>
-    <string name="limit_trackers">Ones that don\'t advertise, or do it in a way Keyhole doesn\'t know yet</string>
+    <string name="limit_trackers">Ones that don\'t advertise, or do it in a way Unpeep doesn\'t know yet</string>
     <string name="limit_infrared">Their camera blocks it; the TV-remote test tells you.</string>
 
     <!-- 16 Privacy -->
     <string name="privacy_header_line">No account, no ads, no tracking.</string>
-    <string name="why_keyhole_asks">Why Keyhole asks</string>
+    <string name="why_unpeep_asks">Why Unpeep asks</string>
     <string name="perm_row_wifi_line">No permission needed.</string>
     <string name="perm_row_location">Location, for hotspots</string>
     <string name="perm_row_location_line">Only to list Wi-Fi names. Never where you are.</string>
@@ -646,9 +646,9 @@
     <string name="source_code">Source code</string>
     <string name="data_stays">Your data stays yours</string>
     <string name="rate_play">Rate on Google Play</string>
-    <string name="rate_play_line">It helps others find Keyhole</string>
+    <string name="rate_play_line">It helps others find Unpeep</string>
     <string name="report_problem">Report a problem</string>
-    <string name="licences_line">Open-source software in Keyhole</string>
+    <string name="licences_line">Open-source software in Unpeep</string>
     <string name="update_checking">Checking for updates</string>
     <string name="update_latest_title">You\'re on the latest version</string>
     <string name="update_open">Open release page</string>
@@ -721,7 +721,7 @@
     <string name="app_burrow_line">Money that tracks itself</string>
     <string name="app_weft" translatable="false">Weft</string>
     <string name="app_weft_line">Small habits, kept honestly</string>
-    <string name="results_cleared">Those results were cleared when Keyhole closed</string>
+    <string name="results_cleared">Those results were cleared when Unpeep closed</string>
     <string name="report_gone">That report was deleted</string>
     <string name="stop_sweep_title">Stop this sweep?</string>
     <string name="stop_sweep_line">You\'re on check %1$d of %2$d.</string>
@@ -736,8 +736,8 @@
     <string name="carry_on">Carry on</string>
     <string name="paused_at">Paused at %1$s</string>
     <plurals name="paused_line">
-        <item quantity="one">%1$d of %2$d check is done. Nothing was lost while Keyhole was in the background.</item>
-        <item quantity="other">%1$d of %2$d checks are done. Nothing was lost while Keyhole was in the background.</item>
+        <item quantity="one">%1$d of %2$d check is done. Nothing was lost while Unpeep was in the background.</item>
+        <item quantity="other">%1$d of %2$d checks are done. Nothing was lost while Unpeep was in the background.</item>
     </plurals>
     <string name="aeroplane_title">Aeroplane mode is on</string>
     <string name="aeroplane_line">Switch it off, or skip to the checks that need no signal.</string>

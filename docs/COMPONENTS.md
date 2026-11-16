@@ -27,7 +27,7 @@ per-screen look options. Two things that look alike are one component.
 | `NumberCircle` | Rows.kt | a numbered step's circle (If you find a camera) |
 | `ProgressLine` | Meter.kt | how far along a list is (checklist) |
 | `MovingLine` | Meter.kt | something on its way with no knowable end (asking GitHub): a thin line that keeps moving; never a spinner |
-| `KeyholeTextField` | Inputs.kt | the one text field: search pill or note box |
+| `UnpeepTextField` | Inputs.kt | the one text field: search pill or note box |
 | `PhotoThumb` | Inputs.kt | a proof photo's thumbnail, read off the main thread |
 | `AddPhotoTile` | Inputs.kt | takes a photo: a dashed square with a camera-add icon, its label beside it (checklist Not sure) |
 | `SummaryBox` | Rows.kt | the count on top of a result list: a 30 sp number beside a 14 sp line, one 6 dp bar split by result, the legend in words (12 sp) |
@@ -36,7 +36,7 @@ per-screen look options. Two things that look alike are one component.
 | `Tag` (`TagKind`) | Controls.kt | Likely camera (red) · Worth a look (amber) · Known (grey) · Good (accent: Nothing found, Stronger, 4 of 7) |
 | `Chip` | Controls.kt | place chips, filters (Red · Contrast), choices |
 | `ChoiceRow` | Controls.kt | pick-one row in sheets, radio on the right; with a circle a full 72 dp row, without one a line of a long list (52 dp, 56 dp with a second line: Language, Help numbers) |
-| `KeyholeSwitch` / `SwitchRow` / `SwitchLine` | Controls.kt | the one switch; the whole row toggles; `SwitchLine` is the same without a box, as the first line of a box that holds more |
+| `UnpeepSwitch` / `SwitchRow` / `SwitchLine` | Controls.kt | the one switch; the whole row toggles; `SwitchLine` is the same without a box, as the first line of a box that holds more |
 | `Dock` | Controls.kt | docked bottom action area |
 | `SegmentMeter` | Meter.kt | the Find it meter: five pills lit by signal strength, Far · Right here underneath |
 | `BarMeter` | Meter.kt | the magnet's bars: one per reading, the newest on the right, accent from the jump up |
@@ -49,13 +49,13 @@ per-screen look options. Two things that look alike are one component.
 | `TabTopBar` / `BackTopBar` | Bars.kt | tab title + actions / back + title + actions |
 | `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
-| `KeyholeNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
-| `KeyholeNavRail` | Bars.kt | the same three, down the side of a wide window (from 840 dp), the mark on top |
+| `UnpeepNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
+| `UnpeepNavRail` | Bars.kt | the same three, down the side of a wide window (from 840 dp), the mark on top |
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |
 | `ReorderList` / `ReorderItem` | Reorder.kt | Sweep steps: grip to drag, circle, title, switch; Move up / down for TalkBack |
 | `ColorSwatch` | Controls.kt | an accent to pick: colour circle, ring and ✓ when picked |
 | `FloatingCard` | Rows.kt | Welcome's tilted cards (part of the picture, silent for TalkBack) |
 | `Haptics` / `Buzz` | Haptics.kt | the one way to buzz: tick · toggle · confirm · reject · found · done (MOTION.md § Haptics) |
-| `KeyholeSheet` / `SheetLine` / `SheetEmpty` | KeyholeSheet.kt | every choice, picker and confirm (`pinned`: a search field that stays while the list scrolls); a quiet line under its rows; the words a sheet's list shows when nothing matches |
+| `UnpeepSheet` / `SheetLine` / `SheetEmpty` | UnpeepSheet.kt | every choice, picker and confirm (`pinned`: a search field that stays while the list scrolls); a quiet line under its rows; the words a sheet's list shows when nothing matches |
 
 

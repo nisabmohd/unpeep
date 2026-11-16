@@ -89,10 +89,10 @@
         <item quantity="many">%1$d dispositivos que você disse não serem câmeras</item>
         <item quantity="other">%1$d dispositivos que você disse não serem câmeras</item>
     </plurals>
-    <string name="how_keyhole_works">Como o Keyhole funciona</string>
-    <string name="how_keyhole_works_line">O que cada verificação procura</string>
-    <string name="what_keyhole_cant_find">O que o Keyhole não encontra</string>
-    <string name="what_keyhole_cant_find_line">E como verificar por conta própria</string>
+    <string name="how_unpeep_works">Como o Unpeep funciona</string>
+    <string name="how_unpeep_works_line">O que cada verificação procura</string>
+    <string name="what_unpeep_cant_find">O que o Unpeep não encontra</string>
+    <string name="what_unpeep_cant_find_line">E como verificar por conta própria</string>
     <string name="if_you_find_a_camera">Se você encontrar uma câmera</string>
     <string name="if_you_find_a_camera_line">O que fazer, passo a passo</string>
     <string name="privacy">Privacidade</string>
@@ -168,8 +168,8 @@
     <string name="not_a_camera_line">Marque como seu ou do cômodo</string>
     <string name="found_it">Encontrou?</string>
     <string name="find_its_lens">Achar a lente</string>
-    <string name="share_footer">Verificado com o Keyhole. Nada foi enviado a lugar nenhum.</string>
-    <string name="not_a_camera_sheet_line">Diga ao Keyhole o que é. Isso fica no seu celular.</string>
+    <string name="share_footer">Verificado com o Unpeep. Nada foi enviado a lugar nenhum.</string>
+    <string name="not_a_camera_sheet_line">Diga ao Unpeep o que é. Isso fica no seu celular.</string>
     <string name="its_mine">É meu</string>
     <string name="its_mine_line">Um celular, notebook ou algo que eu trouxe</string>
     <string name="part_of_the_room">Parte do cômodo</string>
@@ -236,7 +236,7 @@
     <string name="allow">Permitir</string>
     <string name="open_settings">Abrir configurações</string>
     <string name="perm_hotspots_title">Permitir localização</string>
-    <string name="perm_hotspots_line">O Android só mostra nomes de Wi-Fi com ela. O Keyhole nunca lê onde você está.</string>
+    <string name="perm_hotspots_line">O Android só mostra nomes de Wi-Fi com ela. O Unpeep nunca lê onde você está.</string>
     <string name="perm_bluetooth_title">Permitir dispositivos próximos</string>
     <string name="perm_bluetooth_line">Para encontrar rastreadores e câmeras Bluetooth.</string>
     <string name="perm_denied_line">Permita nas Configurações e volte.</string>
@@ -341,9 +341,9 @@
     <string name="perm_camera_line">Nada é gravado. Só as fotos que você tirar ficam.</string>
     <string name="camera_problem_title">Não foi possível abrir a câmera</string>
     <string name="camera_in_use_line">Outro app pode estar usando. Feche esse app e tente de novo.</string>
-    <string name="camera_failed_line">O Android não deixou o Keyhole usar a câmera desta vez.</string>
+    <string name="camera_failed_line">O Android não deixou o Unpeep usar a câmera desta vez.</string>
     <string name="try_again">Tentar de novo</string>
-    <string name="no_camera_title">Este celular não tem câmera que o Keyhole possa usar</string>
+    <string name="no_camera_title">Este celular não tem câmera que o Unpeep possa usar</string>
     <string name="tips_title">Como procurar uma lente</string>
     <string name="tips_line">Marca possíveis lentes. Olhe de perto para ter certeza.</string>
     <string name="tip_dark">Apague as luzes e feche as cortinas</string>
@@ -500,7 +500,7 @@
     <string name="export_failed">Não deu para salvar o PDF</string>
     <string name="magnet_finding">Eletrônicos por perto</string>
     <string name="magnet_finding_line">+%1$d µT acima do normal (%2$d µT)</string>
-    <string name="report_pdf_footer">Feito com o Keyhole. Nada foi enviado.</string>
+    <string name="report_pdf_footer">Feito com o Unpeep. Nada foi enviado.</string>
     <string name="photo">Foto</string>
     <string name="delete">Excluir</string>
     <string name="delete_report_title">Excluir este relatório?</string>
@@ -588,7 +588,7 @@
     <string name="move_up">Mover para cima</string>
     <string name="move_down">Mover para baixo</string>
     <string name="sweep_steps_note">A verificação segue as etapas ativas, nesta ordem.</string>
-    <string name="language_line">O idioma do Keyhole, separado do celular</string>
+    <string name="language_line">O idioma do Unpeep, separado do celular</string>
     <string name="marked_known_note">Dispositivos que você marcou como não câmera. Toque para desfazer.</string>
     <string name="marked_mine">Marcado como seu</string>
     <string name="marked_room">Marcado como parte do cômodo</string>
@@ -601,14 +601,14 @@
     <string name="how_magnet">Mostra quando o campo magnético salta perto de eletrônicos.</string>
     <string name="how_checklist">Os lugares que vale conferir por conta própria.</string>
     <string name="how_note">As verificações só rodam quando você inicia. Nada sai do celular.</string>
-    <string name="limits_intro">Nenhuma verificação garante que um cômodo esteja seguro. Isto é o que o Keyhole não vê.</string>
+    <string name="limits_intro">Nenhuma verificação garante que um cômodo esteja seguro. Isto é o que o Unpeep não vê.</string>
     <string name="limit_memory_card">Gravam no cartão e não enviam nada. Use o localizador de lentes, o infravermelho, o ímã e a lista.</string>
     <string name="limit_other_network">Câmeras em outro Wi-Fi, nos dados móveis ou num Wi-Fi que o celular não vê</string>
     <string name="limit_isolation">Os outros dispositivos não respondem</string>
-    <string name="limit_trackers">Os que não emitem, ou emitem de um jeito que o Keyhole ainda não conhece</string>
+    <string name="limit_trackers">Os que não emitem, ou emitem de um jeito que o Unpeep ainda não conhece</string>
     <string name="limit_infrared">A câmera bloqueia; o teste do controle mostra.</string>
     <string name="privacy_header_line">Sem conta, sem anúncios, sem rastreio.</string>
-    <string name="why_keyhole_asks">Por que o Keyhole pede</string>
+    <string name="why_unpeep_asks">Por que o Unpeep pede</string>
     <string name="perm_row_wifi_line">Não precisa de permissão.</string>
     <string name="perm_row_location">Localização, para as redes</string>
     <string name="perm_row_location_line">Só para nomes de Wi-Fi. Nunca onde você está.</string>
@@ -628,9 +628,9 @@
     <string name="source_code">Código-fonte</string>
     <string name="data_stays">Seus dados são seus</string>
     <string name="rate_play">Avaliar no Google Play</string>
-    <string name="rate_play_line">Ajuda outras pessoas a achar o Keyhole</string>
+    <string name="rate_play_line">Ajuda outras pessoas a achar o Unpeep</string>
     <string name="report_problem">Relatar um problema</string>
-    <string name="licences_line">Software de código aberto no Keyhole</string>
+    <string name="licences_line">Software de código aberto no Unpeep</string>
     <string name="update_checking">Procurando atualizações</string>
     <string name="update_latest_title">Você está na versão mais recente</string>
     <string name="update_open">Abrir página da versão</string>
@@ -703,7 +703,7 @@
     <string name="more_from_mid_apps">Mais da mid apps</string>
     <string name="app_burrow_line">Dinheiro que se registra sozinho</string>
     <string name="app_weft_line">Pequenos hábitos, mantidos com honestidade</string>
-    <string name="results_cleared">Esses resultados foram apagados quando o Keyhole fechou</string>
+    <string name="results_cleared">Esses resultados foram apagados quando o Unpeep fechou</string>
     <string name="report_gone">Esse relatório foi apagado</string>
     <string name="stop_sweep_title">Parar esta verificação?</string>
     <string name="stop_sweep_line">Você está na verificação %1$d de %2$d.</string>
@@ -719,9 +719,9 @@
     <string name="carry_on">Continuar</string>
     <string name="paused_at">Pausado em %1$s</string>
     <plurals name="paused_line">
-        <item quantity="one">%1$d de %2$d verificação feita. Nada se perdeu enquanto o Keyhole estava em segundo plano.</item>
-        <item quantity="many">%1$d de %2$d verificações feitas. Nada se perdeu enquanto o Keyhole estava em segundo plano.</item>
-        <item quantity="other">%1$d de %2$d verificações feitas. Nada se perdeu enquanto o Keyhole estava em segundo plano.</item>
+        <item quantity="one">%1$d de %2$d verificação feita. Nada se perdeu enquanto o Unpeep estava em segundo plano.</item>
+        <item quantity="many">%1$d de %2$d verificações feitas. Nada se perdeu enquanto o Unpeep estava em segundo plano.</item>
+        <item quantity="other">%1$d de %2$d verificações feitas. Nada se perdeu enquanto o Unpeep estava em segundo plano.</item>
     </plurals>
     <string name="aeroplane_title">O modo avião está ativado</string>
     <string name="aeroplane_line">Desligue ou pule para as verificações sem sinal.</string>

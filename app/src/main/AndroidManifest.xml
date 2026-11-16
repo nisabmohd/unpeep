@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!--
-  Keyhole never sends your data anywhere. Android needs INTERNET for any socket, even on your own Wi-Fi, so every
+  Unpeep never sends your data anywhere. Android needs INTERNET for any socket, even on your own Wi-Fi, so every
   flavor declares it; the scanner only opens sockets to private, link-local and multicast addresses
   (scan/net/LocalOnly.kt, ProjectRulesTest). The github build also asks GitHub for updates.
   Permissions are asked just in time, each with one line why (docs/PLAN.md § Permissions).
@@ -14,7 +14,7 @@
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_MULTICAST_STATE" />
     <!-- Hotspots only: Android hands Wi-Fi scan results to apps with precise location access, on every version.
-         Keyhole reads the Wi-Fi names and never a position. Asked when the Hotspots check starts. -->
+         Unpeep reads the Wi-Fi names and never a position. Asked when the Hotspots check starts. -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.BLUETOOTH_SCAN" android:usesPermissionFlags="neverForLocation" tools:targetApi="31" />
@@ -28,7 +28,7 @@
     <uses-feature android:name="android.hardware.sensor.compass" android:required="false" />
 
     <application
-        android:name=".KeyholeApp"
+        android:name=".UnpeepApp"
         android:allowBackup="false"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="false"
@@ -38,7 +38,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Keyhole">
+        android:theme="@style/Theme.Unpeep">
 
         <!-- Proof photos from the checklist: the camera app writes them straight into app storage (files/photos), and
              the share sheet reads them from there. Nothing else is shared. -->

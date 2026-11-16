@@ -5,7 +5,7 @@
 3. Regenerate the baseline profile if screens changed.
 4. Tag `vX.Y.Z` and push: `.github/workflows/release.yml` builds signed `github` and `foss` APKs, writes
    `SHA256SUMS.txt`, and creates the GitHub release from the changelog.
-   Secrets: `KEYHOLE_KEYSTORE_BASE64`, `KEYHOLE_KEYSTORE_PASSWORD`, `KEYHOLE_KEY_ALIAS`, `KEYHOLE_KEY_PASSWORD`.
+   Secrets: `UNPEEP_KEYSTORE_BASE64`, `UNPEEP_KEYSTORE_PASSWORD`, `UNPEEP_KEY_ALIAS`, `UNPEEP_KEY_PASSWORD`.
 5. Play: `./gradlew :app:bundlePlayRelease`, upload; listing text in `release/listing.md`, data safety in
    `release/data-safety.md`, content rating in `release/content-rating.md`.
 6. F-Droid builds `foss` from the tag using `fastlane/metadata`.

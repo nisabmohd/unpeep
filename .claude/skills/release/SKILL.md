@@ -1,6 +1,6 @@
 ---
 name: release
-description: Ship a Keyhole version to GitHub, F-Droid and Google Play. Use when the user asks to release or tag a version.
+description: Ship an Unpeep version to GitHub, F-Droid and Google Play. Use when the user asks to release or tag a version.
 ---
 
 # Release

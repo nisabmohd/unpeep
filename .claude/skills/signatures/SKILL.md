@@ -1,6 +1,6 @@
 ---
 name: signatures
-description: Add or fix camera, hotspot, Bluetooth or known-device signatures in Keyhole. Use when a device was missed or wrongly flagged.
+description: Add or fix camera, hotspot, Bluetooth or known-device signatures in Unpeep. Use when a device was missed or wrongly flagged.
 ---
 
 # Signatures

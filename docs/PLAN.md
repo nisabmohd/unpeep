@@ -1,14 +1,14 @@
-# Keyhole — project plan
+# Unpeep — project plan
 
-> **Name: Keyhole** (checked 15 Nov 2026: no detector app on Play, F-Droid or GitHub uses it).
-> Play title: "Keyhole: Hidden Camera Finder" (≤ 30 chars). Package `app.keyhole.privacy`, repo `nisabmohd/keyhole`.
+> **Name: Unpeep** (checked 15 Nov 2026: no detector app on Play, F-Droid or GitHub uses it).
+> Play title: "Unpeep: Hidden Camera Finder" (≤ 30 chars). Package `app.unpeep.privacy`, repo `nisabmohd/unpeep`.
 
-Keyhole is a small, open-source Android app that helps you check a room (Airbnb, hotel, trial room, washroom, office,
+Unpeep is a small, open-source Android app that helps you check a room (Airbnb, hotel, trial room, washroom, office,
 cab) for hidden cameras and trackers. It scans the Wi-Fi, nearby hotspots and Bluetooth, gives you a lens finder, an
 IR finder and a magnet check, and walks you through a checklist. At the end it tells you plainly what it checked and what it could not.
 **It never sends your data anywhere.**
 
-Package `app.keyhole.privacy` · by **mid apps** · GNU GPL v3 · same stack, size budget and rules as Burrow and Weft.
+Package `app.unpeep.privacy` · by **mid apps** · GNU GPL v3 · same stack, size budget and rules as Burrow and Weft.
 
 **No ads · No tracking · No account · Free and open source (GPL v3)**
 
@@ -155,13 +155,13 @@ Checklist text lives in `strings.xml` too, so it gets translated.
 
 ---
 
-## 4. Design (final, see the "Keyhole — app design" canvas)
+## 4. Design (final, see the "Unpeep — app design" canvas)
 
 - **Same family as Burrow and Weft:** big tab title + round tonal header buttons, bottom nav (Check · Reports · More),
   grouped tinted rows (2 dp gaps, 24 dp outer / 8 dp inner corners), sentence-case section labels, secondary + primary
   button pair docked at the bottom, Weft-style sheets (handle, title left, round close, radio choice rows), Burrow's
   More tiles and About order, the same Welcome layout.
-- **Keyhole's own identity: the lens.** Concentric rings + a glint (from the logo) on the Start button, the scan
+- **Unpeep's own identity: the lens.** Concentric rings + a glint (from the logo) on the Start button, the scan
   progress ring, Find it and every detail header. The seven checks are one row of hue icons on Home, the sweep and the report.
 - **Colour:** dark blue, seed hue 222 (primary hsl(222 70% 30%)), dynamic colour optional. Each check keeps its own
   hue on its icon only: Wi-Fi 232, Hotspots 150, Bluetooth 268, Lens 34, Infrared 338, Magnet 92, Checklist 186.
@@ -175,8 +175,8 @@ Checklist text lives in `strings.xml` too, so it gets translated.
 - **Never "safe":** the report always says what was checked and what couldn't be.
 - **Every language:** no country assumed; help numbers come from the phone's region; labels never squeeze or overlap
   (the check row scrolls sideways at large text).
-- **Logo:** a keyhole drawn the Burrow/Weft way (white strokes, round caps, dark blue). Final: "Lens, open" (lens ring, glint, two legs), centred;
-  one geometry in `tools/keyhole_mark.py` writes every copy.
+- **Logo:** a lens drawn the Burrow/Weft way (white strokes, round caps, dark blue). Final: two lens rings struck through by one line, with a clear gap either side of it, centred;
+  one geometry in `tools/unpeep_mark.py` writes every copy.
 
 ## 5. Screens (canvas)
 
@@ -191,7 +191,7 @@ Checklist text lives in `strings.xml` too, so it gets translated.
 CLAUDE.md  AGENTS.md  README.md  PRIVACY.md  CHANGELOG.md  CONTRIBUTING.md  TODO.md  LICENSE (GPL-3.0)
 app/
   build.gradle.kts  proguard-rules.pro  lint.xml  schemas/
-  src/main/java/app/keyhole/privacy/
+  src/main/java/app/unpeep/privacy/
     ui/          theme (Color, Type, Dimens, Motion), components, screens
     scan/        net (discovery, ports, fingerprint, LocalOnly), wifi (hotspots), ble
     optics/      lens + IR analyzers, photo capture
@@ -210,9 +210,9 @@ docs/                   DESIGN.md TOKENS.md COMPONENTS.md SCREENS.md MOTION.md P
 release/                listing.md  data-safety.md  content-rating.md  README.md
 fastlane/metadata/android/en-US/
 licenses/fonts/  licenses/icons/
-tools/                  keyhole_mark.py  solar_icon.py  store_shots.py  smoke.py  capture.py  device.py  add_strings.py
+tools/                  unpeep_mark.py  solar_icon.py  store_shots.py  smoke.py  capture.py  device.py  add_strings.py
 .claude/skills/         build-screen  add-feature  verify-app  release  signatures
-.github/workflows/      ci.yml  release.yml   (copy Burrow's; secrets KEYHOLE_KEYSTORE_*)
+.github/workflows/      ci.yml  release.yml   (copy Burrow's; secrets UNPEEP_KEYSTORE_*)
 ```
 Release files go in `build/dist/v<version>/`; assets end `-github.apk` with `SHA256SUMS.txt` (update check).
 
@@ -221,9 +221,9 @@ Release files go in `build/dist/v<version>/`; assets end `-github.apk` with `SHA
 ## 7. Roadmap
 
 ### Week 0: Set up
-- [ ] Final name + seed hue + logo (`tools/keyhole_mark.py`)
+- [ ] Final name + seed hue + logo (`tools/unpeep_mark.py`)
 - [ ] Copy Burrow's Gradle setup, catalog, flavors, signing, CI/release workflows, `.gitignore`, `lint.xml`
-- [ ] Theme files, fonts, `AppContainer`, nav shell, `KeyholeSheet`, centred header, More screen
+- [ ] Theme files, fonts, `AppContainer`, nav shell, `UnpeepSheet`, centred header, More screen
 - [ ] CLAUDE.md, AGENTS.md, TODO.md, docs skeleton
 - [ ] Buy a test camera (V380 or Tapo, ₹1–2k) and a cheap "charger cam" if possible
 
@@ -240,7 +240,7 @@ Release files go in `build/dist/v<version>/`; assets end `-github.apk` with `SHA
 - [ ] CameraX decision, analyzers, filters, proof photos, screen 08, remote test, field test in a dark room
 - [ ] Magnet: MagnetSensor, screen 08 Magnet, beep, field test near chargers and smoke detectors
 
-### Week 5: Checklist + Keyhole + Report
+### Week 5: Checklist + Unpeep + Report
 - [ ] Checklist content for all places (write carefully, translate), screens 03, 10, 11, 12, PDF export
 
 ### Week 6: Release

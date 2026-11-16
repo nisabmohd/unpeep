@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "Keyhole"
+rootProject.name = "Unpeep"
 include(":app")
 include(":baselineprofile")

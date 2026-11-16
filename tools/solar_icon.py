@@ -1,7 +1,7 @@
-"""Draws Keyhole's icons with Solar (Linear, by 480 Design, CC BY 4.0), keeping every file name.
+"""Draws Unpeep's icons with Solar (Linear, by 480 Design, CC BY 4.0), keeping every file name.
 
 Each drawable in ICONS is overwritten with the Solar Linear icon of the same meaning, black (Compose's
-Icon and the widgets' colorFilter tint it), viewport 24. Brand marks (launcher, notification) come from tools/keyhole_mark.py.
+Icon and the widgets' colorFilter tint it), viewport 24. Brand marks (launcher, notification) come from tools/unpeep_mark.py.
 
 usage: npm pack @iconify-json/solar && tar xzf iconify-json-solar-*.tgz   # outside the repo
        python3 tools/solar_icon.py <path>/package            # every icon
@@ -109,7 +109,7 @@ def shapes(body):
 def drawable(solar, els, slash=False):
     lines = [
         '<?xml version="1.0" encoding="utf-8"?>',
-        (f'<!-- Drawn for Keyhole in Solar Linear style ({solar}). Tinted where it is drawn. -->' if "custom:" in solar
+        (f'<!-- Drawn for Unpeep in Solar Linear style ({solar}). Tinted where it is drawn. -->' if "custom:" in solar
          else f'<!-- Solar {solar} (Linear) by 480 Design, CC BY 4.0. Tinted where it is drawn. -->'),
         '<vector xmlns:android="http://schemas.android.com/apk/res/android"',
         '    android:width="24dp" android:height="24dp" android:viewportWidth="24" android:viewportHeight="24">',
