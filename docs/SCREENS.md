@@ -6,10 +6,10 @@ PNG per screen in `design/screens/` (light; `HomeDark` for dark). Routes in `ui/
 |---|---|---|---|---|
 | 01 | Welcome | (first run) | todo | three lines on what it does + "Get started"; permissions asked later, just in time |
 | 02 | Home | `HomeRoute` | built | place chips · lens Start · "Check this room" + n checks · Or run one check · last report |
-| 03 | Sweep in progress | `SweepRoute(place)` | stand-in | check row (current ringed) · progress lens · found so far · Skip step |
-| 04 | Wi-Fi results | | todo | Likely camera first; client-isolation Note when only the router answers |
-| 05 | Device | | todo | lens header + tags · Why (signs) · details · Not a camera? / Find it |
-| 06 | Not a camera? | sheet | todo | It's mine · Part of the room · Not sure · Report it |
+| 03 | Sweep in progress | `SweepRoute(place, at)` · `CheckRoute(WIFI)` | built (Wi-Fi step) | check row (current ringed) · progress lens · found so far · Skip step; "Not on Wi-Fi" + Scan again; other steps say they are on their way |
+| 04 | Wi-Fi results | `WifiResultsRoute` | built | Note first (only the router answered / nothing looks like a camera) · count · Likely camera · Worth a look · known and not recognised behind one row each (`WifiOthersRoute`) · Next / Done |
+| 05 | Device | `DeviceRoute(ip)` | built | lens header + tags · Why (signs) · open ports, maker · Not a camera? · Found it? / Find its lens (both lead to stand-ins) · share as text |
+| 06 | Not a camera? | sheet | built | It's mine · Part of the room · Not sure · Report it (opens the repo's issues in the browser); marks live in memory until Room |
 | 07 | Find it | | todo | progress lens, Getting warmer meter, "Updated Xs ago" |
 | 08 | Lens finder | `CheckRoute(LENS/INFRARED)` | stand-in | dark; filters No filter · Red · Contrast · 2×; Lens/Infrared; shutter saves a photo |
 | 08 | Magnet | `CheckRoute(MAGNET)` | stand-in | learning normal → µT above normal, 10 s bars, honesty Note, Set normal again / Add to report |

@@ -59,11 +59,15 @@ object LocalOnly {
         if (!isLocal(address)) throw NotLocalException(address.hostAddress ?: "?")
     }
 
-    /** A TCP connection to a local address; the caller closes it. */
-    fun connect(address: InetAddress, port: Int, timeoutMs: Int): Socket {
+    /**
+     * A TCP connection to a local address; the caller closes it. [prepare] runs on the socket before it connects
+     * (the scanner ties it to the Wi-Fi, so it never leaves over mobile data).
+     */
+    fun connect(address: InetAddress, port: Int, timeoutMs: Int, prepare: (Socket) -> Unit = {}): Socket {
         require(address)
         val socket = Socket()
         try {
+            prepare(socket)
             socket.soTimeout = timeoutMs
             socket.connect(InetSocketAddress(address, port), timeoutMs)
         } catch (e: Throwable) {
@@ -74,7 +78,15 @@ object LocalOnly {
     }
 
     /** A UDP socket for discovery; it can only send through [send]. */
-    fun datagramSocket(timeoutMs: Int): DatagramSocket = DatagramSocket().apply { soTimeout = timeoutMs }
+    fun datagramSocket(timeoutMs: Int, prepare: (DatagramSocket) -> Unit = {}): DatagramSocket =
+        DatagramSocket().apply { soTimeout = timeoutMs }.also { socket ->
+            try {
+                prepare(socket)
+            } catch (e: Throwable) {
+                runCatching { socket.close() }
+                throw e
+            }
+        }
 
     fun multicastSocket(timeoutMs: Int): MulticastSocket = MulticastSocket().apply { soTimeout = timeoutMs }
 

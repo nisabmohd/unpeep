@@ -11,6 +11,11 @@ All scans start only when the user starts them. Nothing runs in the background.
 6. Per device with open ports: RTSP `OPTIONS` (554/8554), HTTP `GET /` (Server header + `<title>`). Nothing else:
    no logins, no default passwords, no streams.
 7. `domain/Risk.kt` `classify()` with `assets/signatures` (rules and tests in `RiskTest`).
+Code: `scan/net/WifiScanner.kt` (the steps), `Subnet`, `Tcp`, `Mdns`, `Banners` (what is sent and how answers are
+read, unit-tested), `scan/WifiSession.kt` (the scan between its screens), `domain/Wifi.kt` (order, marks).
+A device that takes or refuses a connection is there; silence says nothing. Every socket is tied to the Wi-Fi
+network, so a guest Wi-Fi with no internet is still the one scanned. The whole scan stops at 19 s with what it has.
+The Wi-Fi's name shows only when Android gives it (it needs location access, which Keyhole doesn't ask for here).
 Limits: Android 10+ hides MAC addresses; hotel Wi-Fi often isolates clients (only the router answers → Note).
 
 ## Hotspots

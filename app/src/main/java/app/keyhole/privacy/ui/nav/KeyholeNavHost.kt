@@ -20,6 +20,15 @@ import androidx.navigation.toRoute
 import app.keyhole.privacy.AppContainer
 import app.keyhole.privacy.R
 import app.keyhole.privacy.data.Settings
+import app.keyhole.privacy.domain.Check
+import app.keyhole.privacy.ui.sweep.SweepScreen
+import app.keyhole.privacy.ui.sweep.SweepViewModel
+import app.keyhole.privacy.ui.wifi.DeviceScreen
+import app.keyhole.privacy.ui.wifi.DeviceViewModel
+import app.keyhole.privacy.ui.wifi.WifiOthersScreen
+import app.keyhole.privacy.ui.wifi.WifiOthersViewModel
+import app.keyhole.privacy.ui.wifi.WifiResultsScreen
+import app.keyhole.privacy.ui.wifi.WifiResultsViewModel
 import app.keyhole.privacy.ui.components.KeyholeNavBar
 import app.keyhole.privacy.ui.components.NavItem
 import app.keyhole.privacy.ui.home.HomeScreen
@@ -74,11 +83,56 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                 }
                 composable<SweepRoute> { e ->
                     val route = e.toRoute<SweepRoute>()
-                    StandInScreen(stringResource(R.string.check_this_room), stringResource(route.place.label), onBack = nav::popBackStack)
+                    val vm = viewModel { SweepViewModel(route.place, route.at, null, container.settings, container.wifi) }
+                    SweepScreen(
+                        vm, onClose = nav::popBackStack,
+                        onWifiDone = { nav.navigate(WifiResultsRoute(route.place, sweep = true)) { popUpTo<SweepRoute> { inclusive = true } } },
+                        onFinished = nav::popBackStack,
+                    )
                 }
                 composable<CheckRoute> { e ->
                     val route = e.toRoute<CheckRoute>()
-                    StandInScreen(stringResource(route.check.label), stringResource(route.place.label), onBack = nav::popBackStack)
+                    if (route.check == Check.WIFI) {
+                        val vm = viewModel { SweepViewModel(route.place, null, Check.WIFI, container.settings, container.wifi) }
+                        SweepScreen(
+                            vm, onClose = nav::popBackStack,
+                            onWifiDone = { nav.navigate(WifiResultsRoute(route.place, sweep = false)) { popUpTo<CheckRoute> { inclusive = true } } },
+                            onFinished = nav::popBackStack,
+                        )
+                    } else {
+                        StandInScreen(stringResource(route.check.label), stringResource(route.place.label), onBack = nav::popBackStack)
+                    }
+                }
+                composable<WifiResultsRoute> { e ->
+                    val route = e.toRoute<WifiResultsRoute>()
+                    val vm = viewModel { WifiResultsViewModel(route.place, route.sweep, container.settings, container.wifi) }
+                    WifiResultsScreen(
+                        vm, onBack = nav::popBackStack,
+                        onScanAgain = {
+                            val again: Any = if (route.sweep) SweepRoute(route.place, Check.WIFI) else CheckRoute(Check.WIFI, route.place)
+                            nav.navigate(again) { popUpTo<WifiResultsRoute> { inclusive = true } }
+                        },
+                        onDevice = { nav.navigate(DeviceRoute(it, route.place)) },
+                        onOthers = { nav.navigate(WifiOthersRoute(route.place)) },
+                        onNext = { next ->
+                            if (next == null) nav.popBackStack()
+                            else nav.navigate(SweepRoute(route.place, next)) { popUpTo<WifiResultsRoute> { inclusive = true } }
+                        },
+                    )
+                }
+                composable<WifiOthersRoute> { e ->
+                    val route = e.toRoute<WifiOthersRoute>()
+                    val vm = viewModel { WifiOthersViewModel(container.wifi) }
+                    WifiOthersScreen(vm, onBack = nav::popBackStack, onDevice = { nav.navigate(DeviceRoute(it, route.place)) })
+                }
+                composable<DeviceRoute> { e ->
+                    val route = e.toRoute<DeviceRoute>()
+                    val vm = viewModel { DeviceViewModel(route.ip, container.wifi) }
+                    DeviceScreen(
+                        vm, onBack = nav::popBackStack,
+                        onFoundIt = { nav.navigate(MoreItemRoute(MoreItem.FOUND_CAMERA)) },
+                        onFindLens = { nav.navigate(CheckRoute(Check.LENS, route.place)) },
+                    )
                 }
                 composable<MoreItemRoute> { e ->
                     val route = e.toRoute<MoreItemRoute>()

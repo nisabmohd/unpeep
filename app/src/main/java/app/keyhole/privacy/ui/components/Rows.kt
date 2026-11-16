@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -20,6 +21,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -237,5 +239,51 @@ fun Tile(icon: Painter, tone: CircleTone, title: String, line: String, onClick: 
         Spacer(Modifier.size(Space.card))
         Text(title, style = KeyholeType.cardTitle, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
         Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 2, overflow = TextOverflow.Ellipsis)
+    }
+}
+
+/** What one part of a [SummaryBox] counts: a likely camera (red), worth a look (amber), or everything else. */
+enum class SummaryTone { ALERT, WARNING, NEUTRAL }
+
+@Immutable
+data class SummaryPart(val count: Int, val label: String, val tone: SummaryTone)
+
+/**
+ * The count at the top of a result list: a big number with its line ("18 devices on SeaView_Guest"), one bar split
+ * by [parts], and what each colour means in words underneath. Never colour alone.
+ */
+@OptIn(ExperimentalLayoutApi::class)
+@Composable
+fun SummaryBox(count: String, line: String, parts: List<SummaryPart>, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val warning = warningColors().solid
+    fun colour(tone: SummaryTone) = when (tone) {
+        SummaryTone.ALERT -> c.error
+        SummaryTone.WARNING -> warning
+        SummaryTone.NEUTRAL -> c.surfaceContainerHighest
+    }
+    Column(
+        modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(Space.card).semantics(mergeDescendants = true) {},
+        verticalArrangement = Arrangement.spacedBy(Space.block),
+    ) {
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.inline), itemVerticalAlignment = Alignment.Bottom) {
+            Text(count, style = KeyholeType.display, color = c.onSurface)
+            Text(line, style = KeyholeType.body, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = Space.small))
+        }
+        // One segment per colour: the grey ones (known, not recognised) are one stretch of the bar.
+        val shown = parts.filter { it.count > 0 }.groupBy { it.tone }.map { (tone, same) -> SummaryPart(same.sumOf { it.count }, "", tone) }
+        Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {
+            if (shown.isEmpty()) Box(Modifier.weight(1f).height(Size.dot).clip(Shapes.pill).background(colour(SummaryTone.NEUTRAL)))
+            shown.forEach { Box(Modifier.weight(it.count.toFloat()).height(Size.dot).clip(Shapes.pill).background(colour(it.tone))) }
+        }
+        FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.card), verticalArrangement = Arrangement.spacedBy(Space.small)) {
+            parts.forEach { part ->
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Box(Modifier.size(Size.dot).clip(Shapes.pill).background(colour(part.tone)))
+                    Spacer(Modifier.width(Space.inline))
+                    Text(part.label, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+                }
+            }
+        }
     }
 }

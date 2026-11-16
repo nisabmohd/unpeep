@@ -8,7 +8,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -62,7 +61,7 @@ fun CheckIcon(check: Check, modifier: Modifier = Modifier, state: CheckState = C
     val c = MaterialTheme.colorScheme
     val colors = checkColors(check.hue)
     val ring by animateFloatAsState(if (state == CheckState.CURRENT) 1f else 0f, shortSpec(), label = "checkRing")
-    Box(modifier.size(Size.checkSlot), contentAlignment = Alignment.Center) {
+    Box(modifier.widthIn(max = Size.checkSlot).size(Size.checkSlot), contentAlignment = Alignment.Center) {
         // The current step: a primary ring a little outside the circle, fading in.
         Box(Modifier.size(Size.checkRing).graphicsLayer { alpha = ring }.border(Size.ring, c.primary, Shapes.pill))
         Box(
@@ -97,25 +96,28 @@ private fun stateWord(state: CheckState): String? = when (state) {
 @Composable
 fun CheckRow(checks: List<Check>, modifier: Modifier = Modifier, state: (Check) -> CheckState = { CheckState.PLAIN }, onRun: ((Check) -> Unit)? = null) {
     val c = MaterialTheme.colorScheme
-    Row(
-        modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = if (onRun != null) Space.inline else Space.card),
-        horizontalArrangement = if (onRun != null) Arrangement.Start else Arrangement.SpaceBetween,
-    ) {
-        checks.forEach { check ->
-            val name = stringResource(check.label)
-            if (onRun != null) {
-                Column(
-                    Modifier.widthIn(min = Size.checkSlot).clip(Shapes.surface).clickable(role = Role.Button, onClickLabel = stringResource(R.string.run_check, name)) { onRun(check) }.padding(bottom = Space.small),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    CheckIcon(check, Modifier.height(Size.iconButton))
-                    Spacer(Modifier.height(Space.small))
-                    Text(name, style = KeyholeType.caption, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.width(Size.checkSlot))
-                }
-            } else {
+    if (onRun == null) {
+        // Progress: every check fits the width, spread evenly; nothing to scroll.
+        Row(modifier.fillMaxWidth().padding(horizontal = Space.inline)) {
+            checks.forEach { check ->
+                val name = stringResource(check.label)
                 val s = state(check)
                 val word = stateWord(s)
-                CheckIcon(check, Modifier.clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s)
+                CheckIcon(check, Modifier.weight(1f).clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s)
+            }
+        }
+        return
+    }
+    Row(modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = Space.inline)) {
+        checks.forEach { check ->
+            val name = stringResource(check.label)
+            Column(
+                Modifier.widthIn(min = Size.checkSlot).clip(Shapes.surface).clickable(role = Role.Button, onClickLabel = stringResource(R.string.run_check, name)) { onRun(check) }.padding(bottom = Space.small),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
+                CheckIcon(check, Modifier.height(Size.iconButton))
+                Spacer(Modifier.height(Space.small))
+                Text(name, style = KeyholeType.caption, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.width(Size.checkSlot))
             }
         }
     }

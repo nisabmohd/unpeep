@@ -19,7 +19,8 @@ per-screen look options. Two things that look alike are one component.
 | `SectionLabel` | Rows.kt | label above a group, optional count/action |
 | `Box24` | Rows.kt | a tinted box that is not a list ("Or run one check", Find it meter) |
 | `Note` | Rows.kt | the one note (goes first) |
-| `PrimaryButton` / `SecondaryButton` / `ButtonPair` | Controls.kt | one main action; pair = secondary left, primary right |
+| `SummaryBox` | Rows.kt | the count on top of a result list: big number + line, one bar split by result, the legend in words |
+| `PrimaryButton` / `SecondaryButton` / `ButtonPair` | Controls.kt | one main action (an arrow after its label when it moves on); pair = secondary left, primary right |
 | `RoundIconButton` | Controls.kt | round tonal header buttons |
 | `Tag` (`TagKind`) | Controls.kt | Likely camera (red) · Worth a look (amber) · Known · Good |
 | `Chip` | Controls.kt | place chips, filters (Red · Contrast), choices |
@@ -27,6 +28,7 @@ per-screen look options. Two things that look alike are one component.
 | `KeyholeSwitch` / `SwitchRow` | Controls.kt | the one switch; the whole row toggles |
 | `Dock` | Controls.kt | docked bottom action area |
 | `TabTopBar` / `BackTopBar` | Bars.kt | tab title + actions / back + title + actions |
+| `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
 | `KeyholeNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |

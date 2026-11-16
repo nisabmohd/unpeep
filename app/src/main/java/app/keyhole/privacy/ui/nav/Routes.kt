@@ -12,8 +12,17 @@ import kotlinx.serialization.Serializable
 /** 01 Welcome (first run). */
 @Serializable data object WelcomeRoute
 
-/** 03 Sweep in progress: every step of [place], one after the other. */
-@Serializable data class SweepRoute(val place: Place)
+/** 03 Sweep in progress: every step of [place], one after the other, beginning with [at] (null = the first). */
+@Serializable data class SweepRoute(val place: Place, val at: Check? = null)
+
+/** 04 Wi-Fi results. [sweep]: part of a sweep (then "Next" goes on), or the check run alone. */
+@Serializable data class WifiResultsRoute(val place: Place, val sweep: Boolean)
+
+/** The known and unrecognised devices of the last Wi-Fi scan. */
+@Serializable data class WifiOthersRoute(val place: Place)
+
+/** 05 Device: one device of the last Wi-Fi scan, by its address. */
+@Serializable data class DeviceRoute(val ip: String, val place: Place)
 
 /** One check by itself (Home › Or run one check). */
 @Serializable data class CheckRoute(val check: Check, val place: Place)

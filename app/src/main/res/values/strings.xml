@@ -106,6 +106,133 @@
     <string name="font_atkinson" translatable="false">Atkinson</string>
     <string name="font_space_grotesk" translatable="false">Space Grotesk</string>
 
+    <!-- Actions used on more than one screen -->
+    <string name="skip_step">Skip step</string>
+    <string name="scan_again">Scan again</string>
+    <string name="cancel">Cancel</string>
+    <string name="done">Done</string>
+    <string name="share">Share</string>
+
+    <!-- 03 Sweep in progress: Wi-Fi -->
+    <string name="checking_wifi">Checking the Wi-Fi</string>
+    <plurals name="about_seconds_left">
+        <item quantity="one">about %1$d s left</item>
+        <item quantity="other">about %1$d s left</item>
+    </plurals>
+    <string name="of_total">of %1$d</string>
+    <string name="found_line">found</string>
+    <string name="found_so_far">Found so far</string>
+    <string name="nothing_answered_yet">Nothing has answered yet.</string>
+    <string name="not_on_wifi_title">Not on Wi-Fi</string>
+    <string name="not_on_wifi_line">Join the room\'s Wi-Fi, then scan again. Keyhole only looks at the Wi-Fi this phone is on.</string>
+    <string name="next_wifi">Next: Wi-Fi</string>
+    <string name="next_hotspots">Next: hotspots</string>
+    <string name="next_bluetooth">Next: Bluetooth</string>
+    <string name="next_lens">Next: lens</string>
+    <string name="next_infrared">Next: infrared</string>
+    <string name="next_magnet">Next: magnet</string>
+    <string name="next_checklist">Next: checklist</string>
+
+    <!-- Results in words -->
+    <string name="risk_likely_camera">Likely camera</string>
+    <string name="risk_worth_a_look">Worth a look</string>
+    <string name="risk_known">Known</string>
+    <string name="risk_not_recognised">Not recognised</string>
+    <plurals name="likely_cameras_count">
+        <item quantity="one">%1$d likely camera</item>
+        <item quantity="other">%1$d likely cameras</item>
+    </plurals>
+    <plurals name="worth_a_look_count">
+        <item quantity="one">%1$d worth a look</item>
+        <item quantity="other">%1$d worth a look</item>
+    </plurals>
+    <plurals name="known_count">
+        <item quantity="one">%1$d known</item>
+        <item quantity="other">%1$d known</item>
+    </plurals>
+    <plurals name="not_recognised_count">
+        <item quantity="one">%1$d not recognised</item>
+        <item quantity="other">%1$d not recognised</item>
+    </plurals>
+
+    <!-- 04 Wi-Fi results -->
+    <plurals name="devices_on_wifi">
+        <item quantity="one">device on %1$s</item>
+        <item quantity="other">devices on %1$s</item>
+    </plurals>
+    <plurals name="devices_on_this_wifi">
+        <item quantity="one">device on this Wi-Fi</item>
+        <item quantity="other">devices on this Wi-Fi</item>
+    </plurals>
+    <string name="isolation_title">Only the router answered</string>
+    <string name="isolation_text">This Wi-Fi may keep devices apart, so a camera on it can\'t be seen from here. The other checks still work.</string>
+    <string name="wifi_none_title">Nothing here looks like a camera</string>
+    <string name="wifi_none_text">A camera on another network, on mobile data or recording to a memory card doesn\'t show up in this scan.</string>
+    <plurals name="known_devices">
+        <item quantity="one">%1$d known device</item>
+        <item quantity="other">%1$d known devices</item>
+    </plurals>
+    <plurals name="other_devices">
+        <item quantity="one">%1$d device not recognised</item>
+        <item quantity="other">%1$d devices not recognised</item>
+    </plurals>
+    <string name="other_devices_line">Answered, but nothing says what they are</string>
+    <string name="other_devices_title">Other devices</string>
+
+    <!-- Kinds of known device -->
+    <string name="kind_phone">Phone</string>
+    <string name="kind_computer">Computer</string>
+    <string name="kind_tv">TV</string>
+    <string name="kind_speaker">Speaker</string>
+    <string name="kind_printer">Printer</string>
+    <string name="kind_router">Router</string>
+    <string name="kind_console">Console</string>
+    <string name="kind_storage">Storage</string>
+    <string name="kind_home">Smart home</string>
+    <string name="kind_this_phone">This phone</string>
+
+    <!-- Why: one sentence per sign -->
+    <string name="sign_onvif">Answers as a network camera</string>
+    <string name="sign_rtsp">Streams video on port %1$d</string>
+    <string name="sign_camera_maker">Its maker makes IP cameras</string>
+    <string name="sign_camera_port">Port %1$d is one that cameras use</string>
+    <string name="sign_web_page">Has a web page, and nothing says what it is</string>
+    <string name="sign_known_kind">Matches a known kind of device: %1$s</string>
+    <string name="sign_marked">You marked it as known</string>
+    <string name="sign_router">The router of this Wi-Fi</string>
+    <string name="sign_this_phone">The phone you are holding</string>
+    <string name="sign_none">Answered, but shows nothing either way</string>
+
+    <!-- 05 Device -->
+    <string name="seen_at">seen %1$s</string>
+    <plurals name="strong_signs">
+        <item quantity="one">%1$d strong sign</item>
+        <item quantity="other">%1$d strong signs</item>
+    </plurals>
+    <string name="why">Why</string>
+    <string name="open_ports">Open ports</string>
+    <string name="none_found">None found</string>
+    <string name="maker">Maker</string>
+    <string name="maker_likely">%1$s, likely</string>
+    <string name="not_a_camera">Not a camera?</string>
+    <string name="not_a_camera_line">Mark it as yours or the room\'s</string>
+    <string name="marked_mine_line">You marked it as yours</string>
+    <string name="marked_room_line">You marked it as part of the room</string>
+    <string name="found_it">Found it?</string>
+    <string name="find_its_lens">Find its lens</string>
+    <string name="share_footer">Checked with Keyhole. Nothing was sent anywhere.</string>
+
+    <!-- 06 Not a camera? -->
+    <string name="not_a_camera_sheet_line">Tell Keyhole what it is. This stays on your phone.</string>
+    <string name="its_mine">It\'s mine</string>
+    <string name="its_mine_line">A phone, laptop or something I brought</string>
+    <string name="part_of_the_room">Part of the room</string>
+    <string name="part_of_the_room_line">The TV, a speaker or the router</string>
+    <string name="not_sure">Not sure</string>
+    <string name="not_sure_line">Keep it on the list to check</string>
+    <string name="report_wrong">Keyhole got it wrong? Report it to help fix the device list</string>
+    <string name="mark_as_known">Mark as known</string>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">This screen is on its way.</string>
     <string name="stand_in_line_for">%1$s · this screen is on its way.</string>

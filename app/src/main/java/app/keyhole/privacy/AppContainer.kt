@@ -3,6 +3,8 @@ package app.keyhole.privacy
 import android.content.Context
 import app.keyhole.privacy.data.SettingsRepository
 import app.keyhole.privacy.data.SignatureLoader
+import app.keyhole.privacy.scan.WifiSession
+import app.keyhole.privacy.scan.net.WifiScanner
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -14,6 +16,9 @@ import kotlinx.coroutines.SupervisorJob
 class AppContainer(val context: Context) {
     val settings by lazy { SettingsRepository(context) }
     val signatures by lazy { SignatureLoader(context) }
+
+    /** The Wi-Fi check between its screens. It scans only when a screen starts it. */
+    val wifi by lazy { WifiSession(WifiScanner(context), signatures, appScope) }
 
     /** Lives as long as the process, for work that isn't tied to a screen (saving a setting as a screen closes). */
     val appScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)

@@ -92,6 +92,109 @@
     <string name="colour_wallpaper">壁紙の色</string>
     <string name="colour_accent">ダークブルー</string>
 
+    <!-- Wi-Fi check: 03 Sweep, 04 Results, 05 Device, 06 Not a camera? -->
+    <string name="skip_step">スキップ</string>
+    <string name="scan_again">再スキャン</string>
+    <string name="cancel">キャンセル</string>
+    <string name="done">完了</string>
+    <string name="share">共有</string>
+    <string name="checking_wifi">Wi-Fi をチェック中</string>
+    <string name="of_total">/ %1$d 台</string>
+    <string name="found_line">台を検出</string>
+    <string name="found_so_far">これまでの検出</string>
+    <string name="nothing_answered_yet">まだ応答がありません。</string>
+    <string name="not_on_wifi_title">Wi-Fi に未接続</string>
+    <string name="not_on_wifi_line">部屋の Wi-Fi に接続してから、もう一度スキャンしてください。Keyhole はこのスマートフォンが接続中の Wi-Fi だけを調べます。</string>
+    <string name="next_wifi">次へ: Wi-Fi</string>
+    <string name="next_hotspots">次へ: スポット</string>
+    <string name="next_bluetooth">次へ: Bluetooth</string>
+    <string name="next_lens">次へ: レンズ</string>
+    <string name="next_infrared">次へ: 赤外線</string>
+    <string name="next_magnet">次へ: 磁気</string>
+    <string name="next_checklist">次へ: リスト</string>
+    <string name="risk_likely_camera">カメラの可能性大</string>
+    <string name="risk_worth_a_look">要確認</string>
+    <string name="risk_known">既知</string>
+    <string name="risk_not_recognised">不明</string>
+    <string name="isolation_title">応答したのはルーターだけです</string>
+    <string name="isolation_text">この Wi-Fi は端末どうしを分離している可能性があり、接続中のカメラはここからは見えません。ほかのチェックは使えます。</string>
+    <string name="wifi_none_title">カメラらしいものは見つかりませんでした</string>
+    <string name="wifi_none_text">別のネットワークやモバイル回線を使うカメラ、メモリーカードに録画するカメラは、このスキャンには表示されません。</string>
+    <string name="other_devices_line">応答はありますが、種類が分かりません</string>
+    <string name="other_devices_title">その他のデバイス</string>
+    <string name="kind_phone">スマートフォン</string>
+    <string name="kind_computer">パソコン</string>
+    <string name="kind_tv">テレビ</string>
+    <string name="kind_speaker">スピーカー</string>
+    <string name="kind_printer">プリンター</string>
+    <string name="kind_router">ルーター</string>
+    <string name="kind_console">ゲーム機</string>
+    <string name="kind_storage">ストレージ</string>
+    <string name="kind_home">スマートホーム</string>
+    <string name="kind_this_phone">この端末</string>
+    <string name="sign_onvif">ネットワークカメラとして応答します</string>
+    <string name="sign_rtsp">ポート %1$d で映像を配信しています</string>
+    <string name="sign_camera_maker">メーカーは IP カメラを製造しています</string>
+    <string name="sign_camera_port">ポート %1$d はカメラが使うポートです</string>
+    <string name="sign_web_page">ウェブページがありますが、種類が分かりません</string>
+    <string name="sign_known_kind">既知の種類のデバイスと一致: %1$s</string>
+    <string name="sign_marked">既知としてマークしました</string>
+    <string name="sign_router">この Wi-Fi のルーター</string>
+    <string name="sign_this_phone">お使いのスマートフォン</string>
+    <string name="sign_none">応答はありますが、判断材料がありません</string>
+    <string name="seen_at">%1$s に検出</string>
+    <string name="why">理由</string>
+    <string name="open_ports">開いているポート</string>
+    <string name="none_found">見つかりません</string>
+    <string name="maker">メーカー</string>
+    <string name="maker_likely">おそらく %1$s</string>
+    <string name="not_a_camera">カメラではない？</string>
+    <string name="not_a_camera_line">自分のもの、または部屋の備品としてマーク</string>
+    <string name="marked_mine_line">自分のものとしてマーク済み</string>
+    <string name="marked_room_line">部屋の備品としてマーク済み</string>
+    <string name="found_it">見つけた？</string>
+    <string name="find_its_lens">レンズを探す</string>
+    <string name="share_footer">Keyhole でチェックしました。データはどこにも送信されていません。</string>
+    <string name="not_a_camera_sheet_line">これが何かを Keyhole に教えてください。この情報は端末内に保存されます。</string>
+    <string name="its_mine">自分のもの</string>
+    <string name="its_mine_line">持ち込んだスマートフォンやノートパソコンなど</string>
+    <string name="part_of_the_room">部屋の備品</string>
+    <string name="part_of_the_room_line">テレビ、スピーカー、ルーターなど</string>
+    <string name="not_sure">分からない</string>
+    <string name="not_sure_line">確認用にリストに残す</string>
+    <string name="report_wrong">判定が違いますか？報告するとデバイス一覧の改善に役立ちます</string>
+    <string name="mark_as_known">既知としてマーク</string>
+    <plurals name="about_seconds_left">
+        <item quantity="other">残り約 %1$d 秒</item>
+    </plurals>
+    <plurals name="likely_cameras_count">
+        <item quantity="other">カメラの可能性大 %1$d 台</item>
+    </plurals>
+    <plurals name="worth_a_look_count">
+        <item quantity="other">要確認 %1$d 台</item>
+    </plurals>
+    <plurals name="known_count">
+        <item quantity="other">既知 %1$d 台</item>
+    </plurals>
+    <plurals name="not_recognised_count">
+        <item quantity="other">不明 %1$d 台</item>
+    </plurals>
+    <plurals name="devices_on_wifi">
+        <item quantity="other">台（%1$s）</item>
+    </plurals>
+    <plurals name="devices_on_this_wifi">
+        <item quantity="other">台（この Wi-Fi）</item>
+    </plurals>
+    <plurals name="known_devices">
+        <item quantity="other">既知のデバイス %1$d 台</item>
+    </plurals>
+    <plurals name="other_devices">
+        <item quantity="other">不明なデバイス %1$d 台</item>
+    </plurals>
+    <plurals name="strong_signs">
+        <item quantity="other">強い兆候 %1$d 件</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">この画面は準備中です。</string>
     <string name="stand_in_line_for">%1$s · この画面は準備中です。</string>

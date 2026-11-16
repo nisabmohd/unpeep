@@ -100,6 +100,119 @@
     <string name="colour_wallpaper">Couleurs du fond d\'écran</string>
     <string name="colour_accent">Bleu foncé</string>
 
+    <!-- Wi-Fi check: 03 Sweep, 04 Results, 05 Device, 06 Not a camera? -->
+    <string name="skip_step">Passer l\'étape</string>
+    <string name="scan_again">Relancer</string>
+    <string name="cancel">Annuler</string>
+    <string name="done">Terminé</string>
+    <string name="share">Partager</string>
+    <string name="checking_wifi">Vérification du Wi-Fi</string>
+    <string name="of_total">sur %1$d</string>
+    <string name="found_line">trouvés</string>
+    <string name="found_so_far">Trouvé jusqu\'ici</string>
+    <string name="nothing_answered_yet">Rien n\'a encore répondu.</string>
+    <string name="not_on_wifi_title">Pas de Wi-Fi</string>
+    <string name="not_on_wifi_line">Connectez-vous au Wi-Fi de la pièce, puis relancez. Keyhole ne regarde que le Wi-Fi auquel ce téléphone est connecté.</string>
+    <string name="next_wifi">Suivant : Wi-Fi</string>
+    <string name="next_hotspots">Suivant : réseaux</string>
+    <string name="next_bluetooth">Suivant : Bluetooth</string>
+    <string name="next_lens">Suivant : objectif</string>
+    <string name="next_infrared">Suivant : infrarouge</string>
+    <string name="next_magnet">Suivant : aimant</string>
+    <string name="next_checklist">Suivant : liste</string>
+    <string name="risk_likely_camera">Caméra probable</string>
+    <string name="risk_worth_a_look">À regarder</string>
+    <string name="risk_known">Connu</string>
+    <string name="risk_not_recognised">Non reconnu</string>
+    <string name="isolation_title">Seul le routeur a répondu</string>
+    <string name="isolation_text">Ce Wi-Fi sépare peut-être les appareils : une caméra qui y est connectée ne se voit pas d\'ici. Les autres vérifications fonctionnent toujours.</string>
+    <string name="wifi_none_title">Rien ici ne ressemble à une caméra</string>
+    <string name="wifi_none_text">Une caméra sur un autre réseau, en données mobiles ou qui enregistre sur carte mémoire n\'apparaît pas dans cette analyse.</string>
+    <string name="other_devices_line">Ont répondu, mais rien ne dit ce qu\'ils sont</string>
+    <string name="other_devices_title">Autres appareils</string>
+    <string name="kind_phone">Téléphone</string>
+    <string name="kind_computer">Ordinateur</string>
+    <string name="kind_tv">TV</string>
+    <string name="kind_speaker">Enceinte</string>
+    <string name="kind_printer">Imprimante</string>
+    <string name="kind_router">Routeur</string>
+    <string name="kind_console">Console</string>
+    <string name="kind_storage">Stockage</string>
+    <string name="kind_home">Maison connectée</string>
+    <string name="kind_this_phone">Ce téléphone</string>
+    <string name="sign_onvif">Répond comme une caméra réseau</string>
+    <string name="sign_rtsp">Diffuse de la vidéo sur le port %1$d</string>
+    <string name="sign_camera_maker">Son fabricant fait des caméras IP</string>
+    <string name="sign_camera_port">Le port %1$d est utilisé par les caméras</string>
+    <string name="sign_web_page">A une page web, et rien ne dit ce que c\'est</string>
+    <string name="sign_known_kind">Correspond à un type d\'appareil connu : %1$s</string>
+    <string name="sign_marked">Vous l\'avez marqué comme connu</string>
+    <string name="sign_router">Le routeur de ce Wi-Fi</string>
+    <string name="sign_this_phone">Le téléphone que vous tenez</string>
+    <string name="sign_none">A répondu, mais ne montre rien dans un sens ni dans l\'autre</string>
+    <string name="seen_at">vu à %1$s</string>
+    <string name="why">Pourquoi</string>
+    <string name="open_ports">Ports ouverts</string>
+    <string name="none_found">Aucun trouvé</string>
+    <string name="maker">Fabricant</string>
+    <string name="maker_likely">%1$s, probablement</string>
+    <string name="not_a_camera">Pas une caméra ?</string>
+    <string name="not_a_camera_line">Marquez-le comme à vous ou à la pièce</string>
+    <string name="marked_mine_line">Vous l\'avez marqué comme à vous</string>
+    <string name="marked_room_line">Vous l\'avez marqué comme faisant partie de la pièce</string>
+    <string name="found_it">Trouvée ?</string>
+    <string name="find_its_lens">Trouver l\'objectif</string>
+    <string name="share_footer">Vérifié avec Keyhole. Rien n\'a été envoyé nulle part.</string>
+    <string name="not_a_camera_sheet_line">Dites à Keyhole ce que c\'est. Cela reste sur votre téléphone.</string>
+    <string name="its_mine">C\'est à moi</string>
+    <string name="its_mine_line">Un téléphone, un ordinateur ou quelque chose que j\'ai apporté</string>
+    <string name="part_of_the_room">Fait partie de la pièce</string>
+    <string name="part_of_the_room_line">La télé, une enceinte ou le routeur</string>
+    <string name="not_sure">Pas sûr</string>
+    <string name="not_sure_line">Le garder dans la liste à vérifier</string>
+    <string name="report_wrong">Keyhole s\'est trompé ? Signalez-le pour corriger la liste d\'appareils</string>
+    <string name="mark_as_known">Marquer comme connu</string>
+    <plurals name="about_seconds_left">
+        <item quantity="one">environ %1$d s restante</item>
+        <item quantity="other">environ %1$d s restantes</item>
+    </plurals>
+    <plurals name="likely_cameras_count">
+        <item quantity="one">%1$d caméra probable</item>
+        <item quantity="other">%1$d caméras probables</item>
+    </plurals>
+    <plurals name="worth_a_look_count">
+        <item quantity="one">%1$d à regarder</item>
+        <item quantity="other">%1$d à regarder</item>
+    </plurals>
+    <plurals name="known_count">
+        <item quantity="one">%1$d connu</item>
+        <item quantity="other">%1$d connus</item>
+    </plurals>
+    <plurals name="not_recognised_count">
+        <item quantity="one">%1$d non reconnu</item>
+        <item quantity="other">%1$d non reconnus</item>
+    </plurals>
+    <plurals name="devices_on_wifi">
+        <item quantity="one">appareil sur %1$s</item>
+        <item quantity="other">appareils sur %1$s</item>
+    </plurals>
+    <plurals name="devices_on_this_wifi">
+        <item quantity="one">appareil sur ce Wi-Fi</item>
+        <item quantity="other">appareils sur ce Wi-Fi</item>
+    </plurals>
+    <plurals name="known_devices">
+        <item quantity="one">%1$d appareil connu</item>
+        <item quantity="other">%1$d appareils connus</item>
+    </plurals>
+    <plurals name="other_devices">
+        <item quantity="one">%1$d appareil non reconnu</item>
+        <item quantity="other">%1$d appareils non reconnus</item>
+    </plurals>
+    <plurals name="strong_signs">
+        <item quantity="one">%1$d signe fort</item>
+        <item quantity="other">%1$d signes forts</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">Cet écran arrive bientôt.</string>
     <string name="stand_in_line_for">%1$s · cet écran arrive bientôt.</string>

@@ -61,7 +61,7 @@ import app.keyhole.privacy.ui.theme.warningColors
 
 /** Every button: a 52 dp pill whose label is one line that shrinks to fit, never wraps. */
 @Composable
-private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, content: Color, modifier: Modifier, icon: Painter?, enabled: Boolean) {
+private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, content: Color, modifier: Modifier, icon: Painter?, enabled: Boolean, trailing: Painter? = null) {
     val c = MaterialTheme.colorScheme
     Button(
         onClick = onClick,
@@ -82,14 +82,19 @@ private fun KeyholeButton(text: String, onClick: () -> Unit, container: Color, c
             text, style = KeyholeType.cardTitle.copy(color = LocalContentColor.current, textAlign = TextAlign.Center),
             maxLines = 1, softWrap = false, overflow = TextOverflow.Ellipsis,
             autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = KeyholeType.cardTitle.fontSize),
+            modifier = Modifier.weight(1f, fill = false),
         )
+        if (trailing != null) {
+            Spacer(Modifier.width(Space.inline))
+            Icon(trailing, null, modifier = Modifier.size(Size.buttonIcon))
+        }
     }
 }
 
-/** The one main action of a screen or sheet. */
+/** The one main action of a screen or sheet. [trailing]: the arrow of an action that moves on ("Next: hotspots →"). */
 @Composable
-fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: Painter? = null, enabled: Boolean = true) =
-    KeyholeButton(text, onClick, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, modifier, icon, enabled)
+fun PrimaryButton(text: String, onClick: () -> Unit, modifier: Modifier = Modifier, icon: Painter? = null, enabled: Boolean = true, trailing: Painter? = null) =
+    KeyholeButton(text, onClick, MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.onPrimary, modifier, icon, enabled, trailing)
 
 /** The quiet action beside it (Cancel, Skip step, Found it?). */
 @Composable

@@ -15,10 +15,15 @@ Tick it and commit after each one.
 - [ ] Buy a test camera (V380 or Tapo) and, if possible, a cheap "charger cam"
 
 ## Week 1–2 · Wi-Fi
-- [ ] Subnet from `LinkProperties`; sweep (≤ 64 sockets, 400 ms) through `LocalOnly`
-- [ ] mDNS (`NsdManager`), SSDP + device XML, ONVIF WS-Discovery (MulticastLock), ports, RTSP OPTIONS, HTTP banner
-- [ ] Screen 03 Sweep in progres/mos · 04 Wi-Fi results · 05 Device · 06 Not a camera? (sheet)
-- [ ] Client-isolation note; test on home Wi-Fi, a phone hotspot and the test camera
+- [x] Subnet from `LinkProperties`; sweep (≤ 64 sockets, 400 ms) through `LocalOnly`
+- [x] mDNS (`NsdManager`), SSDP + device XML, ONVIF WS-Discovery (MulticastLock), ports, RTSP OPTIONS, HTTP banner
+- [x] Screen 03 Sweep in progress · 04 Wi-Fi results · 05 Device · 06 Not a camera? (sheet)
+- [x] Client-isolation note
+- [ ] Test on home Wi-Fi, a phone hotspot and the test camera (so far: emulator Wi-Fi with a stand-in camera on the host)
+- [ ] Design review: "Other devices" list (behind "n known devices"), the "Not on Wi-Fi" state, the "not recognised"
+      group and legend entry, the report line's icon in 06 (the PNG draws a chat bubble; the set has `ic_mail`)
+- [ ] Icons for known kinds (computer, speaker, printer, console, storage) via `tools/solar_icon.py`; they use the plug for now
+- [ ] "Marked as known" is kept in memory until Room (Week 5); More › Marked as known still counts 0
 
 ## Week 3 · Hotspots + Bluetooth
 - [ ] Wi-Fi scan results + hotspot patterns; throttle (4 per 2 min) with "Updated Xs ago"

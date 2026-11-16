@@ -100,6 +100,119 @@
     <string name="colour_wallpaper">वॉलपेपर के रंग</string>
     <string name="colour_accent">गहरा नीला</string>
 
+    <!-- Wi-Fi check: 03 Sweep, 04 Results, 05 Device, 06 Not a camera? -->
+    <string name="skip_step">चरण छोड़ें</string>
+    <string name="scan_again">फिर से स्कैन करें</string>
+    <string name="cancel">रद्द करें</string>
+    <string name="done">हो गया</string>
+    <string name="share">शेयर करें</string>
+    <string name="checking_wifi">वाई-फ़ाई की जाँच हो रही है</string>
+    <string name="of_total">%1$d में से</string>
+    <string name="found_line">मिले</string>
+    <string name="found_so_far">अब तक मिला</string>
+    <string name="nothing_answered_yet">अभी तक किसी ने जवाब नहीं दिया।</string>
+    <string name="not_on_wifi_title">वाई-फ़ाई से नहीं जुड़ा</string>
+    <string name="not_on_wifi_line">कमरे के वाई-फ़ाई से जुड़ें, फिर दोबारा स्कैन करें। Keyhole सिर्फ़ वही वाई-फ़ाई देखता है जिससे यह फ़ोन जुड़ा है।</string>
+    <string name="next_wifi">अगला: वाई-फ़ाई</string>
+    <string name="next_hotspots">अगला: हॉटस्पॉट</string>
+    <string name="next_bluetooth">अगला: ब्लूटूथ</string>
+    <string name="next_lens">अगला: लेंस</string>
+    <string name="next_infrared">अगला: इन्फ़्रारेड</string>
+    <string name="next_magnet">अगला: चुंबक</string>
+    <string name="next_checklist">अगला: चेकलिस्ट</string>
+    <string name="risk_likely_camera">शायद कैमरा</string>
+    <string name="risk_worth_a_look">एक बार देख लें</string>
+    <string name="risk_known">जाना-पहचाना</string>
+    <string name="risk_not_recognised">पहचाना नहीं गया</string>
+    <string name="isolation_title">सिर्फ़ राउटर ने जवाब दिया</string>
+    <string name="isolation_text">यह वाई-फ़ाई शायद डिवाइसों को एक-दूसरे से अलग रखता है, इसलिए इस पर लगा कैमरा यहाँ से नहीं दिखेगा। बाकी जाँचें फिर भी काम करती हैं।</string>
+    <string name="wifi_none_title">यहाँ कुछ भी कैमरे जैसा नहीं दिखता</string>
+    <string name="wifi_none_text">किसी दूसरे नेटवर्क पर, मोबाइल डेटा पर या मेमोरी कार्ड में रिकॉर्ड करने वाला कैमरा इस स्कैन में नहीं दिखता।</string>
+    <string name="other_devices_line">जवाब दिया, पर कुछ नहीं बताता कि ये क्या हैं</string>
+    <string name="other_devices_title">अन्य डिवाइस</string>
+    <string name="kind_phone">फ़ोन</string>
+    <string name="kind_computer">कंप्यूटर</string>
+    <string name="kind_tv">टीवी</string>
+    <string name="kind_speaker">स्पीकर</string>
+    <string name="kind_printer">प्रिंटर</string>
+    <string name="kind_router">राउटर</string>
+    <string name="kind_console">गेम कंसोल</string>
+    <string name="kind_storage">स्टोरेज</string>
+    <string name="kind_home">स्मार्ट होम</string>
+    <string name="kind_this_phone">यह फ़ोन</string>
+    <string name="sign_onvif">नेटवर्क कैमरे की तरह जवाब देता है</string>
+    <string name="sign_rtsp">पोर्ट %1$d पर वीडियो स्ट्रीम करता है</string>
+    <string name="sign_camera_maker">इसकी कंपनी IP कैमरे बनाती है</string>
+    <string name="sign_camera_port">पोर्ट %1$d कैमरे इस्तेमाल करते हैं</string>
+    <string name="sign_web_page">इसका एक वेब पेज है, पर कुछ नहीं बताता कि यह क्या है</string>
+    <string name="sign_known_kind">जाने-पहचाने तरह के डिवाइस से मेल खाता है: %1$s</string>
+    <string name="sign_marked">आपने इसे जाना-पहचाना चिह्नित किया</string>
+    <string name="sign_router">इस वाई-फ़ाई का राउटर</string>
+    <string name="sign_this_phone">वही फ़ोन जो आपके हाथ में है</string>
+    <string name="sign_none">जवाब दिया, पर किसी भी तरफ़ कुछ नहीं दिखाता</string>
+    <string name="seen_at">%1$s पर दिखा</string>
+    <string name="why">क्यों</string>
+    <string name="open_ports">खुले पोर्ट</string>
+    <string name="none_found">कोई नहीं मिला</string>
+    <string name="maker">कंपनी</string>
+    <string name="maker_likely">%1$s, शायद</string>
+    <string name="not_a_camera">कैमरा नहीं है?</string>
+    <string name="not_a_camera_line">इसे अपना या कमरे का बताएँ</string>
+    <string name="marked_mine_line">आपने इसे अपना बताया</string>
+    <string name="marked_room_line">आपने इसे कमरे का हिस्सा बताया</string>
+    <string name="found_it">मिल गया?</string>
+    <string name="find_its_lens">इसका लेंस ढूँढें</string>
+    <string name="share_footer">Keyhole से जाँचा गया। कुछ भी कहीं नहीं भेजा गया।</string>
+    <string name="not_a_camera_sheet_line">Keyhole को बताएँ कि यह क्या है। यह आपके फ़ोन पर ही रहता है।</string>
+    <string name="its_mine">यह मेरा है</string>
+    <string name="its_mine_line">फ़ोन, लैपटॉप या कुछ जो मैं लाया</string>
+    <string name="part_of_the_room">कमरे का हिस्सा</string>
+    <string name="part_of_the_room_line">टीवी, स्पीकर या राउटर</string>
+    <string name="not_sure">पक्का नहीं</string>
+    <string name="not_sure_line">जाँचने के लिए सूची में रखें</string>
+    <string name="report_wrong">Keyhole से गलती हुई? बताएँ, ताकि डिवाइस सूची ठीक हो सके</string>
+    <string name="mark_as_known">जाना-पहचाना चिह्नित करें</string>
+    <plurals name="about_seconds_left">
+        <item quantity="one">लगभग %1$d से. बाकी</item>
+        <item quantity="other">लगभग %1$d से. बाकी</item>
+    </plurals>
+    <plurals name="likely_cameras_count">
+        <item quantity="one">%1$d शायद कैमरा</item>
+        <item quantity="other">%1$d शायद कैमरे</item>
+    </plurals>
+    <plurals name="worth_a_look_count">
+        <item quantity="one">%1$d देखने लायक</item>
+        <item quantity="other">%1$d देखने लायक</item>
+    </plurals>
+    <plurals name="known_count">
+        <item quantity="one">%1$d जाना-पहचाना</item>
+        <item quantity="other">%1$d जाने-पहचाने</item>
+    </plurals>
+    <plurals name="not_recognised_count">
+        <item quantity="one">%1$d पहचाना नहीं गया</item>
+        <item quantity="other">%1$d पहचाने नहीं गए</item>
+    </plurals>
+    <plurals name="devices_on_wifi">
+        <item quantity="one">डिवाइस %1$s पर</item>
+        <item quantity="other">डिवाइस %1$s पर</item>
+    </plurals>
+    <plurals name="devices_on_this_wifi">
+        <item quantity="one">डिवाइस इस वाई-फ़ाई पर</item>
+        <item quantity="other">डिवाइस इस वाई-फ़ाई पर</item>
+    </plurals>
+    <plurals name="known_devices">
+        <item quantity="one">%1$d जाना-पहचाना डिवाइस</item>
+        <item quantity="other">%1$d जाने-पहचाने डिवाइस</item>
+    </plurals>
+    <plurals name="other_devices">
+        <item quantity="one">%1$d डिवाइस पहचाना नहीं गया</item>
+        <item quantity="other">%1$d डिवाइस पहचाने नहीं गए</item>
+    </plurals>
+    <plurals name="strong_signs">
+        <item quantity="one">%1$d पक्का संकेत</item>
+        <item quantity="other">%1$d पक्के संकेत</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">यह स्क्रीन जल्द आ रही है।</string>
     <string name="stand_in_line_for">%1$s · यह स्क्रीन जल्द आ रही है।</string>

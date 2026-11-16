@@ -1,6 +1,7 @@
 package app.keyhole.privacy.ui.components
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -32,6 +33,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
@@ -43,6 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
 import app.keyhole.privacy.ui.theme.KeyholeType
 import app.keyhole.privacy.ui.theme.NavLabelMinSize
+import app.keyhole.privacy.ui.theme.Shapes
 import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.Space
 
@@ -88,6 +92,17 @@ fun BackTopBar(onBack: () -> Unit, modifier: Modifier = Modifier, title: String?
             }
         }
         actions()
+    }
+}
+
+/** A text action at the end of a top bar ("Skip step", "Scan again"): the accent colour, one line, a 48 dp pill to tap. */
+@Composable
+fun TopBarAction(text: String, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    Box(
+        modifier.heightIn(min = Size.iconButton).clip(Shapes.pill).clickable(role = Role.Button, onClick = onClick).padding(horizontal = Space.block),
+        contentAlignment = Alignment.Center,
+    ) {
+        Text(text, style = KeyholeType.cardTitle, color = MaterialTheme.colorScheme.primary, maxLines = 1, softWrap = false)
     }
 }
 
