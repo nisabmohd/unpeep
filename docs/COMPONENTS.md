@@ -11,14 +11,19 @@ per-screen look options. Two things that look alike are one component.
 | `LensHeader` / `EmptyState` | Lens.kt | first block of every detail screen; every empty list (lens header + line) |
 | `CheckRow` / `CheckIcon` | CheckRow.kt | the seven checks: Home (labels, scrolls), sweep and report (no labels) |
 | `Grouped` + `groupShape` | Rows.kt | a group of rows, 2 dp apart, 24/8 corners |
-| `ListRow` | Rows.kt | the one list row: circle, title, line, trailing, chevron |
+| `ListRow` | Rows.kt | the one list row: circle, title, line, trailing, chevron; long press; `alert` title for a destructive row |
 | `ValueRow` | Rows.kt | a detail row: muted label left, value right (Open ports · Maker) |
 | `SignRow` | Rows.kt | a reason or step: 24 dp icon with no circle + one sentence (Why) |
 | `Tile` | Rows.kt | a More tile: circle, small value, title, line |
 | `IconCircle` / `NeutralCircle` | Rows.kt | 44 dp circle with a 22 dp icon |
-| `SectionLabel` | Rows.kt | label above a group, optional count/action |
+| `SectionLabel` | Rows.kt | label above a group, optional count or text action (Change) |
 | `Box24` | Rows.kt | a tinted box that is not a list ("Or run one check", Find it meter) |
 | `Note` | Rows.kt | the one note (goes first) |
+| `ChecklistRow` / `AnswerMarkCircle` | Rows.kt | a checklist item: hued circle, title, line, its answer mark (✓ · ? · − · empty) |
+| `NumberCircle` | Rows.kt | a numbered step's circle (If you find a camera) |
+| `ProgressLine` | Meter.kt | how far along a list is (checklist) |
+| `KeyholeTextField` | Inputs.kt | the one text field: search pill or note box |
+| `PhotoThumb` | Inputs.kt | a proof photo's thumbnail, read off the main thread |
 | `SummaryBox` | Rows.kt | the count on top of a result list: big number + line, one bar split by result, the legend in words |
 | `PrimaryButton` / `SecondaryButton` / `ButtonPair` | Controls.kt | one main action (an arrow after its label when it moves on); pair = secondary left, primary right |
 | `RoundIconButton` | Controls.kt | round tonal header buttons |
@@ -38,7 +43,10 @@ per-screen look options. Two things that look alike are one component.
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
 | `KeyholeNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |
+| `ReorderList` / `ReorderItem` | Reorder.kt | Sweep steps: grip to drag, circle, title, switch; Move up / down for TalkBack |
+| `ColorSwatch` | Controls.kt | an accent to pick: colour circle, ring and ✓ when picked |
+| `FloatingCard` | Rows.kt | Welcome's tilted cards (part of the picture, silent for TalkBack) |
 | `Haptics` / `Buzz` | Haptics.kt | the one way to buzz: tick · toggle · confirm · reject · found · done (MOTION.md § Haptics) |
 | `KeyholeSheet` / `SheetLine` | KeyholeSheet.kt | every choice, picker and confirm; a quiet line under its rows |
 
-To add (with their screens): `ChecklistItem` (Looks fine · Not sure · Skip), `PhotoThumb`, `ReorderRow` (dotted grip + switch), `ColorSwatch`.
+

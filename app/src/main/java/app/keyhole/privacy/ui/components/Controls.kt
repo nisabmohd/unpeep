@@ -41,6 +41,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
@@ -298,6 +300,26 @@ fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, m
                 }
                 Text(s.label, style = KeyholeType.cardTitle, color = if (picked) c.surface else c.onSurface, maxLines = 1, softWrap = false)
             }
+        }
+    }
+}
+
+/**
+ * An accent to pick (Appearance): a 48 dp circle of the colour; the picked one has a ring around it and a ✓.
+ * [label] is what TalkBack says ("Dark blue").
+ */
+@Composable
+fun ColorSwatch(color: Color, label: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val haptics = rememberHaptics()
+    Box(
+        modifier.size(Size.swatch).then(if (selected) Modifier.border(Size.ring, c.onSurface, Shapes.pill) else Modifier).clip(Shapes.pill)
+            .selectable(selected, role = Role.RadioButton) { if (!selected) haptics.buzz(Buzz.TICK); onClick() }
+            .semantics { contentDescription = label },
+        contentAlignment = Alignment.Center,
+    ) {
+        Box(Modifier.size(if (selected) Size.iconCircle else Size.swatch).clip(Shapes.pill).background(color), contentAlignment = Alignment.Center) {
+            if (selected) Icon(painterResource(R.drawable.ic_check), null, tint = c.surface, modifier = Modifier.size(Size.swatchCheck))
         }
     }
 }

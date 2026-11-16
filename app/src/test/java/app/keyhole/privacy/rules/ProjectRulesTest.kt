@@ -57,7 +57,8 @@ class ProjectRulesTest {
     /** Detect, never intrude: no logins, no passwords, no streams, no writes. */
     @Test fun neverIntrudes() = assertNone("something that logs in, tries a password, or opens a stream",
         violations(allKotlin) { _, _, l ->
-            Regex("""Authorization:|Basic |Digest |\bDESCRIBE\b|\bSETUP\b|\bPLAY\b rtsp|password\s*=|"admin"|"12345"|"POST |"PUT |"DELETE |GetStreamUri|GetSnapshotUri""").containsMatchIn(code(l))
+            // HTTP writes are a verb then a path or a URL ("POST /", "PUT http…"); SQL's "DELETE FROM" on our own database is not one.
+            Regex("""Authorization:|Basic |Digest |\bDESCRIBE\b|\bSETUP\b|\bPLAY\b rtsp|password\s*=|"admin"|"12345"|"(POST|PUT|DELETE|PATCH) +(/|https?:|rtsp:|\$)|GetStreamUri|GetSnapshotUri""").containsMatchIn(code(l))
         })
 
     /** A scan never runs in the background or on a schedule. */

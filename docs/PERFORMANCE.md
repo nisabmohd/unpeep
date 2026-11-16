@@ -8,4 +8,4 @@ Budgets (same as Burrow/Weft):
 - Camera analyzers: downscaled Y plane only, `STRATEGY_KEEP_ONLY_LATEST`, never block the preview (30 fps on a
   low-end phone). Magnet: `SENSOR_DELAY_UI`, unregister when the screen stops.
 - Check with: `./gradlew :app:assemblePlayRelease` → `app/build/outputs/apk/play/release/`; Macrobenchmark via
-  `:baselineprofile` (`./gradlew :app:generatePlayReleaseBaselineProfile`).
+  `:baselineprofile` (`./gradlew :app:generateBaselineProfile`).

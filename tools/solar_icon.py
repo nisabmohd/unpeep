@@ -33,6 +33,11 @@ ICONS = {
     # Kinds of known device, trackers, Find it
     "ic_laptop": "laptop", "ic_printer": "printer", "ic_speaker": "speaker-minimalistic", "ic_gamepad": "gamepad",
     "ic_server": "server", "ic_home": "home-angle", "ic_tag": "tag", "ic_arrow_down": "arrow-down", "ic_chat": "chat-round-line",
+    # Checklist, reports, help
+    "ic_pen": "pen", "ic_bed": "bed", "ic_clock": "clock-circle", "ic_wind": "wind", "ic_frame": "gallery-minimalistic",
+    "ic_box": "box", "ic_book": "book", "ic_leaf": "leaf", "ic_fire": "fire", "ic_socket": "socket", "ic_usb": "usb",
+    "ic_chair": "chair", "ic_monitor": "monitor", "ic_call": "phone-calling", "ic_camera_add": "camera-add",
+    "ic_notes": "notes", "ic_link": "link", "ic_skip": "minus-circle", "ic_car": "car",
     # Places
     "ic_place_stay": "suitcase", "ic_place_trial_room": "hanger", "ic_place_washroom": "bath",
     "ic_place_office": "buildings", "ic_place_car": "bus",

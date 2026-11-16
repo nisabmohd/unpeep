@@ -30,14 +30,17 @@ import kotlinx.coroutines.withContext
  * known. It lives in memory only (reports and saved marks come with Room); a scan starts only from [start], which
  * a screen calls when the user asks.
  */
-class WifiSession(private val scanner: WifiScanner, private val signatures: SignatureLoader, appScope: CoroutineScope, private val now: () -> Long = System::currentTimeMillis) {
+class WifiSession(
+    private val scanner: WifiScanner, private val signatures: SignatureLoader, appScope: CoroutineScope,
+    private val marks: StateFlow<Map<String, KnownAs>>, private val onMark: (key: String, knownAs: KnownAs?, label: String) -> Unit,
+    private val onDone: () -> Unit = {}, private val now: () -> Long = System::currentTimeMillis,
+) {
     private data class Raw(
         val run: Int = 0, val status: WifiStatus = WifiStatus.IDLE, val ssid: String? = null, val fraction: Float = 0f,
         val checked: Int = 0, val total: Int = 0, val secondsLeft: Int = 0, val devices: List<DeviceEvidence> = emptyList(), val at: Long = 0,
     )
 
     private val raw = MutableStateFlow(Raw())
-    private val marks = MutableStateFlow<Map<String, KnownAs>>(emptyMap())
     private var job: Job? = null
 
     val state: StateFlow<WifiSnapshot> = combine(raw, marks) { r, m ->
@@ -65,6 +68,7 @@ class WifiSession(private val scanner: WifiScanner, private val signatures: Sign
                         ScanStatus.DONE -> WifiStatus.DONE
                     }
                     raw.value = Raw(run, status, u.ssid, u.fraction, u.checked, u.total, secondsLeft(u.fraction, at - started, BUDGET_MS), u.devices, at)
+                    if (status == WifiStatus.DONE) onDone()
                 }
             } finally {
                 // Left half-way (Skip step, Close): nothing to show.
@@ -78,11 +82,8 @@ class WifiSession(private val scanner: WifiScanner, private val signatures: Sign
         job?.cancel()
     }
 
-    /** "Not a camera?": [knownAs] null takes the mark away again. */
-    fun mark(device: WifiDevice, knownAs: KnownAs?) {
-        val key = markKey(raw.value.ssid, device.evidence)
-        marks.update { if (knownAs == null) it - key else it + (key to knownAs) }
-    }
+    /** "Not a camera?": [knownAs] null takes the mark away again. Kept on the phone (More › Marked as known). */
+    fun mark(device: WifiDevice, knownAs: KnownAs?) = onMark(markKey(raw.value.ssid, device.evidence), knownAs, device.name ?: device.ip)
 
     private companion object {
         const val BUDGET_MS = 20_000L

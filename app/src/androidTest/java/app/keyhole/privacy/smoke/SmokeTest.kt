@@ -3,6 +3,7 @@ package app.keyhole.privacy.smoke
 import androidx.compose.ui.test.ExperimentalTestApi
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.isSelected
+import androidx.compose.ui.test.isSelectable
 import androidx.compose.ui.test.hasContentDescription
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
@@ -36,8 +37,17 @@ class SmokeTest {
 
     private fun waitFor(text: String, ms: Long = 5_000) = rule.waitUntilAtLeastOneExists(hasText(text), ms)
 
+    /** Home, after Welcome when this is the first run. */
     private fun home() {
+        val first = waitForAny(text(R.string.check_this_room), text(R.string.get_started), text(R.string.report_not_safe_note), ms = 10_000)
+        if (first == text(R.string.get_started)) rule.onNodeWithText(text(R.string.get_started)).performClick()
+        // A sweep ends on its report: back to Home.
+        if (first == text(R.string.report_not_safe_note)) rule.onNodeWithContentDescription(text(R.string.back)).performClick()
         waitFor(text(R.string.check_this_room))
+        // Every run starts on a stay (an earlier run may have left another place picked).
+        val stay = hasText(text(R.string.place_stay)) and isSelectable()
+        rule.onNode(stay).performClick()
+        rule.waitUntilAtLeastOneExists(stay and isSelected(), 5_000)
     }
 
     /** Waits until any one of [texts] is on screen and returns it: a check may end in more than one honest way. */
@@ -60,7 +70,7 @@ class SmokeTest {
         rule.onNodeWithText(text(R.string.start)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.or_run_one_check)).assertIsDisplayed()
         rule.onNodeWithText(text(R.string.tab_reports)).performClick()
-        waitFor(text(R.string.reports_empty_title))
+        waitForAny(text(R.string.reports_empty_title), text(R.string.reports_footer), ms = 5_000)
         rule.onNodeWithText(text(R.string.tab_more)).performClick()
         waitFor(text(R.string.marked_as_known))
         rule.onNodeWithText(text(R.string.tab_check)).performClick()
@@ -69,21 +79,22 @@ class SmokeTest {
 
     @Test fun pickingAPlaceChangesTheSweep() {
         home()
-        rule.onNodeWithText(text(R.string.place_trial_room)).performClick()
+        rule.onNode(hasText(text(R.string.place_trial_room)) and isSelectable()).performClick()
         // The place is saved first and the screen follows what was saved.
         rule.waitUntilAtLeastOneExists(hasText(text(R.string.place_trial_room)) and isSelected(), 5_000)
         // A trial room has no Wi-Fi to join: six checks, and the Wi-Fi check is gone from the row.
         rule.waitUntilDoesNotExist(hasText(text(R.string.check_wifi)), 5_000)
-        rule.onNodeWithText(text(R.string.place_stay)).performClick()
+        rule.onNode(hasText(text(R.string.place_stay)) and isSelectable()).performClick()
         waitFor(text(R.string.check_wifi))
     }
 
     @Test fun everyMoreRowOpensAScreenAndComesBack() {
         home()
         rule.onNodeWithText(text(R.string.tab_more)).performClick()
-        for (row in listOf(R.string.appearance, R.string.language, R.string.sweep_steps, R.string.marked_as_known, R.string.how_keyhole_works, R.string.what_keyhole_cant_find, R.string.if_you_find_a_camera, R.string.privacy, R.string.about)) {
+        for (row in listOf(R.string.appearance, R.string.sweep_steps, R.string.marked_as_known, R.string.how_keyhole_works, R.string.what_keyhole_cant_find, R.string.if_you_find_a_camera, R.string.privacy, R.string.about)) {
             waitFor(text(R.string.tab_more))
             rule.onNodeWithText(text(row)).performScrollTo().performClick()
+            if (row == R.string.if_you_find_a_camera) waitFor(text(R.string.found_step_1))
             rule.waitUntilAtLeastOneExists(hasContentDescription(text(R.string.back)), 5_000)
             back()
         }
@@ -144,18 +155,38 @@ class SmokeTest {
         if (end == text(R.string.perm_bluetooth_title)) rule.onNodeWithText(text(R.string.allow)).assertIsDisplayed()
     }
 
-    @Test fun aSweepStartsOnItsFirstStepAndCanBeSkippedToTheEnd() {
+    @Test fun aSweepCanBeSkippedToTheEndAndEndsOnItsReport() {
         home()
         rule.onNodeWithText(text(R.string.start)).performClick()
-        waitFor(text(R.string.skip_step))
-        // Seven steps for a stay: Skip step on the scans, Next on the hands-on checks. Moving on from each ends the
-        // sweep back on Home, whatever state each step was in.
-        repeat(7) {
-            val step = waitForAny(text(R.string.skip_step), text(R.string.next), ms = 10_000)
+        // Seven steps for a stay: Skip step on the scans, Next on the hands-on checks (the infrared question answered
+        // on the way), See report on the checklist. The sweep ends on its saved report.
+        repeat(10) {
+            val step = waitForAny(text(R.string.skip_step), text(R.string.next), text(R.string.ir_saw), text(R.string.see_report), text(R.string.report_not_safe_note), ms = 15_000)
+            if (step == text(R.string.report_not_safe_note)) return@repeat
             rule.onNodeWithText(step).performClick()
             rule.waitForIdle()
         }
+        waitFor(text(R.string.couldnt_check), 15_000)
+        rule.onNodeWithText(text(R.string.couldnt_check)).performScrollTo().assertIsDisplayed()
+        // It is on the Reports tab now.
+        rule.onNodeWithContentDescription(text(R.string.back)).performClick()
+        rule.onNodeWithText(text(R.string.tab_reports)).performClick()
+        waitFor(text(R.string.reports_footer))
+    }
+
+    @Test fun moreOpensItsSheetsAndAboutOpensTheLicences() {
         home()
+        rule.onNodeWithText(text(R.string.tab_more)).performClick()
+        rule.onNodeWithText(text(R.string.language)).performClick()
+        waitFor(text(R.string.language_line))
+        rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        rule.onNodeWithText(text(R.string.help_numbers)).performClick()
+        waitFor(text(R.string.help_numbers_line))
+        rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        rule.onNodeWithText(text(R.string.about)).performScrollTo().performClick()
+        rule.onNodeWithText(text(R.string.licences)).performScrollTo().performClick()
+        rule.onNodeWithText(text(R.string.lic_gpl)).performClick()
+        rule.waitUntilAtLeastOneExists(hasText("GNU GENERAL PUBLIC LICENSE", substring = true), 5_000)
     }
 
     @Test fun closingASweepMidScanGoesHome() {
@@ -203,15 +234,16 @@ class SmokeTest {
             rule.waitForIdle()
         }
         waitForAny(text(R.string.lens_finder), ms = 10_000)
-        // Next twice: Lens → Infrared (same screen) → Magnet.
+        // Next: Lens → Infrared (same screen; the first time it asks whether the phone sees infrared) → Magnet.
         rule.onNodeWithText(text(R.string.next)).performClick()
+        if (waitForAny(text(R.string.ir_saw), text(R.string.infrared_finder)) == text(R.string.ir_saw)) rule.onNodeWithText(text(R.string.ir_saw)).performClick()
         waitForAny(text(R.string.infrared_finder))
         rule.onNodeWithText(text(R.string.next)).performClick()
         waitForAny(text(R.string.magnet_learning_title), text(R.string.magnet_normal_title), text(R.string.magnet_jumped_title), text(R.string.no_magnet_title))
-        // Then the checklist step (not built yet), and Skip ends the sweep.
+        // Then the checklist, on its own screen, and See report ends the sweep on its report.
         rule.onNodeWithText(text(R.string.next)).performClick()
-        rule.waitUntilAtLeastOneExists(hasText(text(R.string.skip_step)), 10_000)
-        rule.onNodeWithText(text(R.string.skip_step)).performClick()
-        home()
+        waitFor(text(R.string.item_mirror_light))
+        rule.onNodeWithText(text(R.string.see_report)).performClick()
+        waitFor(text(R.string.couldnt_check), 15_000)
     }
 }

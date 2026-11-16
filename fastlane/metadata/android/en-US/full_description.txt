@@ -1,0 +1,21 @@
+Keyhole helps you check a hotel room, a rental, a trial room or an office for hidden cameras and trackers, and tells you plainly what it checked and what it couldn't.
+
+<b>Seven checks, one sweep</b>
+• <b>Wi-Fi</b>: asks the devices on the Wi-Fi you're on what they are, and flags the ones that answer like cameras (ONVIF, video streams, camera makers), each with the reason.
+• <b>Hotspots</b>: lists the Wi-Fi names around you and flags the ones cheap cameras broadcast for setup.
+• <b>Bluetooth</b>: listens for trackers such as AirTags, Tiles and SmartTags, and for camera-like names.
+• <b>Lens finder</b>: the torch and the rear camera ring small, bright dots that may be a lens. Red and contrast filters, 2× zoom, proof photos.
+• <b>Infrared</b>: the front camera shows infrared lights in the dark, after a quick TV-remote test.
+• <b>Magnet</b>: learns the room's normal field and shows when it jumps near electronics.
+• <b>Checklist</b>: the places worth a look by hand, for a stay, a trial room, a washroom, an office or a car.
+
+<b>Honest results</b>
+Every finding says why. Every report lists what couldn't be checked, because no app can promise a room is clear. Mark anything that isn't a camera as yours or the room's, and undo it any time.
+
+<b>If you find something</b>
+Steps to follow and the emergency numbers where you are, offline.
+
+<b>Private by design</b>
+No account, no ads, no tracking, no analytics. Scans only talk to devices on the Wi-Fi you're on. Reports and photos stay on your phone until you export them.
+
+Free and open source (GNU GPL v3).

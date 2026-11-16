@@ -57,12 +57,14 @@ data class WifiResultsState(
     /** The step after Wi-Fi when this is part of a sweep; null when the check ran alone or was the last step. */
     val next: Check? = null,
     val loaded: Boolean = false,
+    /** Part of a sweep: the last step ends on "See report". */
+    val sweep: Boolean = false,
 )
 
 class WifiResultsViewModel(place: Place, sweep: Boolean, settings: SettingsRepository, session: WifiSession) : ViewModel() {
     val state: StateFlow<WifiResultsState> = combine(session.state, settings.settings) { w, s ->
         val steps = sweepSteps(place, s.stepOrder, s.stepsOff)
-        WifiResultsState(w, if (sweep) steps.getOrNull(steps.indexOf(Check.WIFI) + 1) else null, loaded = true)
+        WifiResultsState(w, if (sweep) steps.getOrNull(steps.indexOf(Check.WIFI) + 1) else null, loaded = true, sweep = sweep)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WifiResultsState(session.state.value))
 }
 
@@ -94,7 +96,7 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
             if (s.next != null) {
                 PrimaryButton(stringResource(s.next.next), { onNext(s.next) }, Modifier.fillMaxWidth(), trailing = painterResource(R.drawable.ic_arrow_right))
             } else {
-                PrimaryButton(stringResource(R.string.done), { onNext(null) }, Modifier.fillMaxWidth())
+                PrimaryButton(stringResource(if (s.sweep) R.string.see_report else R.string.done), { onNext(null) }, Modifier.fillMaxWidth())
             }
         },
     ) {

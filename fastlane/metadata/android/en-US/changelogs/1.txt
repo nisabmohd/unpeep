@@ -1,0 +1,1 @@
+First release: Wi-Fi, hotspot and Bluetooth checks, lens and infrared finders, magnet, a checklist per place, and reports with PDF export. Nothing leaves your phone.

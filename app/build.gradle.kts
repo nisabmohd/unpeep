@@ -148,7 +148,7 @@ ksp {
 }
 
 baselineProfile {
-    automaticGenerationDuringBuild = false // ./gradlew :app:generatePlayReleaseBaselineProfile, then commit
+    automaticGenerationDuringBuild = false // ./gradlew :app:generateBaselineProfile, then commit
     mergeIntoMain = true
     dexLayoutOptimization = true
 }

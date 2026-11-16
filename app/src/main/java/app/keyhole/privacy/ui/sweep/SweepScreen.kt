@@ -133,8 +133,8 @@ fun SweepContent(s: SweepState, onClose: () -> Unit, onSkip: () -> Unit, onRetry
             }
             nearby != null && block != null -> EmptyState(painterResource(nearby.check.icon), stringResource(block.title), stringResource(block.line))
             nearby != null -> NearbyStep(nearby)
-            // The other checks arrive with their weeks (TODO.md); until then the step says so and can be skipped.
-            else -> EmptyState(painterResource(s.current.icon), stringResource(s.current.label), stringResource(R.string.stand_in_line))
+            // Lens, Infrared, Magnet and the checklist open their own screens as soon as the sweep reaches them.
+            else -> Unit
         }
     }
 }

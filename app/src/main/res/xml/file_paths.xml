@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Only the photos folder, and a cache folder for a PDF being shared. -->
+<paths>
+    <files-path name="photos" path="photos/" />
+    <cache-path name="shared" path="shared/" />
+</paths>

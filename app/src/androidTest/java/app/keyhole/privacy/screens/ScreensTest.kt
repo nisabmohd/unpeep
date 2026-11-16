@@ -32,6 +32,20 @@ import app.keyhole.privacy.plural
 import app.keyhole.privacy.setKeyholeContent
 import app.keyhole.privacy.text
 import app.keyhole.privacy.ui.lens.CameraStatus
+import androidx.compose.foundation.layout.Column
+import androidx.compose.ui.test.longClick
+import androidx.compose.ui.test.performTextClearance
+import androidx.compose.ui.test.performTextInput
+import androidx.compose.ui.test.performTouchInput
+import app.keyhole.privacy.ui.checklist.AnswerSheet
+import app.keyhole.privacy.ui.checklist.ChecklistContent
+import app.keyhole.privacy.ui.checklist.ChecklistState
+import app.keyhole.privacy.ui.found.FoundCameraContent
+import app.keyhole.privacy.ui.found.HelpNumbersSheet
+import app.keyhole.privacy.ui.found.HelpState
+import app.keyhole.privacy.ui.report.ReportContent
+import app.keyhole.privacy.ui.reports.ReportsContent
+import app.keyhole.privacy.ui.reports.ReportsState
 import app.keyhole.privacy.ui.lens.LensContent
 import app.keyhole.privacy.ui.lens.LensState
 import app.keyhole.privacy.ui.magnet.MagnetContent
@@ -178,9 +192,10 @@ class ScreensTest {
         rule.onNodeWithText(text(R.string.nothing_flagged_yet)).assertIsDisplayed()
     }
 
-    @Test fun aStepThatIsNotBuiltYetSaysSo() {
+    @Test fun aHandsOnStepDrawsOnlyItsCheckRowWhileItsScreenOpens() {
         rule.setKeyholeContent { SweepContent(SweepState(Place.STAY, Check.entries, Check.MAGNET), {}, {}, {}) }
-        rule.onNodeWithText(text(R.string.stand_in_line)).assertIsDisplayed()
+        rule.onNodeWithContentDescription("${text(R.string.check_magnet)}, ${text(R.string.check_state_current)}").assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.skip_step)).assertIsDisplayed()
     }
 
     // --- 04 Wi-Fi results ---------------------------------------------------------------------------
@@ -546,5 +561,246 @@ class ScreensTest {
         magnet(MagnetState(sweep = true, next = Check.CHECKLIST), taps)
         rule.onNodeWithText(text(R.string.next)).performClick()
         assertEquals(listOf("next"), taps)
+    }
+
+    // --- 09 Checklist -------------------------------------------------------------------------------
+
+    @Test fun theChecklistShowsHowFarAlongAndEveryItemOfThePlace() {
+        val tapped = mutableListOf<app.keyhole.privacy.domain.ChecklistItem>()
+        val answers = mapOf(app.keyhole.privacy.domain.ChecklistItem.MIRROR_LIGHT to app.keyhole.privacy.domain.ChecklistEntry(app.keyhole.privacy.domain.ChecklistAnswer.LOOKS_FINE))
+        rule.setKeyholeContent { ChecklistContent(ChecklistState(Place.TRIAL_ROOM, answers = answers), {}, { tapped += it }, {}) }
+        rule.onNodeWithText(text(R.string.checklist_of, 1, 7)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.section_mirror)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.item_hooks)).performScrollTo().performClick()
+        assertEquals(listOf(app.keyhole.privacy.domain.ChecklistItem.HOOKS), tapped)
+        rule.onNodeWithText(text(R.string.see_report)).assertIsDisplayed()
+    }
+
+    @Test fun inASweepWithMoreStepsTheChecklistGoesOn() {
+        var next = 0
+        rule.setKeyholeContent { ChecklistContent(ChecklistState(Place.STAY, sweep = true, next = Check.MAGNET), {}, {}, { next++ }) }
+        rule.onNodeWithText(text(R.string.next_magnet)).performClick()
+        assertEquals(1, next)
+    }
+
+    @Test fun answeringLooksFineAndSkipAnswerAtOnce() {
+        val got = mutableListOf<app.keyhole.privacy.domain.ChecklistEntry?>()
+        rule.setKeyholeContent { AnswerSheet(app.keyhole.privacy.domain.ChecklistItem.HOOKS, null, {}, { got += it }) }
+        rule.onNodeWithText(text(R.string.looks_fine)).performClick()
+        rule.onNodeWithText(text(R.string.skip)).performClick()
+        assertEquals(listOf(app.keyhole.privacy.domain.ChecklistAnswer.LOOKS_FINE, app.keyhole.privacy.domain.ChecklistAnswer.SKIPPED), got.map { it?.answer })
+    }
+
+    @Test fun notSureOpensANoteAndSavesIt() {
+        var got: app.keyhole.privacy.domain.ChecklistEntry? = null
+        rule.setKeyholeContent { AnswerSheet(app.keyhole.privacy.domain.ChecklistItem.HOOKS, null, {}, { got = it }) }
+        rule.onNodeWithText(text(R.string.not_sure)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.note_label)).performTextInput("loose hook")
+        rule.onNodeWithText(text(R.string.add_photo)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.save)).performClick()
+        assertEquals(app.keyhole.privacy.domain.ChecklistAnswer.NOT_SURE, got?.answer)
+        assertEquals("loose hook", got?.note)
+    }
+
+    @Test fun anAnswerCanBeTakenBack() {
+        var got: app.keyhole.privacy.domain.ChecklistEntry? = app.keyhole.privacy.domain.ChecklistEntry(app.keyhole.privacy.domain.ChecklistAnswer.LOOKS_FINE)
+        rule.setKeyholeContent { AnswerSheet(app.keyhole.privacy.domain.ChecklistItem.HOOKS, got, {}, { got = it }) }
+        rule.onNodeWithText(text(R.string.undo)).performClick()
+        assertEquals(null, got)
+    }
+
+    // --- 10 Report ----------------------------------------------------------------------------------
+
+    private fun report(words: (app.keyhole.privacy.ui.report.ReportWords) -> Unit = {}, r: app.keyhole.privacy.data.SavedReport = app.keyhole.privacy.ui.report.previewReport(), taps: MutableList<String> = mutableListOf(), export: Boolean? = null) =
+        rule.setKeyholeContent {
+            ReportContent(
+                r, app.keyhole.privacy.ui.report.rememberReportWords().also(words), {}, { taps += "share" }, { taps += "rename" }, { taps += "finding:${it.id}" },
+                { taps += "photo" }, { taps += "found" }, { taps += "export" }, export,
+            )
+        }
+
+    @Test fun aReportSaysWhatToLookAtWhatWasCheckedAndWhatCouldntBe() {
+        val taps = mutableListOf<String>()
+        report(taps = taps)
+        rule.onNodeWithText("Sea View Hotel, room 304").assertIsDisplayed()
+        rule.onNodeWithText(plural(R.plurals.to_look_at, 2, 2)).assertIsDisplayed()
+        rule.onNodeWithText(plural(R.plurals.checks_of, 7, 6, 7)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.step_was_skipped, text(R.string.check_infrared))).assertIsDisplayed()
+        rule.onNodeWithText("IPC-3F2A").performClick()
+        rule.onNodeWithText(text(R.string.couldnt_check)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.gap_memory_card)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.report_not_safe_note), useUnmergedTree = true).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.marked_room_undo)).performScrollTo().performClick()
+        rule.onNodeWithText(text(R.string.export)).performClick()
+        rule.onNodeWithText(text(R.string.found_something)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.rename)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.share)).performClick()
+        assertEquals(listOf("finding:1", "finding:3", "export", "found", "rename", "share"), taps)
+    }
+
+    @Test fun aReportWithNothingToLookAtSaysNothingFoundAndStillListsWhatCouldntBeChecked() {
+        report(r = app.keyhole.privacy.ui.report.previewReport().copy(name = "", findings = emptyList(), toLookAt = 0, ran = Check.entries, planned = Check.entries))
+        rule.onNodeWithText(text(R.string.place_stay)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.nothing_found)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.all_checks_ran)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.couldnt_check)).performScrollTo().assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.found)).assertCountEquals(0)
+    }
+
+    @Test fun theExportResultIsANoteFirst() {
+        report(export = true)
+        rule.onNodeWithText(text(R.string.export_done), useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test fun aFailedExportSaysSo() {
+        report(export = false)
+        rule.onNodeWithText(text(R.string.export_failed), useUnmergedTree = true).assertIsDisplayed()
+    }
+
+    @Test fun theRenameSheetSavesWhatWasTyped() {
+        var saved = ""
+        rule.setKeyholeContent { app.keyhole.privacy.ui.report.RenameSheet("", {}, { saved = it }) }
+        rule.onNodeWithContentDescription(text(R.string.rename)).performTextInput("Room 304")
+        rule.onNodeWithText("Room 304", useUnmergedTree = true).assertExists()
+        rule.onNodeWithText(text(R.string.save)).performClick()
+        assertEquals("Room 304", saved)
+    }
+
+    // --- 11 If you find a camera, 15 Help numbers ---------------------------------------------------
+
+    @Test fun withoutAReportThereIsOnlyTheCallButton() {
+        val dialled = mutableListOf<String>()
+        rule.setKeyholeContent { FoundCameraContent(HelpState(app.keyhole.privacy.data.HelpEntry("DE", "112", "110"), true), {}, {}, { dialled += it }, {}, null) }
+        rule.onNodeWithText(text(R.string.found_step_1)).assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.share_report)).assertCountEquals(0)
+        rule.onNodeWithText(text(R.string.police)).performScrollTo().performClick()
+        rule.onNodeWithText(text(R.string.call_number, "112")).performClick()
+        assertEquals(listOf("110", "112"), dialled)
+    }
+
+    @Test fun anUnknownRegionStillOffers112AndASiteRowOnlyWhereKnown() {
+        var shared = 0
+        val sites = mutableListOf<String>()
+        rule.setKeyholeContent { FoundCameraContent(HelpState(null, true), {}, {}, {}, { sites += it }, { shared++ }) }
+        rule.onNodeWithText(text(R.string.emergency_unknown_line, "112")).performScrollTo().assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.report_to_police)).assertCountEquals(0)
+        rule.onNodeWithText(text(R.string.share_report)).performClick()
+        assertEquals(1, shared)
+    }
+
+    @Test fun indiaShowsItsHelplineAndOfficialSite() {
+        val sites = mutableListOf<String>()
+        rule.setKeyholeContent { FoundCameraContent(HelpState(app.keyhole.privacy.data.HelpEntry("IN", "112", "112", "https://cybercrime.gov.in/", "1930"), false), {}, {}, {}, { sites += it }, null) }
+        rule.onNodeWithText(text(R.string.helpline)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.report_to_police)).performScrollTo().performClick()
+        assertEquals(listOf("https://cybercrime.gov.in/"), sites)
+        rule.onAllNodesWithText(text(R.string.police)).assertCountEquals(0)
+    }
+
+    @Test fun theHelpSheetSearchesAndPicks() {
+        var picked: String? = "x"
+        val all = listOf(app.keyhole.privacy.data.HelpEntry("DE", "112", "110"), app.keyhole.privacy.data.HelpEntry("IN", "112"), app.keyhole.privacy.data.HelpEntry("US", "911"))
+        rule.setKeyholeContent { HelpNumbersSheet(HelpState(all[0], true, null, all, "DE"), {}, { picked = it }) }
+        rule.onNodeWithText(text(R.string.use_phone_region)).assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.search_countries)).performTextInput("zzz")
+        rule.onNodeWithText(text(R.string.no_countries_found)).assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.search_countries)).performTextClearance()
+        rule.onNodeWithContentDescription(text(R.string.search_countries)).performTextInput("US")
+        rule.onNodeWithText("911").performClick()
+        assertEquals("US", picked)
+    }
+
+    // --- 12 Reports ---------------------------------------------------------------------------------
+
+    @Test fun theReportsListGroupsSearchesAndDeletesWithALongPress() {
+        val opened = mutableListOf<Long>()
+        val deleted = mutableListOf<Long>()
+        val now = System.currentTimeMillis()
+        val list = listOf(app.keyhole.privacy.ui.report.previewReport().copy(id = 7, savedAt = now - 1000), app.keyhole.privacy.ui.report.previewReport().copy(id = 8, name = "Office", savedAt = now - 90L * 24 * 3600 * 1000, toLookAt = 0))
+        rule.setKeyholeContent { ReportsContent(ReportsState(list, true), { opened += it }, { deleted += it }, now) }
+        rule.onNodeWithText(text(R.string.this_week)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.nothing_found)).assertIsDisplayed()
+        rule.onNodeWithText("Sea View Hotel, room 304").performClick()
+        rule.onNodeWithText("Office").performTouchInput { longClick() }
+        assertEquals(listOf(7L), opened)
+        assertEquals(listOf(8L), deleted)
+        rule.onNodeWithText(text(R.string.reports_footer)).performScrollTo().assertIsDisplayed()
+        rule.onNodeWithContentDescription(text(R.string.search)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.search_reports)).performTextInput("nowhere")
+        rule.onNodeWithText(text(R.string.no_reports_match)).assertIsDisplayed()
+    }
+
+    @Test fun noReportsSaysSoWithNoSearch() {
+        rule.setKeyholeContent { ReportsContent(ReportsState(emptyList(), true), {}, {}, 0L) }
+        rule.onNodeWithText(text(R.string.reports_empty_title)).assertIsDisplayed()
+        rule.onAllNodesWithContentDescription(text(R.string.search)).assertCountEquals(0)
+    }
+
+    // --- 01 Welcome, 14 Appearance, More's screens --------------------------------------------------
+
+    @Test fun welcomeSaysWhatKeyholeIsAndStarts() {
+        var started = 0
+        rule.setKeyholeContent { app.keyhole.privacy.ui.welcome.WelcomeScreen { started++ } }
+        rule.onNodeWithText(text(R.string.welcome_title)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.welcome_footer)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.get_started)).performClick()
+        assertEquals(1, started)
+    }
+
+    @Test fun appearancePicksThemeAccentFontAndSwitchesSteps() {
+        val taps = mutableListOf<String>()
+        rule.setKeyholeContent {
+            app.keyhole.privacy.ui.more.AppearanceContent(
+                app.keyhole.privacy.data.Settings(), {}, { taps += "mode:$it" }, { taps += "dynamic:$it" }, { taps += "accent" }, { taps += "font:$it" },
+                { taps += "size" }, { _, _ -> taps += "move" }, { c, on -> taps += "step:$c:$on" },
+            )
+        }
+        rule.onNodeWithText(text(R.string.theme_dark)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.accent_green)).performClick()
+        rule.onNodeWithText(text(R.string.font_outfit)).performClick()
+        rule.onNodeWithText(text(R.string.two_parts, text(R.string.text_size), text(R.string.text_size_default))).performClick()
+        rule.onNodeWithText(text(R.string.check_hotspots)).performScrollTo().performClick()
+        assertTrue(taps.containsAll(listOf("mode:DARK", "accent", "font:OUTFIT", "size", "step:HOTSPOTS:false")))
+    }
+
+    @Test fun markedAsKnownListsMarksAndSaysWhenThereAreNone() {
+        val tapped = mutableListOf<String>()
+        rule.setKeyholeContent { app.keyhole.privacy.ui.more.MarkedKnownContent(listOf(app.keyhole.privacy.data.Mark("k", KnownAs.MINE, "IPC-3F2A", Check.WIFI, 0)), {}, { tapped += it.key }) }
+        rule.onNodeWithText(text(R.string.marked_known_note), useUnmergedTree = true).assertIsDisplayed()
+        rule.onNodeWithText("IPC-3F2A").performClick()
+        assertEquals(listOf("k"), tapped)
+    }
+
+    @Test fun markedAsKnownWithNothingMarked() {
+        rule.setKeyholeContent { app.keyhole.privacy.ui.more.MarkedKnownContent(emptyList(), {}, {}) }
+        rule.onNodeWithText(text(R.string.marked_known_none)).assertIsDisplayed()
+    }
+
+    @Test fun howItWorksAndLimitsSayEveryCheckAndEveryLimit() {
+        rule.setKeyholeContent { Column { app.keyhole.privacy.ui.more.HowItWorksScreen {} } }
+        rule.onNodeWithText(text(R.string.how_wifi)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.how_note), useUnmergedTree = true).performScrollTo().assertIsDisplayed()
+    }
+
+    @Test fun limitsEndWithTheChecklist() {
+        var opened = 0
+        rule.setKeyholeContent { app.keyhole.privacy.ui.more.LimitsScreen({}, { opened++ }) }
+        rule.onNodeWithText(text(R.string.limit_memory_card)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.limits_by_hand)).performScrollTo().performClick()
+        assertEquals(1, opened)
+    }
+
+    @Test fun licencesOpenTheirText() {
+        val opened = mutableListOf<String?>()
+        rule.setKeyholeContent { app.keyhole.privacy.ui.more.LicencesScreen({}, { opened += it.file }) }
+        rule.onNodeWithText(text(R.string.lic_gpl)).performClick()
+        rule.onNodeWithText(text(R.string.lic_kotlin)).performClick()
+        assertEquals(listOf("gpl-3.0.txt", null), opened)
+        rule.onAllNodesWithText("CameraX").assertCountEquals(0)
+    }
+
+    @Test fun aBundledLicenceTextIsShown() {
+        rule.setKeyholeContent { app.keyhole.privacy.ui.more.LicenceTextScreen("Keyhole", "gpl-3.0.txt") {} }
+        rule.waitUntil(5_000) { rule.onAllNodesWithText("GNU GENERAL PUBLIC LICENSE", substring = true).fetchSemanticsNodes().isNotEmpty() }
     }
 }

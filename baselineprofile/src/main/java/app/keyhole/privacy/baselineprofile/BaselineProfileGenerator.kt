@@ -11,8 +11,9 @@ import org.junit.Test
 import org.junit.runner.RunWith
 
 /**
- * Records the code paths of a typical session (docs/PERFORMANCE.md): open the app on Check, visit every tab.
- * Grows with the app. Run `./gradlew :app:generatePlayReleaseBaselineProfile`, then commit the result.
+ * Records the code paths of a typical session (docs/PERFORMANCE.md): Welcome on first run, every tab, a report,
+ * Appearance and Privacy, and the magnet check (no permission needed).
+ * Grows with the app. Run `./gradlew :app:generateBaselineProfile`, then commit the result.
  */
 @RunWith(AndroidJUnit4::class)
 class BaselineProfileGenerator {
@@ -24,7 +25,19 @@ class BaselineProfileGenerator {
         pressHome()
         startActivityAndWait()
         device.finishWelcome()
+        // The usual session: every tab, a report if there is one, a few More screens, a check's results.
         for (tab in listOf("Reports", "More", "Check")) device.tap(By.text(tab))
+        device.tap(By.text("Reports"))
+        device.tap(By.textContains("·"))
+        device.pressBack()
+        device.tap(By.text("More"))
+        for (row in listOf("Appearance", "Privacy")) {
+            device.tap(By.text(row))
+            device.pressBack()
+        }
+        device.tap(By.text("Check"))
+        device.tap(By.text("Magnet"))
+        device.pressBack()
     }
 
     private fun UiDevice.finishWelcome() {

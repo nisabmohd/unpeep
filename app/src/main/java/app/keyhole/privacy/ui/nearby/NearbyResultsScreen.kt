@@ -61,6 +61,8 @@ data class NearbyResultsState(
     /** Seconds since Android last refreshed the list. */
     val updatedSecondsAgo: Int = 0,
     val loaded: Boolean = false,
+    /** Part of a sweep: the last step ends on "See report". */
+    val sweep: Boolean = false,
 )
 
 /** Ticks once a second while a screen shows an age ("Updated 12 s ago"). */
@@ -76,7 +78,7 @@ internal fun secondsSince(at: Long, now: Long): Int = if (at <= 0) 0 else ((now 
 class NearbyResultsViewModel(place: Place, sweep: Boolean, settings: SettingsRepository, session: NearbySession<*>, now: () -> Long = System::currentTimeMillis) : ViewModel() {
     val state: StateFlow<NearbyResultsState> = combine(session.state, settings.settings, everySecond(now)) { n, s, t ->
         val steps = sweepSteps(place, s.stepOrder, s.stepsOff)
-        NearbyResultsState(n, if (sweep) steps.getOrNull(steps.indexOf(n.check) + 1) else null, secondsSince(n.updatedAt, t), loaded = true)
+        NearbyResultsState(n, if (sweep) steps.getOrNull(steps.indexOf(n.check) + 1) else null, secondsSince(n.updatedAt, t), loaded = true, sweep = sweep)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), NearbyResultsState(session.state.value))
 }
 
@@ -110,7 +112,7 @@ fun NearbyResultsContent(s: NearbyResultsState, onBack: () -> Unit, onScanAgain:
             if (s.next != null) {
                 PrimaryButton(stringResource(s.next.next), { onNext(s.next) }, Modifier.fillMaxWidth(), trailing = painterResource(R.drawable.ic_arrow_right))
             } else {
-                PrimaryButton(stringResource(R.string.done), { onNext(null) }, Modifier.fillMaxWidth())
+                PrimaryButton(stringResource(if (s.sweep) R.string.see_report else R.string.done), { onNext(null) }, Modifier.fillMaxWidth())
             }
         },
     ) {

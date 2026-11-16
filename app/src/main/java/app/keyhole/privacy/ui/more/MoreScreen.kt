@@ -45,11 +45,13 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.stateIn
 
 @Immutable
-data class MoreState(val theme: ThemeSettings = ThemeSettings(), val stepsOn: Int = Check.entries.size, val markedKnown: Int = 0)
+data class MoreState(val theme: ThemeSettings = ThemeSettings(), val stepsOn: Int = Check.entries.size, val markedKnown: Int = 0, val helpCountry: String? = null, val helpNumber: String = "")
 
-class MoreViewModel(settings: SettingsRepository) : ViewModel() {
-    val state: StateFlow<MoreState> = settings.settings.map { MoreState(it.theme, Check.entries.size - it.stepsOff.size) }
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MoreState())
+class MoreViewModel(settings: SettingsRepository, reports: app.keyhole.privacy.data.ReportRepository, private val help: app.keyhole.privacy.data.HelpNumbers) : ViewModel() {
+    val state: StateFlow<MoreState> = kotlinx.coroutines.flow.combine(settings.settings, reports.markList) { s, marks ->
+        val entry = help.entry(s.helpRegion)
+        MoreState(s.theme, Check.entries.size - s.stepsOff.size, marks.size, entry?.country, entry?.emergency ?: app.keyhole.privacy.data.HelpNumbers.FALLBACK)
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), MoreState())
 }
 
 @Composable
@@ -73,8 +75,9 @@ fun fontLabel(font: BodyFont): String = stringResource(
 
 /** 13 More: four tiles (Appearance · Language · Help numbers · Sweep steps), then Checks and App rows. */
 @Composable
-fun MoreScreen(vm: MoreViewModel, onOpen: (MoreItem) -> Unit, onHelpNumbers: () -> Unit = {}, helpLine: String = "") {
+fun MoreScreen(vm: MoreViewModel, onOpen: (MoreItem) -> Unit, onHelpNumbers: () -> Unit, onLanguage: () -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
+    val helpLine = s.helpCountry?.let { stringResource(R.string.two_parts, app.keyhole.privacy.ui.found.countryName(it), s.helpNumber) } ?: s.helpNumber
     val context = LocalContext.current
     TabScreen(stringResource(R.string.tab_more)) {
         Column(Modifier.weight(1f).widthIn(max = Size.contentMax).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Space.screen)) {
@@ -89,7 +92,7 @@ fun MoreScreen(vm: MoreViewModel, onOpen: (MoreItem) -> Unit, onHelpNumbers: () 
                 Tile(
                     painterResource(R.drawable.ic_globe), CircleTone.Hue(Hues.CHECKLIST), stringResource(R.string.language),
                     AppLanguage.current(context)?.let { AppLanguage.currentName(context) } ?: stringResource(R.string.system_default),
-                    { onOpen(MoreItem.LANGUAGE) }, m,
+                    onLanguage, m,
                 )
             }
             val help: @Composable (Modifier) -> Unit = { m ->

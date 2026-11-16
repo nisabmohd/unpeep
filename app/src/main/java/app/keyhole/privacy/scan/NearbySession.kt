@@ -42,7 +42,10 @@ data class SignalReading(val rssi: Int, val at: Long)
  * last one finished, what the user marked as known and what they added to the report. In memory only (reports and
  * saved marks come with Room). A scan starts only from [start], which a screen calls when the user asks.
  */
-abstract class NearbySession<T>(val check: Check, context: Context, appScope: CoroutineScope, protected val now: () -> Long) {
+abstract class NearbySession<T>(
+    val check: Check, context: Context, appScope: CoroutineScope, private val marks: StateFlow<Map<String, KnownAs>>,
+    private val onMark: (key: String, knownAs: KnownAs?, label: String) -> Unit, private val onDone: () -> Unit, protected val now: () -> Long,
+) {
     protected val context: Context = context.applicationContext
 
     private data class Raw(
@@ -52,7 +55,6 @@ abstract class NearbySession<T>(val check: Check, context: Context, appScope: Co
 
     private val raw = MutableStateFlow(Raw())
     protected val seen = MutableStateFlow<List<T>>(emptyList())
-    private val marks = MutableStateFlow<Map<String, KnownAs>>(emptyMap())
     private val added = MutableStateFlow<Set<String>>(emptySet())
     private var job: Job? = null
 
@@ -98,6 +100,7 @@ abstract class NearbySession<T>(val check: Check, context: Context, appScope: Co
                         withTimeoutOrNull(scanMs) { listen { at -> raw.update { if (it.run == run) it.copy(updatedAt = at) else it } } }
                         ticker.cancel()
                         raw.update { if (it.run == run) it.copy(status = NearbyStatus.DONE, fraction = 1f, secondsLeft = 0, updatedAt = if (it.updatedAt == 0L) now() else it.updatedAt) else it }
+                        onDone()
                     } finally {
                         // Left half-way (Skip step, Close): nothing to show.
                         raw.update { if (it.run == run && it.status == NearbyStatus.RUNNING) Raw(run) else it }
@@ -116,10 +119,7 @@ abstract class NearbySession<T>(val check: Check, context: Context, appScope: Co
     fun ready(): Boolean = Access.granted(context, check) && Access.block(context, check) == null
 
     /** "Not a camera?": [knownAs] null takes the mark away again. */
-    fun mark(device: NearbyDevice, knownAs: KnownAs?) {
-        val key = nearbyKey(check, device.name, device.id)
-        marks.update { if (knownAs == null) it - key else it + (key to knownAs) }
-    }
+    fun mark(device: NearbyDevice, knownAs: KnownAs?) = onMark(nearbyKey(check, device.name, device.id), knownAs, device.name ?: device.label ?: device.id)
 
     /** "Add to report", and taking it out again. */
     fun setAdded(device: NearbyDevice, on: Boolean) {
@@ -135,8 +135,10 @@ abstract class NearbySession<T>(val check: Check, context: Context, appScope: Co
 }
 
 /** Nearby hotspots: the Wi-Fi names around, matched against signatures/hotspots.json. */
-class HotspotSession(context: Context, private val scanner: HotspotScanner, private val signatures: SignatureLoader, appScope: CoroutineScope, now: () -> Long = System::currentTimeMillis) :
-    NearbySession<SeenHotspot>(Check.HOTSPOTS, context, appScope, now) {
+class HotspotSession(
+    context: Context, private val scanner: HotspotScanner, private val signatures: SignatureLoader, appScope: CoroutineScope,
+    marks: StateFlow<Map<String, KnownAs>>, onMark: (String, KnownAs?, String) -> Unit, onDone: () -> Unit = {}, now: () -> Long = System::currentTimeMillis,
+) : NearbySession<SeenHotspot>(Check.HOTSPOTS, context, appScope, marks, onMark, onDone, now) {
     override val scanMs = 8_000L
 
     override fun judge(seen: List<SeenHotspot>, marks: Map<String, KnownAs>, added: Set<String>) = judgeHotspots(seen, signatures.hotspots, marks, added)
@@ -185,8 +187,10 @@ class HotspotSession(context: Context, private val scanner: HotspotScanner, priv
 }
 
 /** Bluetooth: trackers by what they advertise, cameras by name, from signatures/ble.json. */
-class BleSession(context: Context, private val scanner: BleScanner, private val signatures: SignatureLoader, appScope: CoroutineScope, now: () -> Long = System::currentTimeMillis) :
-    NearbySession<BleAdvert>(Check.BLUETOOTH, context, appScope, now) {
+class BleSession(
+    context: Context, private val scanner: BleScanner, private val signatures: SignatureLoader, appScope: CoroutineScope,
+    marks: StateFlow<Map<String, KnownAs>>, onMark: (String, KnownAs?, String) -> Unit, onDone: () -> Unit = {}, now: () -> Long = System::currentTimeMillis,
+) : NearbySession<BleAdvert>(Check.BLUETOOTH, context, appScope, marks, onMark, onDone, now) {
     override val scanMs = 8_000L
 
     override fun judge(seen: List<BleAdvert>, marks: Map<String, KnownAs>, added: Set<String>) = judgeBle(seen, signatures.ble, marks, added)

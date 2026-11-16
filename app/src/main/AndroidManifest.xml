@@ -40,6 +40,18 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Keyhole">
 
+        <!-- Proof photos from the checklist: the camera app writes them straight into app storage (files/photos), and
+             the share sheet reads them from there. Nothing else is shared. -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.files"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

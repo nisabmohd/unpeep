@@ -1,0 +1,1 @@
+Check a room for hidden cameras and trackers. Says plainly what it checked.

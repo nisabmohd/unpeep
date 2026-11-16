@@ -1,6 +1,6 @@
 # Keyhole privacy policy
 
-_Last updated: 15 November 2026_
+_Last updated: 16 November 2026_
 
 Keyhole is made by mid apps (hello.midapps@gmail.com). In short: **Keyhole never sends your data anywhere.**
 
@@ -10,17 +10,18 @@ Nothing. There is no account, no analytics, no advertising, no crash reporting a
 ## What stays on your phone
 Reports, the devices you marked as known, checklist answers, notes and photos you take in the app are saved in the
 app's own storage. They are not in your gallery and are not backed up to the cloud. Deleting a report deletes its
-photos. Uninstalling Keyhole deletes everything. A report leaves your phone only when you export or share it.
+photos. More › Privacy › Delete all reports deletes every report, photo and mark at once. Uninstalling Keyhole deletes
+everything. A report leaves your phone only when you export or share it.
 
 ## Network
 Android needs the Internet permission for any network connection, including to devices on the Wi-Fi you joined.
 Keyhole uses it only to talk to devices on your **local network** (private, link-local and multicast addresses)
-during a scan you start. The GitHub build also asks GitHub whether a new version exists; nothing about you is sent.
+during a scan you start. The GitHub build also asks GitHub for the latest version number, only when you tap About › Check for updates; the
+request carries nothing about you or your phone.
 
 ## Permissions and why
 - **Location** (Hotspots check only; Bluetooth too on Android 11 and older): Android only lists the Wi-Fi names
-  around you for apps with location access. Keyhole reads those names and never where you are.
-  Keyhole never reads or stores where you are.
+  around you for apps with location access. Keyhole reads those names and never reads or stores where you are.
 - **Bluetooth:** to find trackers and Bluetooth cameras.
 - **Camera:** for the lens and infrared finders. Nothing is recorded unless you save a photo.
 - The magnet check uses the phone's sensor and needs no permission.

@@ -21,7 +21,7 @@ Screens never write a raw colour, dp, sp or tween (`ProjectRulesTest`).
 
 Check hues: Wi-Fi 232 · Hotspots 150 · Bluetooth 268 · Lens 34 · Infrared 338 · Magnet 92 · Checklist 186
 (`checkColors(hue)`: container + onContainer).
-Brand: launcher background `#173782`.
+Brand: launcher background `#173782` (`Brand` in Color.kt: the mark's tile on Welcome and About).
 
 ## Type
 | Style | Size/line | Weight | Used for |

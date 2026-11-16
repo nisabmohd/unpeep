@@ -84,19 +84,9 @@ val WifiDevice.icon: Int
 /** The device's name, or its address when it has none. */
 val WifiDevice.title: String get() = name ?: ip
 
-/** One reason, as a sentence. */
+/** One reason, as a sentence (the same words as the report: ReportWords). */
 @Composable
-fun signText(sign: Sign): String = when (sign) {
-    Sign.Onvif -> stringResource(R.string.sign_onvif)
-    is Sign.Rtsp -> stringResource(R.string.sign_rtsp, sign.port)
-    is Sign.CameraMaker -> stringResource(R.string.sign_camera_maker)
-    is Sign.CameraPort -> stringResource(R.string.sign_camera_port, sign.port)
-    Sign.WebPage -> stringResource(R.string.sign_web_page)
-    is Sign.KnownKind -> stringResource(R.string.sign_known_kind, kindLabel(sign.kind)?.let { stringResource(it) } ?: sign.kind)
-    Sign.MarkedByUser -> stringResource(R.string.sign_marked)
-    Sign.Router -> stringResource(R.string.sign_router)
-    Sign.ThisPhone -> stringResource(R.string.sign_this_phone)
-}
+fun signText(sign: Sign): String = app.keyhole.privacy.ui.report.ReportWords.sign(androidx.compose.ui.platform.LocalContext.current.resources, sign)
 
 /** The first reason, for a row's second line; a device with no reason says so. */
 @Composable

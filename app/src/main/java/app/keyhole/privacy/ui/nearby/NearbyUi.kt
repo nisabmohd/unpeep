@@ -47,15 +47,9 @@ val NearbyKind.icon: Int
 @Composable
 fun NearbyDevice.title(): String = name ?: label?.takeIf { kind == NearbyKind.TRACKER } ?: stringResource(R.string.unnamed_device)
 
-/** Why it is listed, as one sentence. */
+/** Why it is listed, as one sentence (the same words as the report: ReportWords). */
 @Composable
-fun NearbyDevice.reason(): String = when (kind) {
-    NearbyKind.CAMERA_HOTSPOT -> if (risk == Risk.CHECK_THIS) stringResource(R.string.reason_hotspot_weak) else stringResource(R.string.reason_hotspot, label.orEmpty())
-    NearbyKind.NETWORK -> stringResource(R.string.reason_network)
-    NearbyKind.TRACKER -> stringResource(R.string.reason_tracker, label.orEmpty())
-    NearbyKind.BLE_CAMERA -> stringResource(R.string.reason_ble_camera)
-    NearbyKind.BLE_OTHER -> stringResource(R.string.reason_ble_other)
-}
+fun NearbyDevice.reason(): String = app.keyhole.privacy.ui.report.ReportWords.nearbyReason(androidx.compose.ui.platform.LocalContext.current.resources, kind, label, risk)
 
 /** The tag of a row: its result in words; nothing for a plain network or device. */
 @Composable

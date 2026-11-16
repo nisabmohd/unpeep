@@ -46,3 +46,21 @@ enum class MoreItem { APPEARANCE, LANGUAGE, SWEEP_STEPS, MARKED_KNOWN, HOW_IT_WO
 
 /** 08 Magnet. [sweep]: part of a sweep (then "Next" goes on). */
 @Serializable data class MagnetRoute(val place: Place, val sweep: Boolean)
+
+/** 09 Checklist of [place]. [sweep]: part of a sweep. */
+@Serializable data class ChecklistRoute(val place: Place, val sweep: Boolean)
+
+/** 10 Report, saved, by id. */
+@Serializable data class ReportRoute(val id: Long)
+
+/** One finding of a saved report. */
+@Serializable data class FindingRoute(val reportId: Long, val findingId: Long)
+
+/** A proof photo, full screen. */
+@Serializable data class PhotoRoute(val path: String)
+
+/** 11 If you find a camera; [reportId] (−1 = none) lets "Share report" share that report. */
+@Serializable data class FoundCameraRoute(val reportId: Long = -1)
+
+/** 18 Licences › one licence's text ([file] in assets/licences; null = the short Apache 2.0 text). */
+@Serializable data class LicenceRoute(val title: String, val file: String? = null)

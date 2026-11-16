@@ -73,6 +73,16 @@ object Size {
     val photo = 88.dp          // a proof photo's thumbnail
     val switchWidth = 52.dp
     val dot = 8.dp
+    val mark = 40.dp           // a checklist item's answer mark
+    val progressLine = 6.dp    // the checklist's progress line
+    val field = 56.dp          // a text field's least height
+    val logoSmall = 44.dp      // the mark beside "Keyhole" on Welcome
+    val swatchCheck = 22.dp
+    val art = 300.dp           // Welcome's picture
+    val artLens = 220.dp
+    val artCore = 104.dp
+    val floatCard = 200.dp     // a floating card on Welcome's picture (its widest)
+    val cardShadow = 6.dp      // a floating card's or a lifted row's shadow
 }
 
 /** The lens drawing (Lens.kt): diameters of the outer ring and of the core, and its strokes. */

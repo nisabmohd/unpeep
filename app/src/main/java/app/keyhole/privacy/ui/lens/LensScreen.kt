@@ -224,7 +224,7 @@ fun LensContent(
             title = stringResource(if (s.mode == Check.INFRARED) R.string.infrared_finder else R.string.lens_finder), close = s.sweep,
             actions = {
                 if (running) Tag(pluralStringResource(R.plurals.spots_count, s.spots.size, s.spots.size), TagKind.KNOWN)
-                if (s.sweep) TopBarAction(stringResource(R.string.next), onNext)
+                if (s.sweep) TopBarAction(stringResource(if (s.next == null) R.string.see_report else R.string.next), onNext)
             },
         )
         var box by remember { mutableStateOf(IntSize.Zero) }

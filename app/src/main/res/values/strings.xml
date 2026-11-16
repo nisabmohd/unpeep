@@ -395,7 +395,290 @@
     <string name="beep_on_jump">Beep on a jump</string>
     <string name="no_magnet_title">This phone has no magnet sensor</string>
 
-    <!-- Screens not built yet -->
-    <string name="stand_in_line">This screen is on its way.</string>
-    <string name="stand_in_line_for">%1$s · this screen is on its way.</string>
+    <!-- 09 Checklist -->
+    <string name="checklist_of">%1$d of %2$d</string>
+    <string name="see_report">See report</string>
+    <string name="section_mirror">Mirror</string>
+    <string name="section_devices">Devices and plugs</string>
+    <string name="section_room">Walls and ceiling</string>
+    <string name="section_bed">Around the bed</string>
+    <string name="section_bath">Shower and toilet</string>
+    <string name="section_desk">Desk</string>
+    <string name="section_car">Inside the car</string>
+    <string name="item_mirror_light">Light test</string>
+    <string name="item_mirror_light_line">Torch on the glass. Light behind it is a warning.</string>
+    <string name="item_mirror_edges">Edges and frame</string>
+    <string name="item_mirror_edges_line">Gaps, holes or a loose frame</string>
+    <string name="item_smoke_detector">Smoke detector</string>
+    <string name="item_smoke_detector_line">A small hole or a dot that shines</string>
+    <string name="item_clock">Clocks and radios</string>
+    <string name="item_clock_line">A dark dot in the face or the speaker grille</string>
+    <string name="item_chargers">Chargers and sockets</string>
+    <string name="item_chargers_line">Extra holes, or one plugged into nothing</string>
+    <string name="item_usb">USB plugs and cables</string>
+    <string name="item_usb_line">A plug with a dot on its side</string>
+    <string name="item_tv">TV and set-top box</string>
+    <string name="item_tv_line">Unplug what you don\'t use</string>
+    <string name="item_lamps">Light fitting</string>
+    <string name="item_lamps_line">A dark dot that doesn\'t belong</string>
+    <string name="item_frames">Pictures and frames</string>
+    <string name="item_frames_line">Look behind them and at the corners</string>
+    <string name="item_vents">Vents and grilles</string>
+    <string name="item_vents_line">A lens can hide between the slats</string>
+    <string name="item_plants">Plants and decorations</string>
+    <string name="item_plants_line">A lens can sit among leaves or ornaments</string>
+    <string name="item_hooks">Hooks and pegs</string>
+    <string name="item_hooks_line">Look at the base of each one</string>
+    <string name="item_corners">Corners and vents</string>
+    <string name="item_corners_line">Look up as well as around</string>
+    <string name="item_partition">Gaps in the partition</string>
+    <string name="item_partition_line">Holes at eye level or lower</string>
+    <string name="item_bed">Facing the bed</string>
+    <string name="item_bed_line">Shelves, decorations and anything pointing at the bed</string>
+    <string name="item_shower">Facing the shower and toilet</string>
+    <string name="item_shower_line">Anything pointing at where you undress</string>
+    <string name="item_shelves">Shelves and baskets</string>
+    <string name="item_shelves_line">Small boxes, bottles and air fresheners</string>
+    <string name="item_desk">Desk and monitor</string>
+    <string name="item_desk_line">The screen\'s edge and anything on the desk</string>
+    <string name="item_objects">Books, boxes and gifts</string>
+    <string name="item_objects_line">Things you didn\'t put there</string>
+    <string name="item_car_mirror">Rear-view mirror</string>
+    <string name="item_car_mirror_line">Its back and its mount</string>
+    <string name="item_car_vents">Air vents and dashboard</string>
+    <string name="item_car_vents_line">Small holes that don\'t match the rest</string>
+    <string name="item_car_ports">USB ports and chargers</string>
+    <string name="item_car_ports_line">A charger with a dot on it</string>
+    <string name="item_car_ceiling">Ceiling light and visors</string>
+    <string name="item_car_ceiling_line">The light\'s cover and the visors\' edges</string>
+    <string name="item_car_seats">Headrests and seat backs</string>
+    <string name="item_car_seats_line">Pockets and gaps facing the back seat</string>
+    <string name="looks_fine">Looks fine</string>
+    <string name="looks_fine_line">Nothing that shouldn\'t be there</string>
+    <string name="not_sure_item_line">Add a photo and a note for the report</string>
+    <string name="skip">Skip</string>
+    <string name="skip_line">Can\'t check it, or not here</string>
+    <string name="note_label">Note</string>
+    <string name="note_hint">What did you see? Where is it?</string>
+    <string name="add_photo">Add a photo</string>
+    <string name="change_photo">Take another photo</string>
+    <string name="save">Save</string>
+    <string name="answer_not_sure_photo">Not sure · photo added</string>
+    <string name="answer_skipped">Skipped</string>
+
+    <!-- 10 Report -->
+    <string name="rename">Rename</string>
+    <string name="rename_title">Name this report</string>
+    <string name="rename_line">A room number or an address helps you find it later.</string>
+    <string name="report_name_hint">Sea View Hotel, room 304</string>
+    <plurals name="to_look_at">
+        <item quantity="one">%1$d to look at</item>
+        <item quantity="other">%1$d to look at</item>
+    </plurals>
+    <string name="nothing_found">Nothing found</string>
+    <plurals name="checks_of">
+        <item quantity="one">%1$d of %2$d check</item>
+        <item quantity="other">%1$d of %2$d checks</item>
+    </plurals>
+    <string name="step_was_skipped">%1$s was skipped</string>
+    <plurals name="checks_were_skipped">
+        <item quantity="one">%1$d check was skipped</item>
+        <item quantity="other">%1$d checks were skipped</item>
+    </plurals>
+    <string name="all_checks_ran">Every check ran</string>
+    <string name="found">Found</string>
+    <string name="photos">Photos</string>
+    <string name="couldnt_check">Couldn\'t check</string>
+    <string name="source_wifi">Wi-Fi</string>
+    <string name="source_hotspot">Hotspot</string>
+    <string name="source_bluetooth">Bluetooth</string>
+    <string name="source_checklist">Checklist</string>
+    <string name="source_magnet">Magnet</string>
+    <string name="not_sure_lower">not sure</string>
+    <plurals name="photo_count">
+        <item quantity="one">%1$d photo</item>
+        <item quantity="other">%1$d photos</item>
+    </plurals>
+    <string name="marked_mine_undo">You marked it as yours · tap to undo</string>
+    <string name="marked_room_undo">You marked it as part of the room · tap to undo</string>
+    <string name="undo_title">Take the mark away?</string>
+    <string name="undo_line">It goes back to the list of things to look at.</string>
+    <string name="undo">Undo</string>
+    <string name="gap_not_run">%1$s: not checked</string>
+    <string name="gap_isolated">Other devices on the Wi-Fi: it keeps devices apart, so only the router answered</string>
+    <string name="gap_no_infrared">Infrared lights: this phone\'s camera may block them</string>
+    <string name="gap_memory_card">A camera that records to a memory card and sends nothing: no scan can see it</string>
+    <string name="gap_other_network">A camera on another network or on mobile data: it isn\'t on this Wi-Fi</string>
+    <string name="report_not_safe_note">This report lists what was checked. It doesn\'t mean the room is safe.</string>
+    <string name="found_something">Found something?</string>
+    <string name="export">Export</string>
+    <string name="export_done">Saved as a PDF</string>
+    <string name="export_failed">The PDF couldn\'t be saved.</string>
+    <string name="magnet_finding">Electronics nearby</string>
+    <string name="magnet_finding_line">+%1$d µT above a normal of %2$d µT</string>
+    <string name="report_pdf_title">Keyhole report</string>
+    <string name="report_pdf_footer">Made with Keyhole on this phone. Nothing was sent anywhere.</string>
+    <string name="photo">Photo</string>
+    <string name="delete">Delete</string>
+    <string name="delete_report_title">Delete this report?</string>
+    <string name="delete_report_line">Its photos are deleted too. This can\'t be undone.</string>
+    <string name="finding_note">Your note</string>
+    <string name="address">Address</string>
+
+    <!-- 11 If you find a camera -->
+    <string name="found_camera_line">Checking was the right call. Take it one step at a time.</string>
+    <string name="found_step_1">Don\'t touch or unplug it</string>
+    <string name="found_step_1_line">It can help the police later</string>
+    <string name="found_step_2">Take photos and a video</string>
+    <string name="found_step_2_line">Where it is and where it points</string>
+    <string name="found_step_3">Leave if you feel unsafe</string>
+    <string name="found_step_3_line">You come first</string>
+    <string name="found_step_4">Tell the host or the shop</string>
+    <string name="found_step_4_line">And the booking platform</string>
+    <string name="help_where_you_are">Help where you are</string>
+    <string name="change">Change</string>
+    <string name="emergency">Emergency</string>
+    <string name="emergency_line">%1$s · %2$s</string>
+    <string name="emergency_line_phone">%1$s · %2$s, from your phone</string>
+    <string name="emergency_unknown_line">%1$s · works in most countries</string>
+    <string name="police">Police</string>
+    <string name="helpline">Helpline</string>
+    <string name="report_to_police">Report it to the police</string>
+    <string name="report_to_police_line">Your country\'s official site</string>
+    <string name="call_number">Call %1$s</string>
+    <string name="share_report">Share report</string>
+
+    <!-- 15 Help numbers -->
+    <string name="help_numbers_line">Shown when you find something. Works offline.</string>
+    <string name="search_countries">Search countries</string>
+    <string name="use_phone_region">Use my phone\'s region</string>
+    <string name="no_countries_found">No country matches</string>
+
+    <!-- 12 Reports, Home -->
+    <string name="this_week">This week</string>
+    <string name="reports_footer">Reports stay on this phone. Delete any with a long press.</string>
+    <string name="search_reports">Search reports</string>
+    <string name="search">Search</string>
+    <string name="no_reports_match">No report matches</string>
+    <string name="last_report">Last report</string>
+    <string name="this_visit">This visit so far</string>
+    <plurals name="checks_run">
+        <item quantity="one">%1$d check done · see the report</item>
+        <item quantity="other">%1$d checks done · see the report</item>
+    </plurals>
+    <string name="place_lower_stay">stay</string>
+    <string name="place_lower_trial_room">trial room</string>
+    <string name="place_lower_washroom">washroom</string>
+    <string name="place_lower_office">office</string>
+    <string name="place_lower_car">car</string>
+
+    <!-- 01 Welcome -->
+    <string name="welcome_title">Know the room you\'re in</string>
+    <string name="welcome_line">Check a hotel room, stay or trial room for hidden cameras and trackers. Keyhole says plainly what it found.</string>
+    <string name="get_started">Get started</string>
+    <string name="welcome_footer">Free and open source · Nothing leaves your phone</string>
+    <string name="welcome_art_camera" translatable="false">IPC-3F2A</string>
+    <plurals name="welcome_art_devices">
+        <item quantity="one">%1$d device</item>
+        <item quantity="other">%1$d devices</item>
+    </plurals>
+    <string name="welcome_art_on_wifi">on the Wi-Fi</string>
+
+    <!-- 14 Appearance, Sweep steps, Language -->
+    <string name="theme">Theme</string>
+    <string name="colour_wallpaper_title">Colours from wallpaper</string>
+    <string name="colour_wallpaper_line">Android 12 and later</string>
+    <string name="accent_purple">Purple</string>
+    <string name="accent_pink">Pink</string>
+    <string name="accent_coral">Coral</string>
+    <string name="accent_green">Green</string>
+    <string name="accent_teal">Teal</string>
+    <string name="font">Font</string>
+    <string name="text_size">Text size</string>
+    <string name="text_size_small">Small</string>
+    <string name="text_size_default">Default</string>
+    <string name="text_size_large">Large</string>
+    <string name="drag_to_reorder">Drag to reorder</string>
+    <string name="move_up">Move up</string>
+    <string name="move_down">Move down</string>
+    <string name="sweep_steps_note">A sweep runs the steps that are on, in this order. Steps a place doesn\'t have are left out, and anything switched off shows as not checked in the report.</string>
+    <string name="language_line">Keyhole\'s own language, apart from the phone\'s</string>
+
+    <!-- Marked as known -->
+    <string name="marked_known_note">Devices you said aren\'t cameras. They are listed as known in every scan. Tap one to take the mark away.</string>
+    <string name="marked_mine">Marked as yours</string>
+    <string name="marked_room">Marked as part of the room</string>
+    <string name="marked_known_empty_line">Mark a device with \"Not a camera?\" and it shows here.</string>
+
+    <!-- How Keyhole works, What Keyhole can't find -->
+    <string name="how_wifi">Asks the devices on the Wi-Fi you\'re on what they are, and flags the ones that answer like cameras.</string>
+    <string name="how_hotspots">Lists the Wi-Fi names around you and flags the ones cheap cameras use for setup.</string>
+    <string name="how_bluetooth">Listens for trackers like AirTags and Tiles, and for Bluetooth names that read like cameras.</string>
+    <string name="how_lens">Uses the torch and the rear camera to ring small, bright dots that may be a lens.</string>
+    <string name="how_infrared">Uses the front camera in the dark to show infrared lights, which many night cameras have.</string>
+    <string name="how_magnet">Learns the room\'s normal magnetic field and shows when it jumps near electronics.</string>
+    <string name="how_checklist">Walks you through the places worth a look by hand, with photos and notes.</string>
+    <string name="how_note">Every check runs only when you start it, and nothing leaves your phone.</string>
+    <string name="limits_intro">No check can promise a room is safe. This is what Keyhole can\'t see, and how to look by hand.</string>
+    <string name="limit_memory_card">Cameras that record to a memory card and send nothing: only the lens finder, infrared, magnet and checklist help.</string>
+    <string name="limit_other_network">Cameras on another network, on mobile data, or on a Wi-Fi the phone can\'t see.</string>
+    <string name="limit_isolation">Hotel and guest Wi-Fi that keeps devices apart: other devices don\'t answer.</string>
+    <string name="limit_mac">Android hides other devices\' hardware addresses, so a maker can\'t be looked up from them.</string>
+    <string name="limit_trackers">Trackers that don\'t advertise, or do it in a way Keyhole doesn\'t know yet.</string>
+    <string name="limit_infrared">Phones whose camera blocks infrared can\'t see infrared lights; the TV-remote test tells you.</string>
+    <string name="limit_hotspot_scans">Android allows 4 Wi-Fi scans every 2 minutes, so hotspots update slowly.</string>
+    <string name="limit_magnet">The magnet reacts to any electronics, magnets and wiring, not just cameras.</string>
+    <string name="limit_lens">The lens finder rings anything that shines like a lens: glass, screws and jewellery too.</string>
+    <string name="limits_by_hand">The checklist walks you through looking by hand, place by place.</string>
+
+    <!-- 16 Privacy -->
+    <string name="privacy_header_line">No account, no ads, no tracking. Scans only talk to devices on the Wi-Fi you\'re on.</string>
+    <string name="why_keyhole_asks">Why Keyhole asks</string>
+    <string name="perm_row_wifi_line">To list devices on the Wi-Fi you\'re on. No permission needed.</string>
+    <string name="perm_row_location">Location, for hotspots</string>
+    <string name="perm_row_location_line">Android only lists the Wi-Fi names around you with location access. Keyhole never reads where you are.</string>
+    <string name="perm_row_bluetooth_line">To find trackers and Bluetooth cameras</string>
+    <string name="perm_row_camera">Camera</string>
+    <string name="perm_row_camera_line">For the lens and infrared finders. Nothing is recorded.</string>
+    <string name="privacy_policy">Privacy policy</string>
+    <string name="privacy_policy_line">The full text, one page</string>
+    <string name="delete_all">Delete all reports</string>
+    <string name="delete_all_line">And the devices you marked</string>
+    <string name="delete_all_title">Delete everything?</string>
+    <string name="delete_all_sheet_line">Every report, its photos and the devices you marked. This can\'t be undone.</string>
+    <string name="deleted_all">Every report, photo and mark was deleted.</string>
+
+    <!-- 17 About, update check -->
+    <string name="version_by">Version %1$s · by mid apps</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_check_line">From GitHub Releases</string>
+    <string name="source_code">Source code</string>
+    <string name="data_stays">Your data stays yours</string>
+    <string name="rate_play">Rate on Google Play</string>
+    <string name="rate_play_line">It helps others find Keyhole</string>
+    <string name="report_problem">Report a problem</string>
+    <string name="licences_line">Open-source software in Keyhole</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_latest_title">You have the latest version</string>
+    <string name="update_new_title">Version %1$s is out</string>
+    <string name="update_new_line">Open the release page to download it.</string>
+    <string name="update_open">Open release page</string>
+    <string name="update_failed_title">Couldn\'t check</string>
+    <string name="update_failed_line">GitHub didn\'t answer. Check your connection and try again.</string>
+    <string name="update_note">Asks GitHub for the latest version number. Nothing else is sent.</string>
+
+    <!-- 18 Licences -->
+    <string name="section_libraries">Libraries</string>
+    <string name="section_icons_fonts">Icons and fonts</string>
+    <string name="lic_androidx" translatable="false">AndroidX and Jetpack Compose</string>
+    <string name="lic_kotlin" translatable="false">Kotlin and kotlinx.serialization</string>
+    <string name="lic_solar" translatable="false">Solar icons by 480 Design</string>
+    <string name="lic_fonts" translatable="false">Lexend, Outfit, Space Grotesk</string>
+    <string name="lic_atkinson" translatable="false">Atkinson Hyperlegible</string>
+    <string name="lic_gpl" translatable="false">GNU GPL v3</string>
+    <string name="lic_apache" translatable="false">Apache 2.0</string>
+    <string name="lic_cc_by" translatable="false">CC BY 4.0</string>
+    <string name="lic_ofl" translatable="false">SIL Open Font Licence 1.1</string>
+    <string name="lic_apache_text">Licensed under the Apache License, Version 2.0. You may not use these files except in compliance with the License. They are distributed on an "as is" basis, without warranties or conditions of any kind. The full text: https://www.apache.org/licenses/</string>
+
 </resources>

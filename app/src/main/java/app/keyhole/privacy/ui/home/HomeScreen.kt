@@ -42,9 +42,23 @@ import app.keyhole.privacy.ui.theme.Space
 
 /** 02 Home: place chips · the lens Start · "Check this room" + n checks · Or run one check · the last report. */
 @Composable
-fun HomeScreen(vm: HomeViewModel, onStart: (Place) -> Unit, onCheck: (Check, Place) -> Unit, onHelp: () -> Unit, lastReport: @Composable () -> Unit = {}) {
+fun HomeScreen(vm: HomeViewModel, onStart: (Place) -> Unit, onCheck: (Check, Place) -> Unit, onHelp: () -> Unit, onReport: (Long) -> Unit, onSeeVisit: () -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
-    HomeContent(s, vm::pick, onStart, onCheck, onHelp, lastReport)
+    val words = app.keyhole.privacy.ui.report.rememberReportWords()
+    HomeContent(s, vm::pick, onStart, onCheck, onHelp) {
+        if (s.visitChecks > 0) {
+            app.keyhole.privacy.ui.components.ListRow(
+                stringResource(R.string.this_visit), line = pluralStringResource(R.plurals.checks_run, s.visitChecks, s.visitChecks),
+                leading = { app.keyhole.privacy.ui.components.IconCircle(painterResource(R.drawable.ic_history), app.keyhole.privacy.ui.components.CircleTone.Hue(app.keyhole.privacy.ui.theme.Hues.REPORT)) }, onClick = onSeeVisit,
+            )
+        }
+        s.lastReport?.let { r ->
+            app.keyhole.privacy.ui.components.ListRow(
+                words.name(r), line = stringResource(R.string.two_parts, stringResource(R.string.last_report), words.toLookAt(r)),
+                leading = { app.keyhole.privacy.ui.components.IconCircle(painterResource(R.drawable.ic_reports), app.keyhole.privacy.ui.components.CircleTone.Hue(app.keyhole.privacy.ui.theme.Hues.REPORT)) }, onClick = { onReport(r.id) },
+            )
+        }
+    }
 }
 
 @Composable

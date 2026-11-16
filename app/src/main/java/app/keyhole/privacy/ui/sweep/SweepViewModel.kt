@@ -47,7 +47,12 @@ data class SweepState(
 class SweepViewModel(
     private val place: Place, private val at: Check?, private val only: Check?,
     private val settings: SettingsRepository, private val wifi: WifiSession, private val hotspots: NearbySession<*>, private val bluetooth: NearbySession<*>,
+    notes: app.keyhole.privacy.data.SweepNotes,
 ) : ViewModel() {
+    init {
+        notes.begin(place)
+    }
+
     private data class Inner(val steps: List<Check> = emptyList(), val current: Check? = null, val run: Int = -1, val finished: Boolean = false)
 
     private val inner = MutableStateFlow(Inner())
@@ -118,6 +123,6 @@ class SweepViewModel(
 
     companion object {
         /** Steps with a screen of their own, opened as the sweep reaches them. */
-        val HANDS_ON = setOf(Check.LENS, Check.INFRARED, Check.MAGNET)
+        val HANDS_ON = setOf(Check.LENS, Check.INFRARED, Check.MAGNET, Check.CHECKLIST)
     }
 }

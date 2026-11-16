@@ -73,6 +73,10 @@ class LensViewModel(
     private val settings: SettingsRepository, private val notes: SweepNotes, private val store: PhotoStore, private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel(), FrameListener {
     private val inner = MutableStateFlow(LensState(mode = if (start == Check.INFRARED) Check.INFRARED else Check.LENS, sweep = sweep))
+
+    init {
+        notes.begin(place)
+    }
     private val _events = MutableStateFlow<Pair<Int, LensEvent>?>(null)
 
     /** The latest one-off event with a running number, so the same event twice is still seen twice. */

@@ -1,0 +1,116 @@
+package app.keyhole.privacy.ui.welcome
+
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.heading
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
+import app.keyhole.privacy.R
+import app.keyhole.privacy.ui.components.CircleTone
+import app.keyhole.privacy.ui.components.Dock
+import app.keyhole.privacy.ui.components.FloatingCard
+import app.keyhole.privacy.ui.components.LensRings
+import app.keyhole.privacy.ui.components.PrimaryButton
+import app.keyhole.privacy.ui.theme.Brand
+import app.keyhole.privacy.ui.theme.Hues
+import app.keyhole.privacy.ui.theme.KeyholeTheme
+import app.keyhole.privacy.ui.theme.KeyholeType
+import app.keyhole.privacy.ui.theme.LensSize
+import app.keyhole.privacy.ui.theme.Shapes
+import app.keyhole.privacy.ui.theme.Size
+import app.keyhole.privacy.ui.theme.Space
+import androidx.compose.ui.graphics.Color
+
+/** The mark on its brand tile (Welcome, About): the launcher's foreground, which keeps the safe zone around it. */
+@Composable
+fun MarkTile(size: androidx.compose.ui.unit.Dp, modifier: Modifier = Modifier) {
+    Box(modifier.size(size).clip(Shapes.logo(size)).background(Brand).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
+        // The adaptive icon's foreground is 108 units with the mark in its middle 72: draw it 1.5× to fill the tile.
+        Image(painterResource(R.drawable.ic_launcher_foreground), null, modifier = Modifier.requiredSize(size * MARK_SCALE))
+    }
+}
+
+private const val MARK_SCALE = 1.5f
+private const val TILT = -4f
+
+/**
+ * 01 Welcome (first run): the mark · a picture of what Keyhole does · what it is in two lines · Get started.
+ * Permissions are asked later, when each check starts.
+ */
+@Composable
+fun WelcomeScreen(onStart: () -> Unit) {
+    val c = MaterialTheme.colorScheme
+    Column(Modifier.fillMaxSize().background(c.background).statusBarsPadding(), horizontalAlignment = Alignment.CenterHorizontally) {
+        Column(
+            Modifier.weight(1f).widthIn(max = Size.contentMax).fillMaxWidth().verticalScroll(rememberScrollState()).padding(horizontal = Space.screen),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Spacer(Modifier.height(Space.heading))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                MarkTile(Size.logoSmall)
+                Spacer(Modifier.width(Space.card))
+                Text(stringResource(R.string.app_name), style = KeyholeType.title, color = c.onSurface)
+            }
+            Spacer(Modifier.height(Space.heading))
+            // The picture: the lens, a likely camera and a count of devices. Silent for TalkBack: the words say it.
+            Box(Modifier.fillMaxWidth().height(Size.art).clip(Shapes.surface).background(c.primaryContainer).clearAndSetSemantics { }, contentAlignment = Alignment.Center) {
+                LensRings(Size.artLens, Size.artCore, middleRing = true, glint = true) {
+                    Box(Modifier.size(Size.artCore).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
+                        Icon(painterResource(R.drawable.ic_radar), null, tint = c.onPrimary, modifier = Modifier.size(LensSize.startIcon))
+                    }
+                }
+                FloatingCard(
+                    painterResource(R.drawable.ic_camera_device), CircleTone.Alert, stringResource(R.string.welcome_art_camera), stringResource(R.string.risk_likely_camera), TILT,
+                    Modifier.align(Alignment.TopStart).padding(Space.card),
+                )
+                FloatingCard(
+                    painterResource(R.drawable.ic_wifi), CircleTone.Hue(Hues.WIFI), pluralStringResource(R.plurals.welcome_art_devices, ART_DEVICES, ART_DEVICES), stringResource(R.string.welcome_art_on_wifi), -TILT / 2,
+                    Modifier.align(Alignment.BottomEnd).padding(Space.card),
+                )
+            }
+            Spacer(Modifier.height(Space.heading))
+            Text(stringResource(R.string.welcome_title), style = KeyholeType.display, color = c.onSurface, textAlign = TextAlign.Center, modifier = Modifier.semantics { heading() })
+            Spacer(Modifier.height(Space.block))
+            Text(stringResource(R.string.welcome_line), style = KeyholeType.body, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.padding(horizontal = Space.headingInset))
+            Spacer(Modifier.height(Space.heading))
+        }
+        Dock(Modifier.widthIn(max = Size.contentMax)) {
+            PrimaryButton(stringResource(R.string.get_started), onStart, Modifier.fillMaxWidth())
+            Text(stringResource(R.string.welcome_footer), style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.Center, modifier = Modifier.fillMaxWidth())
+        }
+    }
+}
+
+private const val ART_DEVICES = 18
+
+@Preview
+@Composable
+private fun WelcomePreview() = KeyholeTheme { WelcomeScreen {} }

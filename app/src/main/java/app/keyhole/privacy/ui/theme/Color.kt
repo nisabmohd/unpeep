@@ -126,6 +126,9 @@ object Hues {
     const val REPORT = 40f
 }
 
+/** The launcher's background: the mark's tile on Welcome and About (TOKENS.md › Brand). */
+val Brand = Color(0xFF173782)
+
 /** The seed. */
 const val DEFAULT_ACCENT_HUE = 222f
 

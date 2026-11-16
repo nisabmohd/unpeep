@@ -1,7 +1,9 @@
 package app.keyhole.privacy.ui.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -33,6 +35,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -112,6 +118,10 @@ fun ListRow(
     trailing: (@Composable RowScope.() -> Unit)? = null,
     onClick: (() -> Unit)? = null,
     chevron: Boolean = onClick != null && trailing == null,
+    onLongClick: (() -> Unit)? = null,
+    longClickLabel: String? = null,
+    /** A destructive row (Delete all reports): its title in the error colour. */
+    alert: Boolean = false,
 ) {
     val c = MaterialTheme.colorScheme
     Row(
@@ -119,7 +129,13 @@ fun ListRow(
             .fillMaxWidth()
             .clip(shape)
             .background(c.surfaceContainerLow)
-            .then(if (onClick != null) Modifier.clickable(role = Role.Button, onClick = onClick) else Modifier)
+            .then(
+                when {
+                    onLongClick != null -> Modifier.combinedClickable(role = Role.Button, onLongClickLabel = longClickLabel, onLongClick = onLongClick, onClick = onClick ?: {})
+                    onClick != null -> Modifier.clickable(role = Role.Button, onClick = onClick)
+                    else -> Modifier
+                },
+            )
             .heightIn(min = if (line == null) Size.rowOneLine else Size.row)
             .padding(horizontal = Space.card, vertical = Space.block),
         verticalAlignment = Alignment.CenterVertically,
@@ -129,7 +145,7 @@ fun ListRow(
             Spacer(Modifier.width(Space.card))
         }
         Column(Modifier.weight(1f)) {
-            Text(title, style = KeyholeType.cardTitle, color = c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
+            Text(title, style = KeyholeType.cardTitle, color = if (alert) c.error else c.onSurface, maxLines = 2, overflow = TextOverflow.Ellipsis)
             if (line != null) Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 3, overflow = TextOverflow.Ellipsis)
         }
         if (trailing != null) {
@@ -181,7 +197,7 @@ fun SignRow(icon: Painter, text: String, modifier: Modifier = Modifier, shape: S
 
 /** The label above a group: sentence case, 24 dp from the screen edge, an optional count on the right. */
 @Composable
-fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = null) {
+fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = null, action: String? = null, onAction: () -> Unit = {}) {
     val c = MaterialTheme.colorScheme
     Row(
         modifier.fillMaxWidth().padding(start = Space.headingInset, end = Space.headingInset, top = Space.sectionTop, bottom = Space.sectionBottom),
@@ -189,6 +205,8 @@ fun SectionLabel(text: String, modifier: Modifier = Modifier, meta: String? = nu
     ) {
         Text(text, style = KeyholeType.label, color = c.onSurfaceVariant, modifier = Modifier.weight(1f).semantics { heading() })
         if (meta != null) Text(meta, style = KeyholeType.supporting, color = c.onSurfaceVariant)
+        // A text action ("Change"): the accent colour, 48 dp to tap, the one way a section label acts.
+        if (action != null) TopBarAction(action, onAction)
     }
 }
 
@@ -293,6 +311,71 @@ fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: 
                     Text(part.label, style = KeyholeType.supporting, color = c.onSurfaceVariant)
                 }
             }
+        }
+    }
+}
+
+/** How a checklist item was answered, as its mark: ✓ looks fine, ? not sure, − skipped, an empty ring when not yet. */
+enum class AnswerMark { NONE, FINE, NOT_SURE, SKIPPED }
+
+/** The 40 dp mark at the end of a checklist row. */
+@Composable
+fun AnswerMarkCircle(mark: AnswerMark, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val w = warningColors()
+    val box = modifier.size(Size.mark).clip(Shapes.pill)
+    when (mark) {
+        AnswerMark.NONE -> Box(modifier.size(Size.mark).border(Size.ring, c.outline, Shapes.pill))
+        AnswerMark.FINE -> Box(box.background(c.primary), contentAlignment = Alignment.Center) {
+            Icon(painterResource(R.drawable.ic_check), null, tint = c.onPrimary, modifier = Modifier.size(Size.buttonIcon))
+        }
+        AnswerMark.NOT_SURE -> Box(box.background(w.container), contentAlignment = Alignment.Center) {
+            Icon(painterResource(R.drawable.ic_help), null, tint = w.onContainer, modifier = Modifier.size(Size.buttonIcon))
+        }
+        AnswerMark.SKIPPED -> Box(box.background(c.surfaceContainerHigh), contentAlignment = Alignment.Center) {
+            Icon(painterResource(R.drawable.ic_skip), null, tint = c.onSurfaceVariant, modifier = Modifier.size(Size.buttonIcon))
+        }
+    }
+}
+
+/**
+ * One thing to look at (checklist): its hued circle, title, one line, and how it was answered. Tap the row to
+ * answer; [state] is what TalkBack says about the answer ("Looks fine").
+ */
+@Composable
+fun ChecklistRow(icon: Painter, hue: Float, title: String, line: String, mark: AnswerMark, state: String?, onClick: () -> Unit, modifier: Modifier = Modifier, shape: Shape = Shapes.surface) {
+    ListRow(
+        title, modifier.semantics { if (state != null) stateDescription = state }, shape, line = line,
+        leading = { IconCircle(icon, CircleTone.Hue(hue)) }, trailing = { AnswerMarkCircle(mark) }, onClick = onClick, chevron = false,
+    )
+}
+
+/** A step of a numbered list ("1 Don't touch or unplug it"): the number in an accent circle. */
+@Composable
+fun NumberCircle(number: Int, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    Box(modifier.size(Size.iconCircle).clip(Shapes.pill).background(c.primaryContainer), contentAlignment = Alignment.Center) {
+        Text(number.toString(), style = KeyholeType.cardTitle, color = c.onPrimaryContainer)
+    }
+}
+
+/**
+ * A floating card of Welcome's picture ("IPC-3F2A · Likely camera"): a white card with a circle, a title and a line,
+ * tilted by [tilt] degrees. Part of a picture, so TalkBack skips it.
+ */
+@Composable
+fun FloatingCard(icon: Painter, tone: CircleTone, title: String, line: String, tilt: Float, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    Row(
+        modifier.widthIn(max = Size.floatCard).graphicsLayer { rotationZ = tilt; shadowElevation = Size.cardShadow.toPx(); shape = Shapes.surface; clip = true }
+            .background(c.surface).padding(Space.block).clearAndSetSemantics { },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        IconCircle(icon, tone)
+        Spacer(Modifier.width(Space.block))
+        Column {
+            Text(title, style = KeyholeType.cardTitle, color = c.onSurface, maxLines = 1, overflow = TextOverflow.Ellipsis)
+            Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis)
         }
     }
 }

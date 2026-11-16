@@ -73,3 +73,13 @@ fun BarMeter(values: List<Int>, slots: Int, jump: Int, max: Int, description: St
         }
     }
 }
+
+/** How far along a list is (the checklist): a thin accent line on its track. [description] for TalkBack ("4 of 7"). */
+@Composable
+fun ProgressLine(progress: Float, description: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val shown = progress.coerceIn(0f, 1f)
+    Box(modifier.fillMaxWidth().height(Size.progressLine).clip(Shapes.pill).background(c.surfaceContainerHighest).clearAndSetSemantics { contentDescription = description }) {
+        if (shown > 0f) Box(Modifier.fillMaxWidth(shown).height(Size.progressLine).clip(Shapes.pill).background(c.primary))
+    }
+}

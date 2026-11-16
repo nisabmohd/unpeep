@@ -22,12 +22,16 @@ data class HomeState(
     val checks: List<Check> = Place.STAY.checks(),
     val minutes: Int = Place.STAY.minutes(),
     val loaded: Boolean = false,
+    val lastReport: app.keyhole.privacy.data.SavedReport? = null,
+    /** Checks done in this visit that aren't in a report yet. */
+    val visitChecks: Int = 0,
 )
 
-class HomeViewModel(private val settings: SettingsRepository) : ViewModel() {
-    val state: StateFlow<HomeState> = settings.settings.map { s ->
+class HomeViewModel(private val settings: SettingsRepository, reports: app.keyhole.privacy.data.ReportRepository, notes: app.keyhole.privacy.data.SweepNotes) : ViewModel() {
+    val state: StateFlow<HomeState> = kotlinx.coroutines.flow.combine(settings.settings, reports.all, notes.ran, notes.checklist) { s, all, ran, answers ->
         val steps = sweepSteps(s.place, s.stepOrder, s.stepsOff)
-        HomeState(s.place, steps, s.place.checks(), s.place.minutes(steps), loaded = true)
+        val visit = (ran + if (answers.isNotEmpty()) setOf(Check.CHECKLIST) else emptySet()).size
+        HomeState(s.place, steps, s.place.checks(), s.place.minutes(steps), loaded = true, lastReport = all.firstOrNull(), visitChecks = visit)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), HomeState())
 
     fun pick(place: Place) { viewModelScope.launch { settings.setPlace(place) } }

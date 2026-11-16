@@ -100,6 +100,10 @@ class MagnetViewModel(
     private val place: Place, private val sweep: Boolean, private val sensor: MagnetSensor, private val settings: SettingsRepository,
     private val notes: SweepNotes, private val now: () -> Long = System::currentTimeMillis,
 ) : ViewModel() {
+    init {
+        notes.begin(place)
+    }
+
     private val meter = MagnetMeter()
     private val sampler = MagnetSampler()
     private val beeper = Beeper()
@@ -182,7 +186,7 @@ fun MagnetContent(s: MagnetState, onBack: () -> Unit, onNext: () -> Unit, onBeep
         close = s.sweep,
         actions = {
             if (s.available) RoundIconButton(painterResource(R.drawable.ic_sound), stringResource(R.string.beep_on_jump), onBeep, active = s.beep)
-            if (s.sweep) TopBarAction(stringResource(R.string.next), onNext)
+            if (s.sweep) TopBarAction(stringResource(if (s.next == null) R.string.see_report else R.string.next), onNext)
         },
         dock = if (s.available) { {
             ButtonPair(
