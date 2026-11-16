@@ -157,12 +157,12 @@
 
     <!-- 04 Wi-Fi results -->
     <plurals name="devices_on_wifi">
-        <item quantity="one">device on %1$s</item>
-        <item quantity="other">devices on %1$s</item>
+        <item quantity="one">%1$d device on %2$s</item>
+        <item quantity="other">%1$d devices on %2$s</item>
     </plurals>
     <plurals name="devices_on_this_wifi">
-        <item quantity="one">device on this Wi-Fi</item>
-        <item quantity="other">devices on this Wi-Fi</item>
+        <item quantity="one">%1$d device on this Wi-Fi</item>
+        <item quantity="other">%1$d devices on this Wi-Fi</item>
     </plurals>
     <string name="isolation_title">Only the router answered</string>
     <string name="isolation_text">This Wi-Fi may keep devices apart, so a camera on it can\'t be seen from here. The other checks still work.</string>
@@ -232,6 +232,98 @@
     <string name="not_sure_line">Keep it on the list to check</string>
     <string name="report_wrong">Keyhole got it wrong? Report it to help fix the device list</string>
     <string name="mark_as_known">Mark as known</string>
+
+    <!-- Hotspots and Bluetooth: the sweep step -->
+    <string name="checking_hotspots">Looking for camera hotspots</string>
+    <string name="checking_bluetooth">Listening for Bluetooth</string>
+    <string name="nothing_flagged_yet">Nothing worth a look yet.</string>
+    <string name="allow">Allow</string>
+    <string name="open_settings">Open settings</string>
+    <string name="perm_hotspots_title">See the Wi-Fi names around you</string>
+    <string name="perm_hotspots_line">Android only lists Wi-Fi names for apps with precise location access, so Keyhole has to ask. It never reads where you are.</string>
+    <string name="perm_bluetooth_title">See Bluetooth devices nearby</string>
+    <string name="perm_bluetooth_line">To find trackers and Bluetooth cameras. Keyhole never reads where you are.</string>
+    <string name="perm_denied_line">Android won\'t ask again. Allow it in Settings, under Permissions.</string>
+    <string name="block_wifi_off_title">Wi-Fi is off</string>
+    <string name="block_wifi_off_line">Turn Wi-Fi on to hear the hotspots around you. You don\'t need to join one.</string>
+    <string name="block_bluetooth_off_title">Bluetooth is off</string>
+    <string name="block_bluetooth_off_line">Turn Bluetooth on to hear trackers nearby.</string>
+    <string name="block_location_off_title">Location is off</string>
+    <string name="block_location_off_line">Android only lists what is nearby while Location is on. Keyhole never reads where you are.</string>
+    <string name="block_no_bluetooth_title">This phone has no Bluetooth</string>
+    <string name="block_no_bluetooth_line">Keyhole can\'t run this check here, so the report will say it wasn\'t checked.</string>
+
+    <!-- Hotspots and Bluetooth: results -->
+    <plurals name="networks_nearby">
+        <item quantity="one">%1$d Wi-Fi network nearby</item>
+        <item quantity="other">%1$d Wi-Fi networks nearby</item>
+    </plurals>
+    <plurals name="bluetooth_nearby">
+        <item quantity="one">%1$d Bluetooth device nearby</item>
+        <item quantity="other">%1$d Bluetooth devices nearby</item>
+    </plurals>
+    <plurals name="others_count">
+        <item quantity="one">%1$d other</item>
+        <item quantity="other">%1$d others</item>
+    </plurals>
+    <string name="hotspots_none_title">Nothing nearby looks like a camera hotspot</string>
+    <string name="hotspots_none_text">A camera that is already set up on a Wi-Fi doesn\'t broadcast a name of its own. The Wi-Fi check looks for those.</string>
+    <string name="bluetooth_none_title">Nothing nearby looks like a tracker or a camera</string>
+    <string name="bluetooth_none_text">A tracker that doesn\'t advertise, or does it in a way Keyhole doesn\'t know yet, doesn\'t show up here.</string>
+    <plurals name="other_networks">
+        <item quantity="one">%1$d other network</item>
+        <item quantity="other">%1$d other networks</item>
+    </plurals>
+    <string name="other_networks_line">Routers and phones nearby. Not a sign of anything.</string>
+    <string name="other_networks_title">Other networks</string>
+    <plurals name="other_bluetooth">
+        <item quantity="one">%1$d other Bluetooth device</item>
+        <item quantity="other">%1$d other Bluetooth devices</item>
+    </plurals>
+    <string name="other_bluetooth_line">Earbuds, watches, TVs and the like</string>
+    <string name="other_bluetooth_title">Other Bluetooth devices</string>
+    <string name="kind_camera_hotspot">Camera hotspot</string>
+    <string name="kind_network">Wi-Fi network</string>
+    <string name="kind_tracker">Tracker</string>
+    <string name="kind_ble_camera">Bluetooth camera name</string>
+    <string name="kind_ble_other">Bluetooth device</string>
+    <string name="unnamed_device">Unnamed device</string>
+    <string name="reason_hotspot">Its name is one that %1$s cameras use for setup</string>
+    <string name="reason_hotspot_weak">Its name is one that cameras and smart plugs both use</string>
+    <string name="reason_tracker">Advertises as a tracker: %1$s</string>
+    <string name="reason_ble_camera">Its name reads like a camera</string>
+    <string name="reason_network">A Wi-Fi network nearby</string>
+    <string name="reason_ble_other">A Bluetooth device nearby</string>
+    <string name="signal_dbm">%1$d dBm</string>
+    <plurals name="updated_ago">
+        <item quantity="one">Updated %1$d s ago</item>
+        <item quantity="other">Updated %1$d s ago</item>
+    </plurals>
+    <string name="updated_now">Updated just now</string>
+
+    <!-- 07 Find it -->
+    <string name="find_it">Find it</string>
+    <string name="nearness_very_close">Right here</string>
+    <string name="nearness_very_close_line">within 1 m</string>
+    <string name="nearness_close">Close</string>
+    <string name="nearness_close_line">about 1–2 m</string>
+    <string name="nearness_near">Near</string>
+    <string name="nearness_near_line">about 3–6 m</string>
+    <string name="nearness_far">Far</string>
+    <string name="nearness_far_line">more than 6 m</string>
+    <string name="trend_stronger">Stronger</string>
+    <string name="trend_weaker">Weaker</string>
+    <string name="trend_steady">Steady</string>
+    <string name="getting_warmer">Getting warmer</string>
+    <string name="getting_colder">Getting colder</string>
+    <string name="about_the_same">About the same</string>
+    <string name="find_note_hotspots">Walk slowly and point the top of your phone around the room. Android updates the signal about every 30 s.</string>
+    <string name="find_note_bluetooth">Walk slowly and point the top of your phone around the room. The signal updates about once a second.</string>
+    <string name="find_lost_title">Not heard for a while</string>
+    <string name="find_lost_text">It may be switched off or out of reach. The last signal is shown.</string>
+    <string name="add_to_report">Add to report</string>
+    <string name="remove_from_report">Remove from report</string>
+    <string name="added_to_report">Added to report</string>
 
     <!-- Screens not built yet -->
     <string name="stand_in_line">This screen is on its way.</string>

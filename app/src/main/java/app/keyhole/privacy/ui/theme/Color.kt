@@ -159,6 +159,8 @@ object Alpha {
     const val track = 0.5f
     /** A meter bar that isn't the newest. */
     const val barOld = 0.45f
+    /** The first lit segment of the Find it meter; the rest step up to full strength. */
+    const val meterFaint = 0.4f
     /** Material's disabled container and content. */
     const val disabledContainer = 0.10f
     const val disabledContent = 0.38f

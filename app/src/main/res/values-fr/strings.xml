@@ -34,26 +34,32 @@
     <string name="home_line">%1$s · %2$s</string>
     <plurals name="checks_for_stay">
         <item quantity="one">%1$d vérification pour un séjour</item>
+        <item quantity="many">%1$d vérifications pour un séjour</item>
         <item quantity="other">%1$d vérifications pour un séjour</item>
     </plurals>
     <plurals name="checks_for_trial_room">
         <item quantity="one">%1$d vérification pour une cabine</item>
+        <item quantity="many">%1$d vérifications pour une cabine</item>
         <item quantity="other">%1$d vérifications pour une cabine</item>
     </plurals>
     <plurals name="checks_for_washroom">
         <item quantity="one">%1$d vérification pour des toilettes</item>
+        <item quantity="many">%1$d vérifications pour des toilettes</item>
         <item quantity="other">%1$d vérifications pour des toilettes</item>
     </plurals>
     <plurals name="checks_for_office">
         <item quantity="one">%1$d vérification pour un bureau</item>
+        <item quantity="many">%1$d vérifications pour un bureau</item>
         <item quantity="other">%1$d vérifications pour un bureau</item>
     </plurals>
     <plurals name="checks_for_car">
         <item quantity="one">%1$d vérification pour une voiture</item>
+        <item quantity="many">%1$d vérifications pour une voiture</item>
         <item quantity="other">%1$d vérifications pour une voiture</item>
     </plurals>
     <plurals name="about_minutes">
         <item quantity="one">environ %1$d minute</item>
+        <item quantity="many">environ %1$d minutes</item>
         <item quantity="other">environ %1$d minutes</item>
     </plurals>
     <string name="or_run_one_check">Ou lancer une seule vérification</string>
@@ -71,6 +77,7 @@
     <string name="sweep_steps_line">Choisir et ordonner</string>
     <plurals name="steps_on">
         <item quantity="one">%1$d active</item>
+        <item quantity="many">%1$d actives</item>
         <item quantity="other">%1$d actives</item>
     </plurals>
     <string name="section_checks">Vérifications</string>
@@ -79,6 +86,7 @@
     <string name="marked_known_none">Rien de marqué pour l\'instant</string>
     <plurals name="marked_known_count">
         <item quantity="one">%1$d appareil qui, selon vous, n\'est pas une caméra</item>
+        <item quantity="many">%1$d appareils qui, selon vous, ne sont pas des caméras</item>
         <item quantity="other">%1$d appareils qui, selon vous, ne sont pas des caméras</item>
     </plurals>
     <string name="how_keyhole_works">Comment fonctionne Keyhole</string>
@@ -174,43 +182,147 @@
     <string name="mark_as_known">Marquer comme connu</string>
     <plurals name="about_seconds_left">
         <item quantity="one">environ %1$d s restante</item>
+        <item quantity="many">environ %1$d s restantes</item>
         <item quantity="other">environ %1$d s restantes</item>
     </plurals>
     <plurals name="likely_cameras_count">
         <item quantity="one">%1$d caméra probable</item>
+        <item quantity="many">%1$d caméras probables</item>
         <item quantity="other">%1$d caméras probables</item>
     </plurals>
     <plurals name="worth_a_look_count">
         <item quantity="one">%1$d à regarder</item>
+        <item quantity="many">%1$d à regarder</item>
         <item quantity="other">%1$d à regarder</item>
     </plurals>
     <plurals name="known_count">
         <item quantity="one">%1$d connu</item>
+        <item quantity="many">%1$d connus</item>
         <item quantity="other">%1$d connus</item>
     </plurals>
     <plurals name="not_recognised_count">
         <item quantity="one">%1$d non reconnu</item>
+        <item quantity="many">%1$d non reconnus</item>
         <item quantity="other">%1$d non reconnus</item>
     </plurals>
     <plurals name="devices_on_wifi">
-        <item quantity="one">appareil sur %1$s</item>
-        <item quantity="other">appareils sur %1$s</item>
+        <item quantity="one">%1$d appareil sur %2$s</item>
+        <item quantity="many">%1$d appareils sur %2$s</item>
+        <item quantity="other">%1$d appareils sur %2$s</item>
     </plurals>
     <plurals name="devices_on_this_wifi">
-        <item quantity="one">appareil sur ce Wi-Fi</item>
-        <item quantity="other">appareils sur ce Wi-Fi</item>
+        <item quantity="one">%1$d appareil sur ce Wi-Fi</item>
+        <item quantity="many">%1$d appareils sur ce Wi-Fi</item>
+        <item quantity="other">%1$d appareils sur ce Wi-Fi</item>
     </plurals>
     <plurals name="known_devices">
         <item quantity="one">%1$d appareil connu</item>
+        <item quantity="many">%1$d appareils connus</item>
         <item quantity="other">%1$d appareils connus</item>
     </plurals>
     <plurals name="other_devices">
         <item quantity="one">%1$d appareil non reconnu</item>
+        <item quantity="many">%1$d appareils non reconnus</item>
         <item quantity="other">%1$d appareils non reconnus</item>
     </plurals>
     <plurals name="strong_signs">
         <item quantity="one">%1$d signe fort</item>
+        <item quantity="many">%1$d signes forts</item>
         <item quantity="other">%1$d signes forts</item>
+    </plurals>
+
+    <!-- Hotspots, Bluetooth and 07 Find it -->
+    <string name="checking_hotspots">Recherche de réseaux de caméras</string>
+    <string name="checking_bluetooth">Écoute du Bluetooth</string>
+    <string name="nothing_flagged_yet">Rien à regarder pour l\'instant.</string>
+    <string name="allow">Autoriser</string>
+    <string name="open_settings">Ouvrir les réglages</string>
+    <string name="perm_hotspots_title">Voir les noms de Wi-Fi autour de vous</string>
+    <string name="perm_hotspots_line">Android ne liste les noms de Wi-Fi qu\'aux applis ayant accès à la position précise ; Keyhole doit donc le demander. Il ne lit jamais où vous êtes.</string>
+    <string name="perm_bluetooth_title">Voir les appareils Bluetooth à proximité</string>
+    <string name="perm_bluetooth_line">Pour trouver les traceurs et les caméras Bluetooth. Keyhole ne lit jamais où vous êtes.</string>
+    <string name="perm_denied_line">Android ne redemandera pas. Autorisez-le dans Réglages, sous Autorisations.</string>
+    <string name="block_wifi_off_title">Le Wi-Fi est désactivé</string>
+    <string name="block_wifi_off_line">Activez le Wi-Fi pour entendre les réseaux autour de vous. Inutile d\'en rejoindre un.</string>
+    <string name="block_bluetooth_off_title">Le Bluetooth est désactivé</string>
+    <string name="block_bluetooth_off_line">Activez le Bluetooth pour entendre les traceurs à proximité.</string>
+    <string name="block_location_off_title">La localisation est désactivée</string>
+    <string name="block_location_off_line">Android ne liste ce qui est proche que si la localisation est activée. Keyhole ne lit jamais où vous êtes.</string>
+    <string name="block_no_bluetooth_title">Ce téléphone n\'a pas de Bluetooth</string>
+    <string name="block_no_bluetooth_line">Keyhole ne peut pas faire cette vérification ici ; le rapport indiquera qu\'elle n\'a pas été faite.</string>
+    <string name="hotspots_none_title">Rien à proximité ne ressemble au réseau d\'une caméra</string>
+    <string name="hotspots_none_text">Une caméra déjà configurée sur un Wi-Fi n\'émet pas de nom à elle. La vérification Wi-Fi cherche celles-là.</string>
+    <string name="bluetooth_none_title">Rien à proximité ne ressemble à un traceur ou à une caméra</string>
+    <string name="bluetooth_none_text">Un traceur qui ne s\'annonce pas, ou d\'une façon que Keyhole ne connaît pas encore, n\'apparaît pas ici.</string>
+    <string name="other_networks_line">Routeurs et téléphones à proximité. Ce n\'est le signe de rien.</string>
+    <string name="other_networks_title">Autres réseaux</string>
+    <string name="other_bluetooth_line">Écouteurs, montres, télés et autres</string>
+    <string name="other_bluetooth_title">Autres appareils Bluetooth</string>
+    <string name="kind_camera_hotspot">Réseau de caméra</string>
+    <string name="kind_network">Réseau Wi-Fi</string>
+    <string name="kind_tracker">Traceur</string>
+    <string name="kind_ble_camera">Nom de caméra Bluetooth</string>
+    <string name="kind_ble_other">Appareil Bluetooth</string>
+    <string name="unnamed_device">Appareil sans nom</string>
+    <string name="reason_hotspot">Son nom est un de ceux que les caméras %1$s utilisent à l\'installation</string>
+    <string name="reason_hotspot_weak">Son nom est utilisé par des caméras comme par des prises connectées</string>
+    <string name="reason_tracker">S\'annonce comme un traceur : %1$s</string>
+    <string name="reason_ble_camera">Son nom évoque une caméra</string>
+    <string name="reason_network">Un réseau Wi-Fi à proximité</string>
+    <string name="reason_ble_other">Un appareil Bluetooth à proximité</string>
+    <string name="signal_dbm">%1$d dBm</string>
+    <string name="updated_now">mis à jour à l\'instant</string>
+    <string name="find_it">Trouver</string>
+    <string name="nearness_very_close">Juste ici</string>
+    <string name="nearness_very_close_line">à moins de 1 m</string>
+    <string name="nearness_close">Proche</string>
+    <string name="nearness_close_line">environ 1–2 m</string>
+    <string name="nearness_near">Pas loin</string>
+    <string name="nearness_near_line">environ 3–6 m</string>
+    <string name="nearness_far">Loin</string>
+    <string name="nearness_far_line">plus de 6 m</string>
+    <string name="trend_stronger">Plus fort</string>
+    <string name="trend_weaker">Plus faible</string>
+    <string name="trend_steady">Stable</string>
+    <string name="getting_warmer">Ça chauffe</string>
+    <string name="getting_colder">Ça refroidit</string>
+    <string name="about_the_same">À peu près pareil</string>
+    <string name="find_note_hotspots">Marchez lentement et pointez le haut du téléphone autour de la pièce. Android met le signal à jour toutes les 30 s environ.</string>
+    <string name="find_note_bluetooth">Marchez lentement et pointez le haut du téléphone autour de la pièce. Le signal se met à jour environ une fois par seconde.</string>
+    <string name="find_lost_title">Pas entendu depuis un moment</string>
+    <string name="find_lost_text">Il est peut-être éteint ou hors de portée. Le dernier signal est affiché.</string>
+    <string name="add_to_report">Ajouter au rapport</string>
+    <string name="remove_from_report">Retirer du rapport</string>
+    <string name="added_to_report">Dans le rapport</string>
+    <plurals name="networks_nearby">
+        <item quantity="one">%1$d réseau Wi-Fi à proximité</item>
+        <item quantity="many">%1$d réseaux Wi-Fi à proximité</item>
+        <item quantity="other">%1$d réseaux Wi-Fi à proximité</item>
+    </plurals>
+    <plurals name="bluetooth_nearby">
+        <item quantity="one">%1$d appareil Bluetooth à proximité</item>
+        <item quantity="many">%1$d appareils Bluetooth à proximité</item>
+        <item quantity="other">%1$d appareils Bluetooth à proximité</item>
+    </plurals>
+    <plurals name="others_count">
+        <item quantity="one">%1$d autre</item>
+        <item quantity="many">%1$d autres</item>
+        <item quantity="other">%1$d autres</item>
+    </plurals>
+    <plurals name="other_networks">
+        <item quantity="one">%1$d autre réseau</item>
+        <item quantity="many">%1$d autres réseaux</item>
+        <item quantity="other">%1$d autres réseaux</item>
+    </plurals>
+    <plurals name="other_bluetooth">
+        <item quantity="one">%1$d autre appareil Bluetooth</item>
+        <item quantity="many">%1$d autres appareils Bluetooth</item>
+        <item quantity="other">%1$d autres appareils Bluetooth</item>
+    </plurals>
+    <plurals name="updated_ago">
+        <item quantity="one">mis à jour il y a %1$d s</item>
+        <item quantity="many">mis à jour il y a %1$d s</item>
+        <item quantity="other">mis à jour il y a %1$d s</item>
     </plurals>
 
     <!-- Screens not built yet -->

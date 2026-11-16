@@ -180,10 +180,10 @@
         <item quantity="other">不明 %1$d 台</item>
     </plurals>
     <plurals name="devices_on_wifi">
-        <item quantity="other">台（%1$s）</item>
+        <item quantity="other">%1$d 台（%2$s）</item>
     </plurals>
     <plurals name="devices_on_this_wifi">
-        <item quantity="other">台（この Wi-Fi）</item>
+        <item quantity="other">%1$d 台（この Wi-Fi）</item>
     </plurals>
     <plurals name="known_devices">
         <item quantity="other">既知のデバイス %1$d 台</item>
@@ -193,6 +193,88 @@
     </plurals>
     <plurals name="strong_signs">
         <item quantity="other">強い兆候 %1$d 件</item>
+    </plurals>
+
+    <!-- Hotspots, Bluetooth and 07 Find it -->
+    <string name="checking_hotspots">カメラのスポットを検索中</string>
+    <string name="checking_bluetooth">Bluetooth を検索中</string>
+    <string name="nothing_flagged_yet">要確認のものはまだありません。</string>
+    <string name="allow">許可</string>
+    <string name="open_settings">設定を開く</string>
+    <string name="perm_hotspots_title">周囲の Wi-Fi 名を表示</string>
+    <string name="perm_hotspots_line">Android は、正確な位置情報の権限を持つアプリにだけ Wi-Fi 名を表示します。そのため許可が必要ですが、Keyhole が現在地を読み取ることはありません。</string>
+    <string name="perm_bluetooth_title">近くの Bluetooth デバイスを表示</string>
+    <string name="perm_bluetooth_line">トラッカーや Bluetooth カメラを見つけるためです。Keyhole が現在地を読み取ることはありません。</string>
+    <string name="perm_denied_line">Android はもう確認しません。設定の「権限」で許可してください。</string>
+    <string name="block_wifi_off_title">Wi-Fi がオフです</string>
+    <string name="block_wifi_off_line">周囲のスポットを検出するには Wi-Fi をオンにしてください。接続する必要はありません。</string>
+    <string name="block_bluetooth_off_title">Bluetooth がオフです</string>
+    <string name="block_bluetooth_off_line">近くのトラッカーを検出するには Bluetooth をオンにしてください。</string>
+    <string name="block_location_off_title">位置情報がオフです</string>
+    <string name="block_location_off_line">Android は、位置情報がオンのときだけ周囲の機器を一覧表示します。Keyhole が現在地を読み取ることはありません。</string>
+    <string name="block_no_bluetooth_title">この端末には Bluetooth がありません</string>
+    <string name="block_no_bluetooth_line">この端末ではこのチェックを実行できないため、レポートには未チェックと記載されます。</string>
+    <string name="hotspots_none_title">カメラのスポットらしいものは近くにありません</string>
+    <string name="hotspots_none_text">すでに Wi-Fi に設定済みのカメラは、独自の名前を発信しません。それらは Wi-Fi チェックで探します。</string>
+    <string name="bluetooth_none_title">トラッカーやカメラらしいものは近くにありません</string>
+    <string name="bluetooth_none_text">信号を発信しないトラッカーや、Keyhole がまだ対応していない方式のトラッカーは表示されません。</string>
+    <string name="other_networks_line">近くのルーターやスマートフォンです。何かの兆候ではありません。</string>
+    <string name="other_networks_title">その他の Wi-Fi</string>
+    <string name="other_bluetooth_line">イヤホン、時計、テレビなど</string>
+    <string name="other_bluetooth_title">その他の Bluetooth デバイス</string>
+    <string name="kind_camera_hotspot">カメラのスポット</string>
+    <string name="kind_network">Wi-Fi ネットワーク</string>
+    <string name="kind_tracker">トラッカー</string>
+    <string name="kind_ble_camera">Bluetooth のカメラ名</string>
+    <string name="kind_ble_other">Bluetooth デバイス</string>
+    <string name="unnamed_device">名前のないデバイス</string>
+    <string name="reason_hotspot">%1$s のカメラが設定時に使う名前です</string>
+    <string name="reason_hotspot_weak">カメラとスマートプラグの両方が使う名前です</string>
+    <string name="reason_tracker">トラッカーとして発信しています: %1$s</string>
+    <string name="reason_ble_camera">名前がカメラのようです</string>
+    <string name="reason_network">近くの Wi-Fi ネットワーク</string>
+    <string name="reason_ble_other">近くの Bluetooth デバイス</string>
+    <string name="signal_dbm">%1$d dBm</string>
+    <string name="updated_now">たった今更新</string>
+    <string name="find_it">探す</string>
+    <string name="nearness_very_close">すぐそこ</string>
+    <string name="nearness_very_close_line">1 m 以内</string>
+    <string name="nearness_close">近い</string>
+    <string name="nearness_close_line">約 1〜2 m</string>
+    <string name="nearness_near">やや近い</string>
+    <string name="nearness_near_line">約 3〜6 m</string>
+    <string name="nearness_far">遠い</string>
+    <string name="nearness_far_line">6 m 以上</string>
+    <string name="trend_stronger">強くなった</string>
+    <string name="trend_weaker">弱くなった</string>
+    <string name="trend_steady">変化なし</string>
+    <string name="getting_warmer">近づいています</string>
+    <string name="getting_colder">離れています</string>
+    <string name="about_the_same">ほぼ同じです</string>
+    <string name="find_note_hotspots">ゆっくり歩きながら、スマートフォンの上端を部屋のあちこちに向けてください。Android は約 30 秒ごとに信号を更新します。</string>
+    <string name="find_note_bluetooth">ゆっくり歩きながら、スマートフォンの上端を部屋のあちこちに向けてください。信号は約 1 秒ごとに更新されます。</string>
+    <string name="find_lost_title">しばらく検出されていません</string>
+    <string name="find_lost_text">電源が切れているか、範囲外の可能性があります。最後の信号を表示しています。</string>
+    <string name="add_to_report">レポートに追加</string>
+    <string name="remove_from_report">レポートから削除</string>
+    <string name="added_to_report">レポートに追加済み</string>
+    <plurals name="networks_nearby">
+        <item quantity="other">%1$d 件の Wi-Fi が近くにあります</item>
+    </plurals>
+    <plurals name="bluetooth_nearby">
+        <item quantity="other">%1$d 台の Bluetooth デバイスが近くにあります</item>
+    </plurals>
+    <plurals name="others_count">
+        <item quantity="other">その他 %1$d 件</item>
+    </plurals>
+    <plurals name="other_networks">
+        <item quantity="other">その他の Wi-Fi %1$d 件</item>
+    </plurals>
+    <plurals name="other_bluetooth">
+        <item quantity="other">その他の Bluetooth デバイス %1$d 台</item>
+    </plurals>
+    <plurals name="updated_ago">
+        <item quantity="other">%1$d 秒前に更新</item>
     </plurals>
 
     <!-- Screens not built yet -->

@@ -31,3 +31,12 @@ import kotlinx.serialization.Serializable
 @Serializable data class MoreItemRoute(val item: MoreItem)
 
 enum class MoreItem { APPEARANCE, LANGUAGE, SWEEP_STEPS, MARKED_KNOWN, HOW_IT_WORKS, LIMITS, PRIVACY, ABOUT, LICENCES, FOUND_CAMERA }
+
+/** Hotspot or Bluetooth results. [sweep]: part of a sweep (then "Next" goes on), or the check run alone. */
+@Serializable data class NearbyResultsRoute(val check: Check, val place: Place, val sweep: Boolean)
+
+/** The plain networks or Bluetooth devices of the last scan. */
+@Serializable data class NearbyOthersRoute(val check: Check)
+
+/** 07 Find it: one hotspot or Bluetooth device of the last scan, by what Android calls it. */
+@Serializable data class FindItRoute(val check: Check, val id: String)

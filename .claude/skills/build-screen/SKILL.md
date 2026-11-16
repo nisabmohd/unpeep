@@ -16,4 +16,7 @@ description: Build one Keyhole screen from its design PNG so it matches exactly.
 5. Strings in `strings.xml` (all 7 languages; English first, then translate short). Plurals for counts.
 6. Results: words + colour (`Tag`). Never "safe". Every list has its empty state. Reports keep "Couldn't check".
 7. Run at 412 dp and compare side by side with the PNG; then dark, 200 % font, 360 dp width, TalkBack.
-8. `./gradlew :app:testPlayDebugUnitTest` (ProjectRulesTest), commit "Screen: <name> (NN)", tick TODO.md.
+8. Tests: one `ScreensTest` case per state of the screen (made-up state in, words and actions out), a `ComponentsTest`
+   case per new component, and a `SmokeTest` step that reaches the screen in the real app.
+9. `./gradlew :app:testPlayDebugUnitTest` (ProjectRulesTest) and `:app:connectedPlayDebugAndroidTest`, tick TODO.md.
+   Leave the commit to the owner's review.

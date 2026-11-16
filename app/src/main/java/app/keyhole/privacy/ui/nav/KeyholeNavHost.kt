@@ -21,6 +21,13 @@ import app.keyhole.privacy.AppContainer
 import app.keyhole.privacy.R
 import app.keyhole.privacy.data.Settings
 import app.keyhole.privacy.domain.Check
+import app.keyhole.privacy.domain.Place
+import app.keyhole.privacy.ui.nearby.FindItScreen
+import app.keyhole.privacy.ui.nearby.FindItViewModel
+import app.keyhole.privacy.ui.nearby.NearbyOthersScreen
+import app.keyhole.privacy.ui.nearby.NearbyOthersViewModel
+import app.keyhole.privacy.ui.nearby.NearbyResultsScreen
+import app.keyhole.privacy.ui.nearby.NearbyResultsViewModel
 import app.keyhole.privacy.ui.sweep.SweepScreen
 import app.keyhole.privacy.ui.sweep.SweepViewModel
 import app.keyhole.privacy.ui.wifi.DeviceScreen
@@ -39,6 +46,13 @@ import app.keyhole.privacy.ui.more.MoreViewModel
 import app.keyhole.privacy.ui.reports.ReportsScreen
 import app.keyhole.privacy.ui.reports.ReportsViewModel
 import app.keyhole.privacy.ui.theme.NavMotion
+
+/** The checks that scan and then show a list of results. */
+private val SCANS = setOf(Check.WIFI, Check.HOTSPOTS, Check.BLUETOOTH)
+
+/** Where a scan's results open. */
+private fun resultsRoute(check: Check, place: Place, sweep: Boolean): Any =
+    if (check == Check.WIFI) WifiResultsRoute(place, sweep) else NearbyResultsRoute(check, place, sweep)
 
 /** The three tabs, in nav order. */
 private val TABS = listOf<Any>(HomeRoute, ReportsRoute, MoreRoute)
@@ -83,25 +97,52 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                 }
                 composable<SweepRoute> { e ->
                     val route = e.toRoute<SweepRoute>()
-                    val vm = viewModel { SweepViewModel(route.place, route.at, null, container.settings, container.wifi) }
+                    val vm = viewModel { SweepViewModel(route.place, route.at, null, container.settings, container.wifi, container.hotspots, container.bluetooth) }
                     SweepScreen(
                         vm, onClose = nav::popBackStack,
-                        onWifiDone = { nav.navigate(WifiResultsRoute(route.place, sweep = true)) { popUpTo<SweepRoute> { inclusive = true } } },
+                        onStepDone = { check -> nav.navigate(resultsRoute(check, route.place, sweep = true)) { popUpTo<SweepRoute> { inclusive = true } } },
                         onFinished = nav::popBackStack,
                     )
                 }
                 composable<CheckRoute> { e ->
                     val route = e.toRoute<CheckRoute>()
-                    if (route.check == Check.WIFI) {
-                        val vm = viewModel { SweepViewModel(route.place, null, Check.WIFI, container.settings, container.wifi) }
+                    if (route.check in SCANS) {
+                        val vm = viewModel { SweepViewModel(route.place, null, route.check, container.settings, container.wifi, container.hotspots, container.bluetooth) }
                         SweepScreen(
                             vm, onClose = nav::popBackStack,
-                            onWifiDone = { nav.navigate(WifiResultsRoute(route.place, sweep = false)) { popUpTo<CheckRoute> { inclusive = true } } },
+                            onStepDone = { check -> nav.navigate(resultsRoute(check, route.place, sweep = false)) { popUpTo<CheckRoute> { inclusive = true } } },
                             onFinished = nav::popBackStack,
                         )
                     } else {
                         StandInScreen(stringResource(route.check.label), stringResource(route.place.label), onBack = nav::popBackStack)
                     }
+                }
+                composable<NearbyResultsRoute> { e ->
+                    val route = e.toRoute<NearbyResultsRoute>()
+                    val vm = viewModel { NearbyResultsViewModel(route.place, route.sweep, container.settings, container.nearby(route.check)) }
+                    NearbyResultsScreen(
+                        vm, onBack = nav::popBackStack,
+                        onScanAgain = {
+                            val again: Any = if (route.sweep) SweepRoute(route.place, route.check) else CheckRoute(route.check, route.place)
+                            nav.navigate(again) { popUpTo<NearbyResultsRoute> { inclusive = true } }
+                        },
+                        onFind = { nav.navigate(FindItRoute(route.check, it)) },
+                        onOthers = { nav.navigate(NearbyOthersRoute(route.check)) },
+                        onNext = { next ->
+                            if (next == null) nav.popBackStack()
+                            else nav.navigate(SweepRoute(route.place, next)) { popUpTo<NearbyResultsRoute> { inclusive = true } }
+                        },
+                    )
+                }
+                composable<NearbyOthersRoute> { e ->
+                    val route = e.toRoute<NearbyOthersRoute>()
+                    val vm = viewModel { NearbyOthersViewModel(container.nearby(route.check)) }
+                    NearbyOthersScreen(vm, onBack = nav::popBackStack, onFind = { nav.navigate(FindItRoute(route.check, it)) })
+                }
+                composable<FindItRoute> { e ->
+                    val route = e.toRoute<FindItRoute>()
+                    val vm = viewModel { FindItViewModel(route.id, container.nearby(route.check)) }
+                    FindItScreen(vm, onBack = nav::popBackStack)
                 }
                 composable<WifiResultsRoute> { e ->
                     val route = e.toRoute<WifiResultsRoute>()

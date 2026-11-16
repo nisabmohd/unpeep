@@ -2,7 +2,6 @@ package app.keyhole.privacy.ui.wifi
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -22,13 +21,13 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewModelScope
-import app.keyhole.privacy.BuildConfig
 import app.keyhole.privacy.R
 import app.keyhole.privacy.domain.KnownAs
 import app.keyhole.privacy.domain.Risk
 import app.keyhole.privacy.domain.WifiDevice
 import app.keyhole.privacy.scan.WifiSession
 import app.keyhole.privacy.ui.components.ButtonPair
+import app.keyhole.privacy.ui.reportWrongResult
 import app.keyhole.privacy.ui.components.CircleTone
 import app.keyhole.privacy.ui.components.DetailScreen
 import app.keyhole.privacy.ui.components.Grouped
@@ -86,7 +85,7 @@ fun DeviceScreen(vm: DeviceViewModel, onBack: () -> Unit, onFoundIt: () -> Unit,
             device.knownAs,
             onDismiss = { asking = false },
             onMark = { vm.mark(it); asking = false },
-            onReport = { open(context, BuildConfig.REPO_URL + ISSUES) },
+            onReport = { reportWrongResult(context) },
         )
     }
 }
@@ -175,13 +174,6 @@ private fun share(context: Context, text: String) {
     val send = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
     runCatching { context.startActivity(Intent.createChooser(send, null)) }
 }
-
-/** Opens a page in the phone's browser; Keyhole itself never loads it. */
-private fun open(context: Context, address: String) {
-    runCatching { context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(address))) }
-}
-
-private const val ISSUES = "/issues/new"
 
 @Preview
 @Composable

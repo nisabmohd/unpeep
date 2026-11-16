@@ -71,6 +71,12 @@ val WifiDevice.icon: Int
             R.string.kind_this_phone, R.string.kind_phone -> R.drawable.ic_smartphone
             R.string.kind_tv -> R.drawable.ic_tv
             R.string.kind_router -> R.drawable.ic_wifi
+            R.string.kind_computer -> R.drawable.ic_laptop
+            R.string.kind_printer -> R.drawable.ic_printer
+            R.string.kind_speaker -> R.drawable.ic_speaker
+            R.string.kind_console -> R.drawable.ic_gamepad
+            R.string.kind_storage -> R.drawable.ic_server
+            R.string.kind_home -> R.drawable.ic_home
             else -> R.drawable.ic_plug
         }
     }

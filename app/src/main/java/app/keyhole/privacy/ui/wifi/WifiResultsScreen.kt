@@ -41,6 +41,7 @@ import app.keyhole.privacy.ui.components.SummaryPart
 import app.keyhole.privacy.ui.components.SummaryTone
 import app.keyhole.privacy.ui.components.TopBarAction
 import app.keyhole.privacy.ui.label
+import app.keyhole.privacy.ui.next
 import app.keyhole.privacy.ui.theme.KeyholeTheme
 import app.keyhole.privacy.ui.theme.Space
 import app.keyhole.privacy.ui.theme.ThemeMode
@@ -64,18 +65,6 @@ class WifiResultsViewModel(place: Place, sweep: Boolean, settings: SettingsRepos
         WifiResultsState(w, if (sweep) steps.getOrNull(steps.indexOf(Check.WIFI) + 1) else null, loaded = true)
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), WifiResultsState(session.state.value))
 }
-
-/** "Next: hotspots": one sentence per step, so every language can word it its own way. */
-private val Check.next: Int
-    get() = when (this) {
-        Check.WIFI -> R.string.next_wifi
-        Check.HOTSPOTS -> R.string.next_hotspots
-        Check.BLUETOOTH -> R.string.next_bluetooth
-        Check.LENS -> R.string.next_lens
-        Check.INFRARED -> R.string.next_infrared
-        Check.MAGNET -> R.string.next_magnet
-        Check.CHECKLIST -> R.string.next_checklist
-    }
 
 /**
  * 04 Wi-Fi results: the note first (only the router answered, or nothing looks like a camera) · the count ·
@@ -119,8 +108,8 @@ fun WifiResultsContent(s: WifiResultsState, onBack: () -> Unit, onScanAgain: () 
         }
         val count = w.devices.size
         SummaryBox(
+            w.ssid?.let { pluralStringResource(R.plurals.devices_on_wifi, count, count, it) } ?: pluralStringResource(R.plurals.devices_on_this_wifi, count, count),
             count.toString(),
-            w.ssid?.let { pluralStringResource(R.plurals.devices_on_wifi, count, it) } ?: pluralStringResource(R.plurals.devices_on_this_wifi, count),
             buildList {
                 add(SummaryPart(likely.size, pluralStringResource(R.plurals.likely_cameras_count, likely.size, likely.size), SummaryTone.ALERT))
                 add(SummaryPart(look.size, pluralStringResource(R.plurals.worth_a_look_count, look.size, look.size), SummaryTone.WARNING))

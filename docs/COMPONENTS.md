@@ -7,7 +7,7 @@ per-screen look options. Two things that look alike are one component.
 |---|---|---|
 | `LensRings` | Lens.kt | the lens drawing: rings + glint, or a progress arc with its dot |
 | `LensStartButton` | Lens.kt | Home's Start (the only filled hero) |
-| `LensProgress` | Lens.kt | the progress lens: an arc and a big value over one line (sweep, Find it, Magnet) |
+| `LensProgress` | Lens.kt | the progress lens: an arc and a big value over one line (sweep); with a check's circle above a word or reading (Find it, Magnet) |
 | `LensHeader` / `EmptyState` | Lens.kt | first block of every detail screen; every empty list (lens header + line) |
 | `CheckRow` / `CheckIcon` | CheckRow.kt | the seven checks: Home (labels, scrolls), sweep and report (no labels) |
 | `Grouped` + `groupShape` | Rows.kt | a group of rows, 2 dp apart, 24/8 corners |
@@ -22,11 +22,12 @@ per-screen look options. Two things that look alike are one component.
 | `SummaryBox` | Rows.kt | the count on top of a result list: big number + line, one bar split by result, the legend in words |
 | `PrimaryButton` / `SecondaryButton` / `ButtonPair` | Controls.kt | one main action (an arrow after its label when it moves on); pair = secondary left, primary right |
 | `RoundIconButton` | Controls.kt | round tonal header buttons |
-| `Tag` (`TagKind`) | Controls.kt | Likely camera (red) · Worth a look (amber) · Known · Good |
+| `Tag` (`TagKind`) | Controls.kt | Likely camera (red) · Worth a look (amber) · Known (grey) · Good (accent: Nothing found, Stronger, 4 of 7) |
 | `Chip` | Controls.kt | place chips, filters (Red · Contrast), choices |
 | `ChoiceRow` | Controls.kt | pick-one row in sheets, radio on the right |
 | `KeyholeSwitch` / `SwitchRow` | Controls.kt | the one switch; the whole row toggles |
 | `Dock` | Controls.kt | docked bottom action area |
+| `SegmentMeter` | Meter.kt | the Find it meter: five pills lit by signal strength, Far · Right here underneath |
 | `TabTopBar` / `BackTopBar` | Bars.kt | tab title + actions / back + title + actions |
 | `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
@@ -34,5 +35,5 @@ per-screen look options. Two things that look alike are one component.
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |
 | `KeyholeSheet` / `SheetLine` | KeyholeSheet.kt | every choice, picker and confirm; a quiet line under its rows |
 
-To add (with their screens): `Meter` (Find it / Magnet bars), `Viewfinder` (lens/IR overlay + shutter),
+To add (with their screens): `BarMeter` (Magnet bars), `Viewfinder` (lens/IR overlay + shutter),
 `ChecklistItem` (Looks fine · Not sure · Skip), `PhotoThumb`, `ReorderRow` (dotted grip + switch), `ColorSwatch`.

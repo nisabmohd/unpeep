@@ -134,8 +134,13 @@ about updates. Copy, listing and PRIVACY.md say "never sends your data anywhere"
 
 ### Permissions (asked just in time, each with one line why)
 `INTERNET`, `ACCESS_NETWORK_STATE`, `ACCESS_WIFI_STATE`, `CHANGE_WIFI_MULTICAST_STATE`,
-`NEARBY_WIFI_DEVICES` (33+, `neverForLocation`), `ACCESS_FINE_LOCATION` (`maxSdkVersion 32`, for Wi-Fi scan results),
+`CHANGE_WIFI_STATE`, `ACCESS_FINE_LOCATION` + `ACCESS_COARSE_LOCATION` (Hotspots check only, see below),
 `BLUETOOTH_SCAN` (`neverForLocation`), `BLUETOOTH` + `BLUETOOTH_ADMIN` (`maxSdkVersion 30`), `CAMERA`.
+**Location (decided 16 Nov 2026):** Android gives Wi-Fi scan results (`startScan` / `getScanResults`) only to apps with
+precise location access and with Location switched on, on every version; `NEARBY_WIFI_DEVICES` does not cover them
+(checked on Android 15). So the Hotspots check asks for Location when it starts, with the line "Android only lists
+Wi-Fi names for apps with precise location access… It never reads where you are." Nothing else asks for it (Bluetooth
+only before Android 12), no code reads a position (`ProjectRulesTest`), and never in the background.
 No storage permission (SAF). Before raising targetSdk past 36, check Android's new local-network permission rules.
 
 ### Size and speed budgets (from Burrow's PERFORMANCE.md)

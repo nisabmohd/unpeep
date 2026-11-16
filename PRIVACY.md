@@ -18,7 +18,8 @@ Keyhole uses it only to talk to devices on your **local network** (private, link
 during a scan you start. The GitHub build also asks GitHub whether a new version exists; nothing about you is sent.
 
 ## Permissions and why
-- **Nearby devices / Wi-Fi** (location on Android 12 and older): to list devices and camera hotspots around you.
+- **Location** (Hotspots check only; Bluetooth too on Android 11 and older): Android only lists the Wi-Fi names
+  around you for apps with location access. Keyhole reads those names and never where you are.
   Keyhole never reads or stores where you are.
 - **Bluetooth:** to find trackers and Bluetooth cameras.
 - **Camera:** for the lens and infrared finders. Nothing is recorded unless you save a photo.

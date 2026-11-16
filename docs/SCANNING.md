@@ -19,11 +19,13 @@ The Wi-Fi's name shows only when Android gives it (it needs location access, whi
 Limits: Android 10+ hides MAC addresses; hotel Wi-Fi often isolates clients (only the router answers → Note).
 
 ## Hotspots
-`WifiManager.startScan()` + `scanResults`, names matched against `hotspots.json`. Throttle: ≤ 4 scans per 2 min;
+`WifiManager.startScan()` + `scanResults` (`scan/wifi/HotspotScanner.kt`), names matched against `hotspots.json`.
+Android gives these only to apps with precise location access and with Location on, on every version
+(`scan/Access.kt`); Keyhole reads the names, never a position. One row per name (its strongest access point). Throttle: ≤ 4 scans per 2 min;
 show "Updated Xs ago". Find it uses RSSI.
 
 ## Bluetooth
-`BluetoothLeScanner`, `neverForLocation`. Trackers by advertisement, not name: Apple Find My (company 0x004C, type
+`BluetoothLeScanner`, `neverForLocation` (`scan/ble/BleScanner.kt`); it listens for 8 s and never connects. Trackers by advertisement, not name: Apple Find My (company 0x004C, type
 0x12), Tile (FEED/FEEC), SmartTag (FD5A), Chipolo (FE33/FE65), Find Hub (FEAA frames). **Verify each on a real tag**
 before release. Cameras by name only, as a hint.
 

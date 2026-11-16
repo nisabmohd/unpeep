@@ -6,6 +6,9 @@ description: Check a Keyhole build end to end before calling work done or releas
 # Verify the app
 
 1. `./gradlew :app:testPlayDebugUnitTest :app:testFossDebugUnitTest :app:lintPlayDebug`
+   With a phone or emulator attached: `./gradlew :app:connectedPlayDebugAndroidTest` (`ComponentsTest`: every shared
+   component alone; `ScreensTest`: every built screen in each of its states, from made-up state; `SmokeTest`: the
+   real app walked through every built screen). A new component, screen state or screen gets its case there.
 2. `./gradlew :app:assemblePlayRelease` and check the APK size (< 5 MB) in `app/build/outputs/apk/play/release/`.
 3. Merged manifest (`app/build/intermediates/merged_manifest/...`): only the permissions in CLAUDE.md; foss has no
    `com.google` anything.

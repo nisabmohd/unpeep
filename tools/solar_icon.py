@@ -30,6 +30,9 @@ ICONS = {
     "ic_shield": "shield-check", "ic_shield_warning": "shield-warning", "ic_not_checked": "close-circle",
     "ic_smartphone": "smartphone", "ic_tv": "tv", "ic_plug": "plug-circle", "ic_walking": "walking",
     "ic_map_point": "map-point", "ic_mirror": "mirror", "ic_lamp": "lamp", "ic_hanger": "hanger-2",
+    # Kinds of known device, trackers, Find it
+    "ic_laptop": "laptop", "ic_printer": "printer", "ic_speaker": "speaker-minimalistic", "ic_gamepad": "gamepad",
+    "ic_server": "server", "ic_home": "home-angle", "ic_tag": "tag", "ic_arrow_down": "arrow-down", "ic_chat": "chat-round-line",
     # Places
     "ic_place_stay": "suitcase", "ic_place_trial_room": "hanger", "ic_place_washroom": "bath",
     "ic_place_office": "buildings", "ic_place_car": "bus",

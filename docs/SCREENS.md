@@ -6,11 +6,12 @@ PNG per screen in `design/screens/` (light; `HomeDark` for dark). Routes in `ui/
 |---|---|---|---|---|
 | 01 | Welcome | (first run) | todo | three lines on what it does + "Get started"; permissions asked later, just in time |
 | 02 | Home | `HomeRoute` | built | place chips · lens Start · "Check this room" + n checks · Or run one check · last report |
-| 03 | Sweep in progress | `SweepRoute(place, at)` · `CheckRoute(WIFI)` | built (Wi-Fi step) | check row (current ringed) · progress lens · found so far · Skip step; "Not on Wi-Fi" + Scan again; other steps say they are on their way |
+| 03 | Sweep in progress | `SweepRoute(place, at)` · `CheckRoute(check)` | built (Wi-Fi, Hotspots, Bluetooth steps) | check row (current ringed) · progress lens · found so far · Skip step; "Not on Wi-Fi" + Scan again; permission line + Allow / Open settings; Wi-Fi, Bluetooth or Location off + Scan again; the other steps say they are on their way |
 | 04 | Wi-Fi results | `WifiResultsRoute` | built | Note first (only the router answered / nothing looks like a camera) · count · Likely camera · Worth a look · known and not recognised behind one row each (`WifiOthersRoute`) · Next / Done |
 | 05 | Device | `DeviceRoute(ip)` | built | lens header + tags · Why (signs) · open ports, maker · Not a camera? · Found it? / Find its lens (both lead to stand-ins) · share as text |
 | 06 | Not a camera? | sheet | built | It's mine · Part of the room · Not sure · Report it (opens the repo's issues in the browser); marks live in memory until Room |
-| 07 | Find it | | todo | progress lens, Getting warmer meter, "Updated Xs ago" |
+| – | Hotspot / Bluetooth results | `NearbyResultsRoute(check)` | built (no PNG: as 04) | Note first · count + "Updated Xs ago" · Likely camera · Worth a look · Marked as known · the rest behind one row (`NearbyOthersRoute`) · Next / Done; a row opens Find it |
+| 07 | Find it | `FindItRoute(check, id)` | built | "Updated Xs ago" tag · progress lens with how near in words · name, kind, dBm · meter + Stronger / Weaker / Steady · walking note · "Not heard for a while" note · Not a camera? / Add to report |
 | 08 | Lens finder | `CheckRoute(LENS/INFRARED)` | stand-in | dark; filters No filter · Red · Contrast · 2×; Lens/Infrared; shutter saves a photo |
 | 08 | Magnet | `CheckRoute(MAGNET)` | stand-in | learning normal → µT above normal, 10 s bars, honesty Note, Set normal again / Add to report |
 | 09 | Checklist | `CheckRoute(CHECKLIST)` | stand-in | per place; Looks fine · Not sure (photo + note) · Skip |

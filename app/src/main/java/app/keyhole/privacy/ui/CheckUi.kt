@@ -68,3 +68,15 @@ val Place.checksPlural: Int
         Place.OFFICE -> R.plurals.checks_for_office
         Place.CAR -> R.plurals.checks_for_car
     }
+
+/** "Next: hotspots": one sentence per step, so every language can word it its own way. */
+val Check.next: Int
+    @StringRes get() = when (this) {
+        Check.WIFI -> R.string.next_wifi
+        Check.HOTSPOTS -> R.string.next_hotspots
+        Check.BLUETOOTH -> R.string.next_bluetooth
+        Check.LENS -> R.string.next_lens
+        Check.INFRARED -> R.string.next_infrared
+        Check.MAGNET -> R.string.next_magnet
+        Check.CHECKLIST -> R.string.next_checklist
+    }

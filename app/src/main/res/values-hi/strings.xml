@@ -193,12 +193,12 @@
         <item quantity="other">%1$d पहचाने नहीं गए</item>
     </plurals>
     <plurals name="devices_on_wifi">
-        <item quantity="one">डिवाइस %1$s पर</item>
-        <item quantity="other">डिवाइस %1$s पर</item>
+        <item quantity="one">%1$d डिवाइस %2$s पर</item>
+        <item quantity="other">%1$d डिवाइस %2$s पर</item>
     </plurals>
     <plurals name="devices_on_this_wifi">
-        <item quantity="one">डिवाइस इस वाई-फ़ाई पर</item>
-        <item quantity="other">डिवाइस इस वाई-फ़ाई पर</item>
+        <item quantity="one">%1$d डिवाइस इस वाई-फ़ाई पर</item>
+        <item quantity="other">%1$d डिवाइस इस वाई-फ़ाई पर</item>
     </plurals>
     <plurals name="known_devices">
         <item quantity="one">%1$d जाना-पहचाना डिवाइस</item>
@@ -211,6 +211,94 @@
     <plurals name="strong_signs">
         <item quantity="one">%1$d पक्का संकेत</item>
         <item quantity="other">%1$d पक्के संकेत</item>
+    </plurals>
+
+    <!-- Hotspots, Bluetooth and 07 Find it -->
+    <string name="checking_hotspots">कैमरा हॉटस्पॉट ढूँढे जा रहे हैं</string>
+    <string name="checking_bluetooth">ब्लूटूथ सुना जा रहा है</string>
+    <string name="nothing_flagged_yet">अभी देखने लायक कुछ नहीं।</string>
+    <string name="allow">अनुमति दें</string>
+    <string name="open_settings">सेटिंग खोलें</string>
+    <string name="perm_hotspots_title">आस-पास के वाई-फ़ाई नाम देखें</string>
+    <string name="perm_hotspots_line">Android वाई-फ़ाई के नाम सिर्फ़ सटीक लोकेशन की अनुमति वाले ऐप को दिखाता है, इसलिए Keyhole को पूछना पड़ता है। यह कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
+    <string name="perm_bluetooth_title">आस-पास के ब्लूटूथ डिवाइस देखें</string>
+    <string name="perm_bluetooth_line">ट्रैकर और ब्लूटूथ कैमरे ढूँढने के लिए। Keyhole कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
+    <string name="perm_denied_line">Android दोबारा नहीं पूछेगा। सेटिंग में अनुमतियाँ खोलकर अनुमति दें।</string>
+    <string name="block_wifi_off_title">वाई-फ़ाई बंद है</string>
+    <string name="block_wifi_off_line">आस-पास के हॉटस्पॉट सुनने के लिए वाई-फ़ाई चालू करें। किसी से जुड़ना ज़रूरी नहीं।</string>
+    <string name="block_bluetooth_off_title">ब्लूटूथ बंद है</string>
+    <string name="block_bluetooth_off_line">आस-पास के ट्रैकर सुनने के लिए ब्लूटूथ चालू करें।</string>
+    <string name="block_location_off_title">लोकेशन बंद है</string>
+    <string name="block_location_off_line">Android आस-पास की चीज़ें तभी दिखाता है जब लोकेशन चालू हो। Keyhole कभी नहीं पढ़ता कि आप कहाँ हैं।</string>
+    <string name="block_no_bluetooth_title">इस फ़ोन में ब्लूटूथ नहीं है</string>
+    <string name="block_no_bluetooth_line">Keyhole यह जाँच यहाँ नहीं चला सकता, इसलिए रिपोर्ट में लिखा जाएगा कि यह जाँचा नहीं गया।</string>
+    <string name="hotspots_none_title">आस-पास कुछ भी कैमरा हॉटस्पॉट जैसा नहीं दिखता</string>
+    <string name="hotspots_none_text">जो कैमरा पहले से किसी वाई-फ़ाई पर सेट है, वह अपना नाम प्रसारित नहीं करता। उन्हें वाई-फ़ाई जाँच ढूँढती है।</string>
+    <string name="bluetooth_none_title">आस-पास कुछ भी ट्रैकर या कैमरे जैसा नहीं दिखता</string>
+    <string name="bluetooth_none_text">जो ट्रैकर सिग्नल नहीं भेजता, या ऐसे भेजता है जिसे Keyhole अभी नहीं पहचानता, वह यहाँ नहीं दिखता।</string>
+    <string name="other_networks_line">आस-पास के राउटर और फ़ोन। यह किसी बात का संकेत नहीं है।</string>
+    <string name="other_networks_title">अन्य नेटवर्क</string>
+    <string name="other_bluetooth_line">ईयरबड, घड़ियाँ, टीवी वगैरह</string>
+    <string name="other_bluetooth_title">अन्य ब्लूटूथ डिवाइस</string>
+    <string name="kind_camera_hotspot">कैमरा हॉटस्पॉट</string>
+    <string name="kind_network">वाई-फ़ाई नेटवर्क</string>
+    <string name="kind_tracker">ट्रैकर</string>
+    <string name="kind_ble_camera">ब्लूटूथ कैमरा नाम</string>
+    <string name="kind_ble_other">ब्लूटूथ डिवाइस</string>
+    <string name="unnamed_device">बिना नाम का डिवाइस</string>
+    <string name="reason_hotspot">इसका नाम वैसा है जैसा %1$s कैमरे सेटअप के लिए इस्तेमाल करते हैं</string>
+    <string name="reason_hotspot_weak">इसका नाम वैसा है जैसा कैमरे और स्मार्ट प्लग दोनों इस्तेमाल करते हैं</string>
+    <string name="reason_tracker">ट्रैकर की तरह सिग्नल भेजता है: %1$s</string>
+    <string name="reason_ble_camera">इसका नाम कैमरे जैसा लगता है</string>
+    <string name="reason_network">आस-पास का एक वाई-फ़ाई नेटवर्क</string>
+    <string name="reason_ble_other">आस-पास का एक ब्लूटूथ डिवाइस</string>
+    <string name="signal_dbm">%1$d dBm</string>
+    <string name="updated_now">अभी अपडेट हुआ</string>
+    <string name="find_it">ढूँढें</string>
+    <string name="nearness_very_close">बिल्कुल यहीं</string>
+    <string name="nearness_very_close_line">1 मी. के अंदर</string>
+    <string name="nearness_close">पास</string>
+    <string name="nearness_close_line">लगभग 1–2 मी.</string>
+    <string name="nearness_near">आस-पास</string>
+    <string name="nearness_near_line">लगभग 3–6 मी.</string>
+    <string name="nearness_far">दूर</string>
+    <string name="nearness_far_line">6 मी. से ज़्यादा</string>
+    <string name="trend_stronger">तेज़</string>
+    <string name="trend_weaker">कमज़ोर</string>
+    <string name="trend_steady">स्थिर</string>
+    <string name="getting_warmer">पास आ रहे हैं</string>
+    <string name="getting_colder">दूर जा रहे हैं</string>
+    <string name="about_the_same">लगभग वैसा ही</string>
+    <string name="find_note_hotspots">धीरे चलें और फ़ोन का ऊपरी हिस्सा कमरे में घुमाएँ। Android सिग्नल को लगभग हर 30 से. में अपडेट करता है।</string>
+    <string name="find_note_bluetooth">धीरे चलें और फ़ोन का ऊपरी हिस्सा कमरे में घुमाएँ। सिग्नल लगभग हर सेकंड अपडेट होता है।</string>
+    <string name="find_lost_title">कुछ देर से सुनाई नहीं दिया</string>
+    <string name="find_lost_text">यह बंद या पहुँच से बाहर हो सकता है। आख़िरी सिग्नल दिखाया गया है।</string>
+    <string name="add_to_report">रिपोर्ट में जोड़ें</string>
+    <string name="remove_from_report">रिपोर्ट से हटाएँ</string>
+    <string name="added_to_report">रिपोर्ट में जोड़ा गया</string>
+    <plurals name="networks_nearby">
+        <item quantity="one">%1$d वाई-फ़ाई नेटवर्क आस-पास</item>
+        <item quantity="other">%1$d वाई-फ़ाई नेटवर्क आस-पास</item>
+    </plurals>
+    <plurals name="bluetooth_nearby">
+        <item quantity="one">%1$d ब्लूटूथ डिवाइस आस-पास</item>
+        <item quantity="other">%1$d ब्लूटूथ डिवाइस आस-पास</item>
+    </plurals>
+    <plurals name="others_count">
+        <item quantity="one">%1$d अन्य</item>
+        <item quantity="other">%1$d अन्य</item>
+    </plurals>
+    <plurals name="other_networks">
+        <item quantity="one">%1$d अन्य नेटवर्क</item>
+        <item quantity="other">%1$d अन्य नेटवर्क</item>
+    </plurals>
+    <plurals name="other_bluetooth">
+        <item quantity="one">%1$d अन्य ब्लूटूथ डिवाइस</item>
+        <item quantity="other">%1$d अन्य ब्लूटूथ डिवाइस</item>
+    </plurals>
+    <plurals name="updated_ago">
+        <item quantity="one">%1$d से. पहले अपडेट</item>
+        <item quantity="other">%1$d से. पहले अपडेट</item>
     </plurals>
 
     <!-- Screens not built yet -->

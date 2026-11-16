@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.TextAutoSize
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -39,6 +41,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import app.keyhole.privacy.R
 import app.keyhole.privacy.ui.theme.Alpha
+import app.keyhole.privacy.ui.theme.ButtonMinText
 import app.keyhole.privacy.ui.theme.KeyholeType
 import app.keyhole.privacy.ui.theme.LensSize
 import app.keyhole.privacy.ui.theme.Shapes
@@ -127,10 +130,11 @@ fun LensStartButton(label: String, onClick: () -> Unit, modifier: Modifier = Mod
 
 /**
  * The progress lens (sweep, Find it, Magnet): the arc on the middle ring and, in the core, a big value over a
- * small line ("11" over "of 18"; "+14" over "µT above normal").
+ * small line ("11" over "of 18"). With [icon] (Find it, Magnet: the check's circle), the value is a word or a
+ * reading under it ("Close" over "about 1–2 m"; "+14 µT" over "above normal") in the title size, so all three fit.
  */
 @Composable
-fun LensProgress(progress: Float, value: String, line: String, modifier: Modifier = Modifier, description: String = "$value $line") {
+fun LensProgress(progress: Float, value: String, line: String, modifier: Modifier = Modifier, description: String = "$value $line", icon: (@Composable () -> Unit)? = null) {
     val c = MaterialTheme.colorScheme
     LensRings(LensSize.progress, LensSize.progressCore, modifier.clearAndSetSemantics { contentDescription = description }, progress = progress) {
         Column(
@@ -140,8 +144,17 @@ fun LensProgress(progress: Float, value: String, line: String, modifier: Modifie
         ) {
             CappedFontScale {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(value, style = KeyholeType.display, color = c.onSurface, maxLines = 1, softWrap = false)
-                    Text(line, style = KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 2, textAlign = TextAlign.Center)
+                    if (icon != null) {
+                        icon()
+                        Spacer(Modifier.height(Space.small))
+                    }
+                    // One line that shrinks to fit the core, never clipped: "Right here", "+14 µT", long translations.
+                    val style = if (icon != null) KeyholeType.title else KeyholeType.display
+                    BasicText(
+                        value, style = style.copy(color = c.onSurface, textAlign = TextAlign.Center), maxLines = 1, softWrap = false,
+                        autoSize = TextAutoSize.StepBased(minFontSize = ButtonMinText, maxFontSize = style.fontSize),
+                    )
+                    Text(line, style = if (icon != null) KeyholeType.caption else KeyholeType.supporting, color = c.onSurfaceVariant, maxLines = 2, textAlign = TextAlign.Center)
                 }
             }
         }

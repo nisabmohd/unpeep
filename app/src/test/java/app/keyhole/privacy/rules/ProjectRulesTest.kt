@@ -83,16 +83,23 @@ class ProjectRulesTest {
     /** Only the permissions the plan lists (docs/PLAN.md § Permissions), in every manifest. */
     @Test fun onlyThePlannedPermissions() {
         val allowed = setOf(
-            "INTERNET", "ACCESS_NETWORK_STATE", "ACCESS_WIFI_STATE", "CHANGE_WIFI_STATE", "CHANGE_WIFI_MULTICAST_STATE", "NEARBY_WIFI_DEVICES",
-            "ACCESS_FINE_LOCATION", "BLUETOOTH_SCAN", "BLUETOOTH", "BLUETOOTH_ADMIN", "CAMERA",
+            "INTERNET", "ACCESS_NETWORK_STATE", "ACCESS_WIFI_STATE", "CHANGE_WIFI_STATE", "CHANGE_WIFI_MULTICAST_STATE",
+            "ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION", "BLUETOOTH_SCAN", "BLUETOOTH", "BLUETOOTH_ADMIN", "CAMERA",
         )
         val found = src.walkTopDown().filter { it.name == "AndroidManifest.xml" }.flatMap { f ->
             Regex("""uses-permission[^>]*android:name="android\.permission\.([A-Z_]+)"""").findAll(f.readText()).map { it.groupValues[1] }.filter { it !in allowed }.map { "${rel(f)}: $it" }
         }.toList()
         assertNone("a permission the plan doesn't list", found)
         val m = File(main, "AndroidManifest.xml").readText()
-        assertTrue("location is only for Wi-Fi scan results before Android 13", Regex("""ACCESS_FINE_LOCATION"\s+android:maxSdkVersion="32"""").containsMatchIn(m))
-        assertTrue("Bluetooth and nearby Wi-Fi never derive location", Regex("neverForLocation").findAll(m).count() == 2)
+        // Location is declared for the Hotspots check alone (Android lists Wi-Fi names to no app without it, on any
+        // version: decided 2026-11-16). It is asked for only there, and only through scan/Access.kt.
+        assertTrue("precise and approximate location are declared together, or Android 12+ ignores the request", "ACCESS_FINE_LOCATION\"" in m && "ACCESS_COARSE_LOCATION\"" in m)
+        assertTrue("never location in the background", "BACKGROUND_LOCATION" !in m)
+        assertTrue("Bluetooth never derives location", Regex("""BLUETOOTH_SCAN"\s+android:usesPermissionFlags="neverForLocation"""").containsMatchIn(m))
+        val asks = allKotlin.filter { f -> f.readLines().any { "Manifest.permission.ACCESS_" in code(it) } }.map(::rel)
+        assertEquals("location permissions are named in scan/Access.kt only", listOf("app/src/main/java/app/keyhole/privacy/scan/Access.kt"), asks)
+        // No code reads a position: the permission is only what Android wants before it lists Wi-Fi names.
+        assertNone("code that reads the phone's position", violations(allKotlin) { _, _, l -> Regex("""getLastKnownLocation|requestLocationUpdates|getCurrentLocation|FusedLocation|LocationListener|\.latitude|\.longitude""").containsMatchIn(code(l)) })
         assertTrue("no backups", "android:allowBackup=\"false\"" in m)
     }
 

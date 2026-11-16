@@ -19,16 +19,28 @@ Tick it and commit after each one.
 - [x] mDNS (`NsdManager`), SSDP + device XML, ONVIF WS-Discovery (MulticastLock), ports, RTSP OPTIONS, HTTP banner
 - [x] Screen 03 Sweep in progress · 04 Wi-Fi results · 05 Device · 06 Not a camera? (sheet)
 - [x] Client-isolation note
+- [x] Icons for known kinds (computer, speaker, printer, console, storage, smart home) via `tools/solar_icon.py`
 - [ ] Test on home Wi-Fi, a phone hotspot and the test camera (so far: emulator Wi-Fi with a stand-in camera on the host)
 - [ ] Design review: "Other devices" list (behind "n known devices"), the "Not on Wi-Fi" state, the "not recognised"
-      group and legend entry, the report line's icon in 06 (the PNG draws a chat bubble; the set has `ic_mail`)
-- [ ] Icons for known kinds (computer, speaker, printer, console, storage) via `tools/solar_icon.py`; they use the plug for now
+      group and legend entry
 - [ ] "Marked as known" is kept in memory until Room (Week 5); More › Marked as known still counts 0
 
 ## Week 3 · Hotspots + Bluetooth
-- [ ] Wi-Fi scan results + hotspot patterns; throttle (4 per 2 min) with "Updated Xs ago"
-- [ ] BLE: trackers by service data / Apple Find My frame, cameras by name; verify on real tags
-- [ ] Screen 07 Find it
+- [x] Wi-Fi scan results + hotspot patterns; throttle (4 per 2 min) with "Updated Xs ago"
+- [x] BLE: trackers by service data / Apple Find My frame, cameras by name (`BleScanner`, `judgeBle`)
+- [x] Screen 07 Find it
+- [x] Permission asked when the check starts, one line why; "Open settings" after Don't allow; Wi-Fi / Bluetooth /
+      Location off and "no Bluetooth" states
+- [x] Location for Hotspots on every Android version (Android's rule for Wi-Fi names; decided 16 Nov 2026, PLAN.md § Permissions)
+- [x] On-device tests: `ComponentsTest`, `ScreensTest`, `SmokeTest` (`./gradlew :app:connectedPlayDebugAndroidTest`)
+- [ ] Verify each tracker family on a real tag (AirTag, Tile, SmartTag, Chipolo, Find Hub); check whether
+      `neverForLocation` hides Find Hub (Eddystone) frames (docs/LIMITS.md)
+- [ ] Test Hotspots near a real camera hotspot (V380 / A9) and Find it while walking
+- [ ] Design review: Hotspot and Bluetooth results (built as 04), their "Other networks / Bluetooth devices" lists,
+      the permission and switched-off states, Find it's "Not heard for a while" note and Weaker / Steady tags
+- [ ] Design review: 16 Privacy says "Location, Android 12 and older" and "Nearby devices and Wi-Fi"; Hotspots now
+      asks for Location on every version, so that card needs new words before Week 6
+- [ ] "Add to report" is kept in memory until the report exists (Week 5)
 
 ## Week 4 · Lens, Infrared, Magnet
 - [ ] Ask: CameraX or Camera2 (CLAUDE.md › Ask before adding any dependency)

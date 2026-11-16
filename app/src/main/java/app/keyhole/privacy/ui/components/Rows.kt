@@ -22,6 +22,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -32,6 +33,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
@@ -249,12 +251,14 @@ enum class SummaryTone { ALERT, WARNING, NEUTRAL }
 data class SummaryPart(val count: Int, val label: String, val tone: SummaryTone)
 
 /**
- * The count at the top of a result list: a big number with its line ("18 devices on SeaView_Guest"), one bar split
- * by [parts], and what each colour means in words underneath. Never colour alone.
+ * The count at the top of a result list: one sentence whose number is drawn big ("18 devices on SeaView_Guest";
+ * the sentence comes whole from strings.xml, so each language puts the number where it belongs), one bar split by
+ * [parts], and what each colour means in words underneath. Never colour alone. [count] is the number as it appears
+ * in [text].
  */
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun SummaryBox(count: String, line: String, parts: List<SummaryPart>, modifier: Modifier = Modifier) {
+fun SummaryBox(text: String, count: String, parts: List<SummaryPart>, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
     val warning = warningColors().solid
     fun colour(tone: SummaryTone) = when (tone) {
@@ -262,14 +266,19 @@ fun SummaryBox(count: String, line: String, parts: List<SummaryPart>, modifier: 
         SummaryTone.WARNING -> warning
         SummaryTone.NEUTRAL -> c.surfaceContainerHighest
     }
+    val big = KeyholeType.display.toSpanStyle().copy(color = c.onSurface)
+    val sentence = remember(text, count, big) {
+        buildAnnotatedString {
+            append(text)
+            val at = text.indexOf(count)
+            if (count.isNotEmpty() && at >= 0) addStyle(big, at, at + count.length)
+        }
+    }
     Column(
         modifier.fillMaxWidth().clip(Shapes.surface).background(c.surfaceContainerLow).padding(Space.card).semantics(mergeDescendants = true) {},
         verticalArrangement = Arrangement.spacedBy(Space.block),
     ) {
-        FlowRow(horizontalArrangement = Arrangement.spacedBy(Space.inline), itemVerticalAlignment = Alignment.Bottom) {
-            Text(count, style = KeyholeType.display, color = c.onSurface)
-            Text(line, style = KeyholeType.body, color = c.onSurfaceVariant, modifier = Modifier.padding(bottom = Space.small))
-        }
+        Text(sentence, style = KeyholeType.body, color = c.onSurfaceVariant)
         // One segment per colour: the grey ones (known, not recognised) are one stretch of the bar.
         val shown = parts.filter { it.count > 0 }.groupBy { it.tone }.map { (tone, same) -> SummaryPart(same.sumOf { it.count }, "", tone) }
         Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(Space.small)) {

@@ -46,12 +46,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import app.keyhole.privacy.R
 import app.keyhole.privacy.ui.theme.Alpha
 import app.keyhole.privacy.ui.theme.ButtonMinText
-import app.keyhole.privacy.ui.theme.Hues
 import app.keyhole.privacy.ui.theme.KeyholeType
 import app.keyhole.privacy.ui.theme.Shapes
 import app.keyhole.privacy.ui.theme.Size
 import app.keyhole.privacy.ui.theme.Space
-import app.keyhole.privacy.ui.theme.checkColors
 import app.keyhole.privacy.ui.theme.warningColors
 
 /*
@@ -146,7 +144,7 @@ fun RoundIconButton(icon: Painter, label: String, onClick: () -> Unit, modifier:
     ) { Icon(icon, contentDescription = label, modifier = Modifier.size(Size.icon)) }
 }
 
-/** What a tag says. Red only for a likely camera; amber for worth a look; grey for known and plain facts. */
+/** What a tag says. Red only for a likely camera; amber for worth a look; grey for known and plain facts; the accent for good news and progress ("Nothing found", "Stronger", "4 of 7"). */
 enum class TagKind { LIKELY_CAMERA, WORTH_A_LOOK, KNOWN, GOOD }
 
 /** A result in words, with its colour: a 26 dp pill. Never colour alone. */
@@ -157,7 +155,7 @@ fun Tag(text: String, kind: TagKind, modifier: Modifier = Modifier, icon: Painte
         TagKind.LIKELY_CAMERA -> c.errorContainer to c.onErrorContainer
         TagKind.WORTH_A_LOOK -> warningColors().let { it.container to it.onContainer }
         TagKind.KNOWN -> c.surfaceContainerHigh to c.onSurfaceVariant
-        TagKind.GOOD -> checkColors(Hues.HOTSPOTS).let { it.container to it.onContainer }
+        TagKind.GOOD -> c.primaryContainer to c.onPrimaryContainer
     }
     Row(
         modifier.heightIn(min = Size.tag).clip(Shapes.pill).background(bg).padding(horizontal = Space.block, vertical = Space.small),

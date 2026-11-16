@@ -9,4 +9,7 @@ The report's **Couldn't check** section draws from this list.
 - Trackers that don't advertise, or advertise in a way not in `ble.json` yet.
 - Phones with a strong IR filter can't see infrared LEDs (the remote test tells you).
 - Wi-Fi scans are limited by Android to 4 every 2 minutes.
+- Hotspots need Location allowed and switched on (Android's rule for Wi-Fi names); without it the check can't run.
+- With `neverForLocation`, Android may hide beacon-style Bluetooth frames (Eddystone, so possibly Find Hub tags) from
+  the scan. Verify on real tags before release.
 - The magnet reacts to any electronics, magnets and wiring.
