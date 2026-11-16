@@ -62,6 +62,7 @@ class SettingsRepository(private val store: DataStore<Preferences>) {
     suspend fun setHelpRegion(code: String?) = store.edit { if (code == null) it.remove(HELP_REGION) else it[HELP_REGION] = code }
     suspend fun setMagnetBeep(on: Boolean) = store.edit { it[MAGNET_BEEP] = on }
     suspend fun setSeesInfrared(sees: Boolean) = store.edit { it[SEES_IR] = sees }
+    suspend fun clearSeesInfrared() = store.edit { it.remove(SEES_IR) }
 
     companion object {
         private val THEME = stringPreferencesKey("theme")

@@ -325,6 +325,76 @@
     <string name="remove_from_report">Remove from report</string>
     <string name="added_to_report">Added to report</string>
 
+    <!-- 08 Lens finder and infrared -->
+    <string name="lens_finder">Lens finder</string>
+    <string name="infrared_finder">Infrared finder</string>
+    <string name="next">Next</string>
+    <string name="filter_none">No filter</string>
+    <string name="filter_red">Red</string>
+    <string name="filter_contrast">Contrast</string>
+    <string name="zoom_2x" translatable="false">2×</string>
+    <plurals name="spots_count">
+        <item quantity="one">%1$d spot</item>
+        <item quantity="other">%1$d spots</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="one">%1$d possible lens ringed</item>
+        <item quantity="other">%1$d possible lenses ringed</item>
+    </plurals>
+    <string name="look_here">Look here</string>
+    <string name="lens_hint">Lights off, move slowly. Glass and screws shine too. Save a photo of any spot you want to check.</string>
+    <string name="infrared_hint">Lights off. Infrared lights show as purple or white dots that stay put. Save a photo of any you want to check.</string>
+    <string name="camera_preview">Camera picture</string>
+    <string name="take_photo">Save a photo</string>
+    <string name="torch">Torch</string>
+    <string name="tips">Tips</string>
+    <plurals name="photos_saved">
+        <item quantity="one">%1$d photo saved for the report</item>
+        <item quantity="other">%1$d photos saved for the report</item>
+    </plurals>
+    <string name="photo_not_saved">The photo couldn\'t be saved. The phone may be full.</string>
+    <string name="perm_camera_title">Use the camera to look for lenses</string>
+    <string name="perm_camera_line">For the lens and infrared finders. Nothing is recorded: only the photos you take are kept, on this phone.</string>
+    <string name="camera_problem_title">Can\'t open the camera</string>
+    <string name="camera_in_use_line">Another app may be using it. Close that app and try again.</string>
+    <string name="camera_failed_line">Android didn\'t let Keyhole use the camera this time.</string>
+    <string name="try_again">Try again</string>
+    <string name="no_camera_title">This phone has no camera Keyhole can use</string>
+    <string name="tips_title">How to look for a lens</string>
+    <string name="tips_line">Rings possible lenses. Look closely to be sure.</string>
+    <string name="tip_dark">Turn the lights off and close the curtains</string>
+    <string name="tip_slow">Move slowly, holding the phone at eye level</string>
+    <string name="tip_places">Look at smoke detectors, clocks, chargers, vents, frames and mirrors</string>
+    <string name="tip_glint">A lens shines back as a small, sharp dot that stays put as you move</string>
+    <string name="tip_infrared">Infrared uses the front camera: many rear cameras block infrared light</string>
+    <string name="ir_test_title">Can this phone see infrared?</string>
+    <string name="ir_test_line">Point a TV remote at the screen and press any button.</string>
+    <string name="ir_saw">I saw a light</string>
+    <string name="ir_saw_line">This phone can see infrared lights</string>
+    <string name="ir_not_seen">No light</string>
+    <string name="ir_not_seen_line">This phone\'s camera blocks infrared</string>
+    <string name="ir_blocked_title">This phone may not see infrared</string>
+    <string name="ir_blocked_text">Its camera blocks most infrared light, so infrared lights may not show. The lens finder still works.</string>
+    <string name="test_again">Test again</string>
+
+    <!-- 08 Magnet -->
+    <string name="magnet_learning_title">Learning this room\'s normal</string>
+    <string name="magnet_learning_line">Hold the phone still for a moment, away from other things</string>
+    <string name="magnet_learning_value">%1$d%%</string>
+    <string name="magnet_learning_unit">learned</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">above normal</string>
+    <string name="magnet_jumped_title">Electronics nearby</string>
+    <string name="magnet_normal_title">About normal</string>
+    <string name="magnet_now_line">Normal %1$d µT · now %2$d µT</string>
+    <string name="last_10_seconds">Last 10 seconds</string>
+    <string name="magnet_jumped">Jumped</string>
+    <string name="magnet_chart">Readings of the last 10 seconds, the newest %1$d µT above normal</string>
+    <string name="magnet_note">Move the top of your phone slowly along clocks, chargers and smoke detectors. Speakers, magnets and wiring make it jump too, so a jump means electronics inside, not a camera.</string>
+    <string name="set_normal_again">Set normal again</string>
+    <string name="beep_on_jump">Beep on a jump</string>
+    <string name="no_magnet_title">This phone has no magnet sensor</string>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">This screen is on its way.</string>
     <string name="stand_in_line_for">%1$s · this screen is on its way.</string>

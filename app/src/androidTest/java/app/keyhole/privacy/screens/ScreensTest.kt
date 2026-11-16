@@ -3,6 +3,7 @@ package app.keyhole.privacy.screens
 import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
@@ -30,6 +31,11 @@ import app.keyhole.privacy.domain.WifiStatus
 import app.keyhole.privacy.plural
 import app.keyhole.privacy.setKeyholeContent
 import app.keyhole.privacy.text
+import app.keyhole.privacy.ui.lens.CameraStatus
+import app.keyhole.privacy.ui.lens.LensContent
+import app.keyhole.privacy.ui.lens.LensState
+import app.keyhole.privacy.ui.magnet.MagnetContent
+import app.keyhole.privacy.ui.magnet.MagnetState
 import app.keyhole.privacy.ui.nearby.FindItContent
 import app.keyhole.privacy.ui.nearby.FindItState
 import app.keyhole.privacy.ui.nearby.NearbyOthersContent
@@ -390,5 +396,155 @@ class ScreensTest {
     @Test fun findItWithNothingToFindDrawsNothing() {
         rule.setKeyholeContent { FindItContent(FindItState(loaded = true), {}, {}, {}) }
         rule.onAllNodesWithText(text(R.string.find_it)).assertCountEquals(0)
+    }
+
+    // --- 08 Lens finder and Infrared ------------------------------------------------------------------
+
+    private val backCamera = app.keyhole.privacy.optics.CameraSpec("0", app.keyhole.privacy.optics.Facing.BACK, 90, true, android.util.Size(1440, 1080), android.util.Size(320, 240), 8f, null, 2)
+    private val noTorchNoZoom = backCamera.copy(hasTorch = false, maxZoom = 1f)
+
+    private fun lens(s: LensState, taps: MutableList<String> = mutableListOf(), settingsOnly: Boolean = false) = rule.setKeyholeContent {
+        app.keyhole.privacy.ui.theme.ViewfinderTheme {
+            LensContent(
+                s, onBack = { taps += "back" }, onNext = { taps += "next" }, onMode = { taps += "mode:$it" }, onFilter = { taps += "filter:$it" },
+                onZoom = { taps += "zoom" }, onTorch = { taps += "torch" }, onTips = { taps += "tips" }, onShutter = { taps += "shutter" },
+                onAllow = { taps += "allow" }, settingsOnly = settingsOnly, onRetry = { taps += "retry" },
+            )
+        }
+    }
+
+    @Test fun theLensFinderOffersFiltersZoomTorchAndTheShutter() {
+        val taps = mutableListOf<String>()
+        lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, spots = listOf(app.keyhole.privacy.optics.Spot(0.5f, 0.5f, 0.01f, 250)), photos = 2), taps)
+        rule.onNodeWithText(text(R.string.lens_finder)).assertIsDisplayed()
+        rule.onNodeWithText(plural(R.plurals.spots_count, 1, 1)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.lens_hint)).assertIsDisplayed()
+        rule.onNodeWithText(plural(R.plurals.photos_saved, 2, 2)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.filter_red)).performClick()
+        rule.onNodeWithText(text(R.string.zoom_2x)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.torch)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.take_photo)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.tips)).performClick()
+        rule.onNodeWithText(text(R.string.check_infrared)).performClick()
+        assertEquals(listOf("filter:RED", "zoom", "torch", "shutter", "tips", "mode:INFRARED"), taps)
+        // Not part of a sweep: no Next.
+        rule.onAllNodesWithText(text(R.string.next)).assertCountEquals(0)
+    }
+
+    @Test fun aCameraWithoutTorchOrZoomHidesThem() {
+        lens(LensState(status = CameraStatus.RUNNING, spec = noTorchNoZoom))
+        rule.onAllNodesWithText(text(R.string.zoom_2x)).assertCountEquals(0)
+        rule.onAllNodesWithContentDescription(text(R.string.torch)).assertCountEquals(0)
+    }
+
+    @Test fun infraredHasNoTorchAndWarnsWhenThePhoneCantSeeIt() {
+        lens(LensState(mode = Check.INFRARED, status = CameraStatus.RUNNING, spec = backCamera, seesInfrared = false))
+        rule.onNodeWithText(text(R.string.infrared_finder)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.infrared_hint)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.ir_blocked_title), useUnmergedTree = true).assertIsDisplayed()
+        rule.onAllNodesWithContentDescription(text(R.string.torch)).assertCountEquals(0)
+    }
+
+    @Test fun whileTheCameraStartsTheShutterWaits() {
+        val taps = mutableListOf<String>()
+        lens(LensState(status = CameraStatus.STARTING, spec = backCamera), taps)
+        rule.onNodeWithContentDescription(text(R.string.take_photo)).performClick()
+        assertTrue(taps.isEmpty())
+    }
+
+    @Test fun withoutTheCameraPermissionItSaysWhyAndAsks() {
+        val taps = mutableListOf<String>()
+        lens(LensState(status = CameraStatus.NEEDS_PERMISSION), taps)
+        rule.onNodeWithText(text(R.string.perm_camera_title)).assertIsDisplayed()
+        rule.onAllNodesWithContentDescription(text(R.string.take_photo)).assertCountEquals(0)
+        rule.onNodeWithText(text(R.string.allow)).performClick()
+        assertEquals(listOf("allow"), taps)
+    }
+
+    @Test fun afterDontAllowItOpensSettings() {
+        lens(LensState(status = CameraStatus.NEEDS_PERMISSION), settingsOnly = true)
+        rule.onNodeWithText(text(R.string.open_settings)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.perm_denied_line)).assertIsDisplayed()
+    }
+
+    @Test fun aCameraInUseOffersTryAgainAndNoCameraOffersNothing() {
+        val taps = mutableListOf<String>()
+        lens(LensState(status = CameraStatus.IN_USE, spec = backCamera), taps)
+        rule.onNodeWithText(text(R.string.camera_in_use_line)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.try_again)).performClick()
+        assertEquals(listOf("retry"), taps)
+    }
+
+    @Test fun aPhoneWithNoCameraSaysSoAndCanStillSwitchMode() {
+        lens(LensState(status = CameraStatus.NO_CAMERA))
+        rule.onNodeWithText(text(R.string.no_camera_title)).assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.try_again)).assertCountEquals(0)
+        rule.onNodeWithText(text(R.string.check_infrared)).assertIsDisplayed()
+    }
+
+    @Test fun inASweepTheLensFinderClosesAndGoesOn() {
+        val taps = mutableListOf<String>()
+        lens(LensState(status = CameraStatus.RUNNING, spec = backCamera, sweep = true, next = Check.INFRARED), taps)
+        rule.onNodeWithText(text(R.string.next)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        assertEquals(listOf("next", "back"), taps)
+    }
+
+    // --- 08 Magnet ------------------------------------------------------------------------------------
+
+    private fun magnet(s: MagnetState, taps: MutableList<String> = mutableListOf()) = rule.setKeyholeContent {
+        MagnetContent(s, onBack = { taps += "back" }, onNext = { taps += "next" }, onBeep = { taps += "beep" }, onSetNormal = { taps += "normal" }, onAdd = { taps += "add" })
+    }
+
+    @Test fun whileLearningTheMagnetSaysSoAndCantBeAdded() {
+        val taps = mutableListOf<String>()
+        magnet(MagnetState(learned = 0.4f), taps)
+        rule.onNodeWithText(text(R.string.magnet_learning_title)).assertIsDisplayed()
+        rule.onNodeWithContentDescription("${text(R.string.magnet_learning_value, 40)} ${text(R.string.magnet_learning_unit)}").assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.add_to_report)).performClick()
+        rule.onNodeWithText(text(R.string.set_normal_again)).performClick()
+        assertTrue(taps.isEmpty())
+    }
+
+    @Test fun aJumpSaysElectronicsNeverCamera() {
+        magnet(MagnetState(learning = false, learned = 1f, above = 14, normal = 48, now = 62, jumped = true, bars = listOf(1, 2, 14)))
+        rule.onNodeWithText(text(R.string.magnet_jumped_title)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.magnet_now_line, 48, 62)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.magnet_jumped)).assertIsDisplayed()
+        rule.onNodeWithContentDescription("${text(R.string.magnet_above_value, 14)} ${text(R.string.magnet_above_line)}").assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.magnet_note), useUnmergedTree = true).performScrollTo().assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.risk_likely_camera)).assertCountEquals(0)
+    }
+
+    @Test fun aSteadyFieldIsAboutNormalAndCanBeAddedOnce() {
+        val taps = mutableListOf<String>()
+        magnet(MagnetState(learning = false, learned = 1f, above = 2, normal = 48, now = 50), taps)
+        rule.onNodeWithText(text(R.string.magnet_normal_title)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.trend_steady)).assertIsDisplayed()
+        rule.onNodeWithText(text(R.string.add_to_report)).performClick()
+        rule.onNodeWithText(text(R.string.set_normal_again)).performClick()
+        rule.onNodeWithContentDescription(text(R.string.beep_on_jump)).performClick()
+        assertEquals(listOf("add", "normal", "beep"), taps)
+    }
+
+    @Test fun anAddedReadingSaysSoAndCantBeAddedAgain() {
+        val taps = mutableListOf<String>()
+        magnet(MagnetState(learning = false, learned = 1f, above = 20, normal = 48, now = 68, jumped = true, added = true), taps)
+        rule.onNodeWithText(text(R.string.added_to_report)).performClick()
+        assertTrue(taps.isEmpty())
+    }
+
+    @Test fun aPhoneWithNoMagnetSensorSaysSoWithNoButtons() {
+        magnet(MagnetState(available = false))
+        rule.onNodeWithText(text(R.string.no_magnet_title)).assertIsDisplayed()
+        rule.onAllNodesWithText(text(R.string.add_to_report)).assertCountEquals(0)
+        rule.onAllNodesWithContentDescription(text(R.string.beep_on_jump)).assertCountEquals(0)
+    }
+
+    @Test fun inASweepTheMagnetGoesOn() {
+        val taps = mutableListOf<String>()
+        magnet(MagnetState(sweep = true, next = Check.CHECKLIST), taps)
+        rule.onNodeWithText(text(R.string.next)).performClick()
+        assertEquals(listOf("next"), taps)
     }
 }

@@ -22,6 +22,10 @@ import app.keyhole.privacy.R
 import app.keyhole.privacy.data.Settings
 import app.keyhole.privacy.domain.Check
 import app.keyhole.privacy.domain.Place
+import app.keyhole.privacy.ui.lens.LensScreen
+import app.keyhole.privacy.ui.lens.LensViewModel
+import app.keyhole.privacy.ui.magnet.MagnetScreen
+import app.keyhole.privacy.ui.magnet.MagnetViewModel
 import app.keyhole.privacy.ui.nearby.FindItScreen
 import app.keyhole.privacy.ui.nearby.FindItViewModel
 import app.keyhole.privacy.ui.nearby.NearbyOthersScreen
@@ -49,6 +53,13 @@ import app.keyhole.privacy.ui.theme.NavMotion
 
 /** The checks that scan and then show a list of results. */
 private val SCANS = setOf(Check.WIFI, Check.HOTSPOTS, Check.BLUETOOTH)
+
+/** Where step [check] of a sweep opens: the sweep screen for scans, the check's own screen for hands-on ones. */
+private fun stepRoute(place: Place, check: Check): Any = when (check) {
+    Check.LENS, Check.INFRARED -> LensRoute(place, sweep = true, start = check)
+    Check.MAGNET -> MagnetRoute(place, sweep = true)
+    else -> SweepRoute(place, check)
+}
 
 /** Where a scan's results open. */
 private fun resultsRoute(check: Check, place: Place, sweep: Boolean): Any =
@@ -100,22 +111,48 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                     val vm = viewModel { SweepViewModel(route.place, route.at, null, container.settings, container.wifi, container.hotspots, container.bluetooth) }
                     SweepScreen(
                         vm, onClose = nav::popBackStack,
-                        onStepDone = { check -> nav.navigate(resultsRoute(check, route.place, sweep = true)) { popUpTo<SweepRoute> { inclusive = true } } },
+                        onStepDone = { check ->
+                            val to = if (check in SweepViewModel.HANDS_ON) stepRoute(route.place, check) else resultsRoute(check, route.place, sweep = true)
+                            nav.navigate(to) { popUpTo<SweepRoute> { inclusive = true } }
+                        },
                         onFinished = nav::popBackStack,
                     )
                 }
                 composable<CheckRoute> { e ->
                     val route = e.toRoute<CheckRoute>()
-                    if (route.check in SCANS) {
-                        val vm = viewModel { SweepViewModel(route.place, null, route.check, container.settings, container.wifi, container.hotspots, container.bluetooth) }
-                        SweepScreen(
-                            vm, onClose = nav::popBackStack,
-                            onStepDone = { check -> nav.navigate(resultsRoute(check, route.place, sweep = false)) { popUpTo<CheckRoute> { inclusive = true } } },
-                            onFinished = nav::popBackStack,
-                        )
-                    } else {
-                        StandInScreen(stringResource(route.check.label), stringResource(route.place.label), onBack = nav::popBackStack)
+                    when (route.check) {
+                        in SCANS -> {
+                            val vm = viewModel { SweepViewModel(route.place, null, route.check, container.settings, container.wifi, container.hotspots, container.bluetooth) }
+                            SweepScreen(
+                                vm, onClose = nav::popBackStack,
+                                onStepDone = { check -> nav.navigate(resultsRoute(check, route.place, sweep = false)) { popUpTo<CheckRoute> { inclusive = true } } },
+                                onFinished = nav::popBackStack,
+                            )
+                        }
+                        Check.LENS, Check.INFRARED -> {
+                            val vm = viewModel { LensViewModel(route.place, false, route.check, container.settings, container.notes, container.photos) }
+                            LensScreen(vm, onBack = nav::popBackStack, onNext = { nav.popBackStack() })
+                        }
+                        Check.MAGNET -> {
+                            val vm = viewModel { MagnetViewModel(route.place, false, container.magnet, container.settings, container.notes) }
+                            MagnetScreen(vm, onBack = nav::popBackStack, onNext = { nav.popBackStack() })
+                        }
+                        else -> StandInScreen(stringResource(route.check.label), stringResource(route.place.label), onBack = nav::popBackStack)
                     }
+                }
+                composable<LensRoute> { e ->
+                    val route = e.toRoute<LensRoute>()
+                    val vm = viewModel { LensViewModel(route.place, route.sweep, route.start, container.settings, container.notes, container.photos) }
+                    LensScreen(vm, onBack = nav::popBackStack, onNext = { next ->
+                        if (next == null) nav.popBackStack() else nav.navigate(stepRoute(route.place, next)) { popUpTo<LensRoute> { inclusive = true } }
+                    })
+                }
+                composable<MagnetRoute> { e ->
+                    val route = e.toRoute<MagnetRoute>()
+                    val vm = viewModel { MagnetViewModel(route.place, route.sweep, container.magnet, container.settings, container.notes) }
+                    MagnetScreen(vm, onBack = nav::popBackStack, onNext = { next ->
+                        if (next == null) nav.popBackStack() else nav.navigate(stepRoute(route.place, next)) { popUpTo<MagnetRoute> { inclusive = true } }
+                    })
                 }
                 composable<NearbyResultsRoute> { e ->
                     val route = e.toRoute<NearbyResultsRoute>()
@@ -130,7 +167,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                         onOthers = { nav.navigate(NearbyOthersRoute(route.check)) },
                         onNext = { next ->
                             if (next == null) nav.popBackStack()
-                            else nav.navigate(SweepRoute(route.place, next)) { popUpTo<NearbyResultsRoute> { inclusive = true } }
+                            else nav.navigate(stepRoute(route.place, next)) { popUpTo<NearbyResultsRoute> { inclusive = true } }
                         },
                     )
                 }
@@ -157,7 +194,7 @@ fun KeyholeNavHost(container: AppContainer, settings: Settings, nav: NavHostCont
                         onOthers = { nav.navigate(WifiOthersRoute(route.place)) },
                         onNext = { next ->
                             if (next == null) nav.popBackStack()
-                            else nav.navigate(SweepRoute(route.place, next)) { popUpTo<WifiResultsRoute> { inclusive = true } }
+                            else nav.navigate(stepRoute(route.place, next)) { popUpTo<WifiResultsRoute> { inclusive = true } }
                         },
                     )
                 }

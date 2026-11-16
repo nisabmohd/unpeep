@@ -229,6 +229,14 @@ class ProjectRulesTest {
     @Test fun lazyItemsHaveKeys() = assertNone("items / itemsIndexed over data without key =",
         violations { _, _, l -> Regex("""\b(itemsIndexed|items)\(""").containsMatchIn(code(l)) && "key" !in l })
 
+    /** One meaning, one feel: every buzz goes through Haptics.kt (MOTION.md § Haptics). */
+    @Test fun hapticsOnlyThroughBuzz() = assertNone("performHapticFeedback / LocalHapticFeedback outside Haptics.kt: use rememberHaptics().buzz(Buzz.…)",
+        violations { f, _, l -> f.name != "Haptics.kt" && Regex("""performHapticFeedback|LocalHapticFeedback|Vibrator|VibrationEffect""").containsMatchIn(code(l)) })
+
+    /** The camera opens only for the finders, and nothing is recorded: no video, no audio. */
+    @Test fun theCameraNeverRecords() = assertNone("recording: MediaRecorder / video / audio capture",
+        violations(allKotlin) { _, _, l -> Regex("""MediaRecorder|AudioRecord|TEMPLATE_RECORD|VIDEO_CAPTURE|RECORD_AUDIO""").containsMatchIn(code(l)) })
+
     @Test fun notificationsUseTheKeyholeMark() = assertNone("setSmallIcon not R.drawable.ic_notification",
         violations { _, _, l -> "setSmallIcon(" in l && "ic_notification" !in l })
 

@@ -15,6 +15,7 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.LayoutDirection
 
 private val LocalDarkTheme = staticCompositionLocalOf { false }
+private val LocalThemeSettings = staticCompositionLocalOf { ThemeSettings() }
 
 @Composable
 fun ThemeSettings.isDark(): Boolean = when (mode) {
@@ -35,7 +36,7 @@ fun KeyholeTheme(settings: ThemeSettings = ThemeSettings(), content: @Composable
     }
     val rtl = LocalLayoutDirection.current == LayoutDirection.Rtl
     val type = remember(settings.font, settings.textSize, rtl) { keyholeTypography(settings.font, settings.textSize.scale, rtl) }
-    CompositionLocalProvider(LocalDarkTheme provides dark) {
+    CompositionLocalProvider(LocalDarkTheme provides dark, LocalThemeSettings provides settings) {
         MaterialTheme(colorScheme = colors, typography = type, content = content)
     }
 }
@@ -46,3 +47,24 @@ fun checkColors(hue: Float): CheckColors = checkColors(hue, LocalDarkTheme.curre
 
 @Composable @ReadOnlyComposable
 fun warningColors(): WarningColors = warningColors(LocalDarkTheme.current)
+
+/**
+ * The viewfinder's theme (lens and infrared finders): always dark, whatever the app's theme, as a camera screen is;
+ * the same accent (or wallpaper colours) as the rest of the app, on the viewfinder's near-black page.
+ */
+@Composable
+fun ViewfinderTheme(content: @Composable () -> Unit) {
+    val settings = LocalThemeSettings.current
+    val context = LocalContext.current
+    val dynamic = settings.dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S
+    val base = if (dynamic) dynamicDarkColorScheme(context) else remember(settings.accentHue) { seedColorScheme(settings.accentHue, dark = true) }
+    val colors = base.copy(background = Viewfinder.page, surface = Viewfinder.page, onBackground = Viewfinder.content, onSurface = Viewfinder.content, onSurfaceVariant = Viewfinder.muted)
+    CompositionLocalProvider(LocalDarkTheme provides true) {
+        // Typography and shapes carry over from the app's theme (MaterialTheme's defaults are the current ones).
+        MaterialTheme(colorScheme = colors, content = content)
+    }
+}
+
+/** True while the app (not the viewfinder) is dark: what the system bars go back to when a viewfinder closes. */
+@Composable @ReadOnlyComposable
+fun isAppDark(): Boolean = LocalDarkTheme.current

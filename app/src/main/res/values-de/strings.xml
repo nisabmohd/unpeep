@@ -301,6 +301,73 @@
         <item quantity="other">vor %1$d s aktualisiert</item>
     </plurals>
 
+    <!-- 08 Lens finder, Infrared and Magnet -->
+    <string name="lens_finder">Linsensucher</string>
+    <string name="infrared_finder">Infrarotsucher</string>
+    <string name="next">Weiter</string>
+    <string name="filter_none">Kein Filter</string>
+    <string name="filter_red">Rot</string>
+    <string name="filter_contrast">Kontrast</string>
+    <string name="look_here">Hier ansehen</string>
+    <string name="lens_hint">Licht aus, langsam bewegen. Glas und Schrauben glänzen auch. Speichere ein Foto von jedem Punkt, den du prüfen willst.</string>
+    <string name="infrared_hint">Licht aus. Infrarotlichter erscheinen als violette oder weiße Punkte, die stillstehen. Speichere ein Foto von allen, die du prüfen willst.</string>
+    <string name="camera_preview">Kamerabild</string>
+    <string name="take_photo">Foto speichern</string>
+    <string name="torch">Taschenlampe</string>
+    <string name="tips">Tipps</string>
+    <string name="photo_not_saved">Das Foto konnte nicht gespeichert werden. Der Speicher ist vielleicht voll.</string>
+    <string name="perm_camera_title">Die Kamera nutzen, um Linsen zu suchen</string>
+    <string name="perm_camera_line">Für den Linsen- und Infrarotsucher. Nichts wird aufgezeichnet: Nur die Fotos, die du machst, bleiben auf diesem Handy.</string>
+    <string name="camera_problem_title">Kamera lässt sich nicht öffnen</string>
+    <string name="camera_in_use_line">Eine andere App nutzt sie vielleicht. Schließe sie und versuche es erneut.</string>
+    <string name="camera_failed_line">Android hat Keyhole die Kamera diesmal nicht nutzen lassen.</string>
+    <string name="try_again">Erneut versuchen</string>
+    <string name="no_camera_title">Dieses Handy hat keine Kamera, die Keyhole nutzen kann</string>
+    <string name="tips_title">So suchst du nach einer Linse</string>
+    <string name="tips_line">Markiert mögliche Linsen. Sieh genau hin, um sicher zu sein.</string>
+    <string name="tip_dark">Licht aus und Vorhänge zu</string>
+    <string name="tip_slow">Langsam bewegen, das Handy auf Augenhöhe</string>
+    <string name="tip_places">Rauchmelder, Uhren, Ladegeräte, Lüftungen, Rahmen und Spiegel ansehen</string>
+    <string name="tip_glint">Eine Linse wirft einen kleinen, scharfen Punkt zurück, der beim Bewegen stehen bleibt</string>
+    <string name="tip_infrared">Infrarot nutzt die Frontkamera: Viele Rückkameras blockieren Infrarotlicht</string>
+    <string name="ir_test_title">Sieht dieses Handy Infrarot?</string>
+    <string name="ir_test_line">Richte eine TV-Fernbedienung auf den Bildschirm und drücke eine Taste.</string>
+    <string name="ir_saw">Ich habe ein Licht gesehen</string>
+    <string name="ir_saw_line">Dieses Handy kann Infrarotlicht sehen</string>
+    <string name="ir_not_seen">Kein Licht</string>
+    <string name="ir_not_seen_line">Die Kamera dieses Handys blockiert Infrarot</string>
+    <string name="ir_blocked_title">Dieses Handy sieht Infrarot vielleicht nicht</string>
+    <string name="ir_blocked_text">Seine Kamera blockiert das meiste Infrarotlicht, daher erscheinen Infrarotlichter vielleicht nicht. Der Linsensucher funktioniert trotzdem.</string>
+    <string name="test_again">Erneut testen</string>
+    <string name="magnet_learning_title">Der Normalwert des Raums wird gelernt</string>
+    <string name="magnet_learning_line">Halte das Handy kurz still, weg von anderen Dingen</string>
+    <string name="magnet_learning_value">%1$d %%</string>
+    <string name="magnet_learning_unit">gelernt</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">über normal</string>
+    <string name="magnet_jumped_title">Elektronik in der Nähe</string>
+    <string name="magnet_normal_title">Etwa normal</string>
+    <string name="magnet_now_line">Normal %1$d µT · jetzt %2$d µT</string>
+    <string name="last_10_seconds">Letzte 10 Sekunden</string>
+    <string name="magnet_jumped">Gesprungen</string>
+    <string name="magnet_chart">Messwerte der letzten 10 Sekunden, der neueste %1$d µT über normal</string>
+    <string name="magnet_note">Führe die Oberkante des Handys langsam an Uhren, Ladegeräten und Rauchmeldern entlang. Lautsprecher, Magnete und Leitungen lassen ihn auch springen, ein Sprung heißt also Elektronik darin, keine Kamera.</string>
+    <string name="set_normal_again">Normalwert neu setzen</string>
+    <string name="beep_on_jump">Piepton bei einem Sprung</string>
+    <string name="no_magnet_title">Dieses Handy hat keinen Magnetsensor</string>
+    <plurals name="spots_count">
+        <item quantity="one">%1$d Punkt</item>
+        <item quantity="other">%1$d Punkte</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="one">%1$d mögliche Linse markiert</item>
+        <item quantity="other">%1$d mögliche Linsen markiert</item>
+    </plurals>
+    <plurals name="photos_saved">
+        <item quantity="one">%1$d Foto für den Bericht gespeichert</item>
+        <item quantity="other">%1$d Fotos für den Bericht gespeichert</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">Dieser Bildschirm kommt bald.</string>
     <string name="stand_in_line_for">%1$s · dieser Bildschirm kommt bald.</string>

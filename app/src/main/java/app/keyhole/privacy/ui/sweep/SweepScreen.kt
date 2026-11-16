@@ -36,6 +36,8 @@ import app.keyhole.privacy.domain.WifiDevice
 import app.keyhole.privacy.domain.WifiSnapshot
 import app.keyhole.privacy.domain.WifiStatus
 import app.keyhole.privacy.ui.components.Box24
+import app.keyhole.privacy.ui.components.Buzz
+import app.keyhole.privacy.ui.components.rememberHaptics
 import app.keyhole.privacy.ui.components.CheckRow
 import app.keyhole.privacy.ui.components.CheckState
 import app.keyhole.privacy.ui.components.DetailScreen
@@ -66,7 +68,18 @@ import app.keyhole.privacy.ui.wifi.DeviceListRow
 @Composable
 fun SweepScreen(vm: SweepViewModel, onClose: () -> Unit, onStepDone: (Check) -> Unit, onFinished: () -> Unit) {
     val s by vm.state.collectAsStateWithLifecycle()
-    LaunchedEffect(s.done) { s.done?.let(onStepDone) }
+    val haptics = rememberHaptics()
+    LaunchedEffect(s.done) {
+        val done = s.done ?: return@LaunchedEffect
+        // A scan that ends with something to look at buzzes stronger than one that doesn't.
+        val flagged = when (done) {
+            Check.WIFI -> s.wifi.devices.any { it.risk == Risk.LIKELY_CAMERA || it.risk == Risk.CHECK_THIS }
+            Check.HOTSPOTS, Check.BLUETOOTH -> s.nearby?.devices.orEmpty().any { it.risk == Risk.LIKELY_CAMERA || it.risk == Risk.CHECK_THIS }
+            else -> null
+        }
+        if (flagged != null) haptics.buzz(if (flagged) Buzz.FOUND else Buzz.DONE)
+        onStepDone(done)
+    }
     LaunchedEffect(s.finished) { if (s.finished) onFinished() }
     // Back from Android's permission question or from Settings: a step that was waiting starts by itself.
     LifecycleResumeEffect(Unit) {

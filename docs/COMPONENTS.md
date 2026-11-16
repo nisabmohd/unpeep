@@ -28,12 +28,17 @@ per-screen look options. Two things that look alike are one component.
 | `KeyholeSwitch` / `SwitchRow` | Controls.kt | the one switch; the whole row toggles |
 | `Dock` | Controls.kt | docked bottom action area |
 | `SegmentMeter` | Meter.kt | the Find it meter: five pills lit by signal strength, Far · Right here underneath |
+| `BarMeter` | Meter.kt | the magnet's bars: one per reading, the newest on the right, accent from the jump up |
+| `Segmented` / `Segment` | Controls.kt | two or three ways of one thing in one pill (Lens · Infrared) |
+| `CameraPreview` | Viewfinder.kt | the camera picture, centre-cropped, in the viewfinder |
+| `SpotRings` / `SpotMark` | Viewfinder.kt | rings around possible lenses, "Look here" beside the first |
+| `Shutter` | Viewfinder.kt | the viewfinder's shutter (saves a proof photo) |
 | `TabTopBar` / `BackTopBar` | Bars.kt | tab title + actions / back + title + actions |
 | `TopBarAction` | Bars.kt | a text action at the end of a top bar (Skip step · Scan again) |
 | `TabScreen` / `DetailScreen` | Bars.kt | the frame of a tab / of a pushed screen (bar, scrolling body, dock) |
 | `KeyholeNavBar` / `NavBarSpacer` | Bars.kt | bottom nav Check · Reports · More |
 | `CappedFontScale` | CappedFontScale.kt | caps text scaling inside fixed shapes (nav, lens core) |
+| `Haptics` / `Buzz` | Haptics.kt | the one way to buzz: tick · toggle · confirm · reject · found · done (MOTION.md § Haptics) |
 | `KeyholeSheet` / `SheetLine` | KeyholeSheet.kt | every choice, picker and confirm; a quiet line under its rows |
 
-To add (with their screens): `BarMeter` (Magnet bars), `Viewfinder` (lens/IR overlay + shutter),
-`ChecklistItem` (Looks fine · Not sure · Skip), `PhotoThumb`, `ReorderRow` (dotted grip + switch), `ColorSwatch`.
+To add (with their screens): `ChecklistItem` (Looks fine · Not sure · Skip), `PhotoThumb`, `ReorderRow` (dotted grip + switch), `ColorSwatch`.

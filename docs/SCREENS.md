@@ -12,8 +12,8 @@ PNG per screen in `design/screens/` (light; `HomeDark` for dark). Routes in `ui/
 | 06 | Not a camera? | sheet | built | It's mine · Part of the room · Not sure · Report it (opens the repo's issues in the browser); marks live in memory until Room |
 | – | Hotspot / Bluetooth results | `NearbyResultsRoute(check)` | built (no PNG: as 04) | Note first · count + "Updated Xs ago" · Likely camera · Worth a look · Marked as known · the rest behind one row (`NearbyOthersRoute`) · Next / Done; a row opens Find it |
 | 07 | Find it | `FindItRoute(check, id)` | built | "Updated Xs ago" tag · progress lens with how near in words · name, kind, dBm · meter + Stronger / Weaker / Steady · walking note · "Not heard for a while" note · Not a camera? / Add to report |
-| 08 | Lens finder | `CheckRoute(LENS/INFRARED)` | stand-in | dark; filters No filter · Red · Contrast · 2×; Lens/Infrared; shutter saves a photo |
-| 08 | Magnet | `CheckRoute(MAGNET)` | stand-in | learning normal → µT above normal, 10 s bars, honesty Note, Set normal again / Add to report |
+| 08 | Lens finder | `LensRoute(place, sweep, start)` · `CheckRoute(LENS/INFRARED)` | built | dark; held upright; picture + rings ("Look here"); filters No filter · Red · Contrast · 2×; Lens/Infrared; hint + photos saved; tips · shutter · torch; camera permission, in use, failed, no camera; TV-remote sheet on first Infrared; "may not see infrared" note; Next in a sweep |
+| 08 | Magnet | `MagnetRoute(place, sweep)` · `CheckRoute(MAGNET)` | built | learning % → µT above normal, "Electronics nearby" / "About normal", normal · now, 10 s bars + Jumped / Steady, honesty Note, Set normal again / Add to report, beep; no sensor; Next in a sweep |
 | 09 | Checklist | `CheckRoute(CHECKLIST)` | stand-in | per place; Looks fine · Not sure (photo + note) · Skip |
 | 10 | Report | | todo | lens header · check row · Found · Photos · Marked as known (Undo) · Couldn't check · Export |
 | 11 | If you find a camera | | todo | don't touch, photos, leave if unsafe, tell host/platform, help numbers |

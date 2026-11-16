@@ -113,10 +113,8 @@ kotlinx-serialization, profileinstaller + `:baselineprofile` module.
 **Platform APIs only:** `java.net` sockets and `DatagramSocket`, `NsdManager`, `WifiManager`, `ConnectivityManager`,
 `BluetoothLeScanner`, `PdfDocument`, SAF. No networking library.
 
-### Dependency to ask about (one)
-- **CameraX** (`camera-camera2`, `camera-lifecycle`; maybe `camera-compose` for the viewfinder) for the lens and IR
-  finders. Roughly +0.5–1 MB after R8. The other option is raw Camera2: more code, no library.
-  **Decide before Milestone 3.**
+### Camera (decided 16 Nov 2026)
+- **Camera2**, no library: `optics/CameraController.kt`. CameraX was the other option (+0.5–1 MB after R8).
 
 ### Flavors
 | Flavor | What's different |

@@ -61,6 +61,8 @@ class SweepViewModel(
             else -> null
         }?.let { if (it.run == i.run) it else NearbySnapshot(it.check, status = NearbyStatus.RUNNING) }
         val done = when {
+            // The hands-on checks have their own screens: the sweep opens them straight away.
+            i.current in HANDS_ON -> i.current
             i.current == Check.WIFI && myWifi.status == WifiStatus.DONE -> Check.WIFI
             myNearby?.status == NearbyStatus.DONE -> i.current
             else -> null
@@ -112,5 +114,10 @@ class SweepViewModel(
     fun resumed() {
         val waiting = state.value.nearby?.status.let { it == NearbyStatus.NEEDS_PERMISSION || it == NearbyStatus.UNAVAILABLE }
         if (waiting && nearby(inner.value.current)?.ready() == true) retry()
+    }
+
+    companion object {
+        /** Steps with a screen of their own, opened as the sweep reaches them. */
+        val HANDS_ON = setOf(Check.LENS, Check.INFRARED, Check.MAGNET)
     }
 }

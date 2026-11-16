@@ -325,6 +325,76 @@
         <item quantity="other">mis à jour il y a %1$d s</item>
     </plurals>
 
+    <!-- 08 Lens finder, Infrared and Magnet -->
+    <string name="lens_finder">Détecteur d\'objectifs</string>
+    <string name="infrared_finder">Détecteur d\'infrarouge</string>
+    <string name="next">Suivant</string>
+    <string name="filter_none">Sans filtre</string>
+    <string name="filter_red">Rouge</string>
+    <string name="filter_contrast">Contraste</string>
+    <string name="look_here">Regardez ici</string>
+    <string name="lens_hint">Lumières éteintes, bougez lentement. Le verre et les vis brillent aussi. Enregistrez une photo de tout point à vérifier.</string>
+    <string name="infrared_hint">Lumières éteintes. Les lumières infrarouges apparaissent en points violets ou blancs immobiles. Enregistrez une photo de celles à vérifier.</string>
+    <string name="camera_preview">Image de la caméra</string>
+    <string name="take_photo">Enregistrer une photo</string>
+    <string name="torch">Lampe torche</string>
+    <string name="tips">Conseils</string>
+    <string name="photo_not_saved">La photo n\'a pas pu être enregistrée. Le téléphone est peut-être plein.</string>
+    <string name="perm_camera_title">Utiliser l\'appareil photo pour chercher des objectifs</string>
+    <string name="perm_camera_line">Pour les détecteurs d\'objectifs et d\'infrarouge. Rien n\'est enregistré : seules vos photos sont gardées, sur ce téléphone.</string>
+    <string name="camera_problem_title">Impossible d\'ouvrir l\'appareil photo</string>
+    <string name="camera_in_use_line">Une autre appli l\'utilise peut-être. Fermez-la et réessayez.</string>
+    <string name="camera_failed_line">Android n\'a pas laissé Keyhole utiliser l\'appareil photo cette fois.</string>
+    <string name="try_again">Réessayer</string>
+    <string name="no_camera_title">Ce téléphone n\'a pas d\'appareil photo utilisable par Keyhole</string>
+    <string name="tips_title">Comment chercher un objectif</string>
+    <string name="tips_line">Entoure les objectifs possibles. Regardez de près pour en être sûr.</string>
+    <string name="tip_dark">Éteignez les lumières et fermez les rideaux</string>
+    <string name="tip_slow">Bougez lentement, téléphone à hauteur des yeux</string>
+    <string name="tip_places">Regardez détecteurs de fumée, horloges, chargeurs, aérations, cadres et miroirs</string>
+    <string name="tip_glint">Un objectif renvoie un petit point net qui reste en place quand vous bougez</string>
+    <string name="tip_infrared">L\'infrarouge utilise la caméra avant : beaucoup de caméras arrière bloquent l\'infrarouge</string>
+    <string name="ir_test_title">Ce téléphone voit-il l\'infrarouge ?</string>
+    <string name="ir_test_line">Pointez une télécommande de télé vers l\'écran et appuyez sur un bouton.</string>
+    <string name="ir_saw">J\'ai vu une lumière</string>
+    <string name="ir_saw_line">Ce téléphone voit les lumières infrarouges</string>
+    <string name="ir_not_seen">Aucune lumière</string>
+    <string name="ir_not_seen_line">L\'appareil photo de ce téléphone bloque l\'infrarouge</string>
+    <string name="ir_blocked_title">Ce téléphone ne voit peut-être pas l\'infrarouge</string>
+    <string name="ir_blocked_text">Son appareil photo bloque la plupart de l\'infrarouge, donc les lumières infrarouges peuvent ne pas apparaître. Le détecteur d\'objectifs fonctionne toujours.</string>
+    <string name="test_again">Refaire le test</string>
+    <string name="magnet_learning_title">Apprentissage de la normale de la pièce</string>
+    <string name="magnet_learning_line">Tenez le téléphone immobile un instant, loin d\'autres objets</string>
+    <string name="magnet_learning_value">%1$d %%</string>
+    <string name="magnet_learning_unit">appris</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">au-dessus de la normale</string>
+    <string name="magnet_jumped_title">Électronique à proximité</string>
+    <string name="magnet_normal_title">À peu près normal</string>
+    <string name="magnet_now_line">Normale %1$d µT · maintenant %2$d µT</string>
+    <string name="last_10_seconds">10 dernières secondes</string>
+    <string name="magnet_jumped">A bondi</string>
+    <string name="magnet_chart">Mesures des 10 dernières secondes, la plus récente à %1$d µT au-dessus de la normale</string>
+    <string name="magnet_note">Passez lentement le haut du téléphone le long des horloges, chargeurs et détecteurs de fumée. Haut-parleurs, aimants et câbles le font aussi bondir : un bond signifie de l\'électronique à l\'intérieur, pas une caméra.</string>
+    <string name="set_normal_again">Redéfinir la normale</string>
+    <string name="beep_on_jump">Bip à chaque bond</string>
+    <string name="no_magnet_title">Ce téléphone n\'a pas de capteur magnétique</string>
+    <plurals name="spots_count">
+        <item quantity="one">%1$d point</item>
+        <item quantity="many">%1$d points</item>
+        <item quantity="other">%1$d points</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="one">%1$d objectif possible entouré</item>
+        <item quantity="many">%1$d objectifs possibles entourés</item>
+        <item quantity="other">%1$d objectifs possibles entourés</item>
+    </plurals>
+    <plurals name="photos_saved">
+        <item quantity="one">%1$d photo enregistrée pour le rapport</item>
+        <item quantity="many">%1$d photos enregistrées pour le rapport</item>
+        <item quantity="other">%1$d photos enregistrées pour le rapport</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">Cet écran arrive bientôt.</string>
     <string name="stand_in_line_for">%1$s · cet écran arrive bientôt.</string>

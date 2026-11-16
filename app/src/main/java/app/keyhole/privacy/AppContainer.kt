@@ -3,6 +3,9 @@ package app.keyhole.privacy
 import android.content.Context
 import app.keyhole.privacy.data.SettingsRepository
 import app.keyhole.privacy.data.SignatureLoader
+import app.keyhole.privacy.data.SweepNotes
+import app.keyhole.privacy.optics.PhotoStore
+import app.keyhole.privacy.sensors.MagnetSensor
 import app.keyhole.privacy.domain.Check
 import app.keyhole.privacy.scan.BleSession
 import app.keyhole.privacy.scan.HotspotSession
@@ -29,6 +32,11 @@ class AppContainer(val context: Context) {
     /** Nearby hotspots and Bluetooth: they listen only when a screen starts them. */
     val hotspots by lazy { HotspotSession(context, HotspotScanner(context), signatures, appScope) }
     val bluetooth by lazy { BleSession(context, BleScanner(context), signatures, appScope) }
+
+    /** What the lens, infrared and magnet checks collected for the report. */
+    val notes by lazy { SweepNotes() }
+    val magnet by lazy { MagnetSensor(context) }
+    val photos by lazy { PhotoStore(context) }
 
     /** The session of a check that listens for what is nearby. */
     fun nearby(check: Check): NearbySession<*> = if (check == Check.BLUETOOTH) bluetooth else hotspots

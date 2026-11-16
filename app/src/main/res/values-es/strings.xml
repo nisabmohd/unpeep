@@ -325,6 +325,76 @@
         <item quantity="other">actualizado hace %1$d s</item>
     </plurals>
 
+    <!-- 08 Lens finder, Infrared and Magnet -->
+    <string name="lens_finder">Buscador de lentes</string>
+    <string name="infrared_finder">Buscador de infrarrojos</string>
+    <string name="next">Siguiente</string>
+    <string name="filter_none">Sin filtro</string>
+    <string name="filter_red">Rojo</string>
+    <string name="filter_contrast">Contraste</string>
+    <string name="look_here">Mira aquí</string>
+    <string name="lens_hint">Luces apagadas y muévete despacio. El cristal y los tornillos también brillan. Guarda una foto de cualquier punto que quieras revisar.</string>
+    <string name="infrared_hint">Luces apagadas. Las luces infrarrojas se ven como puntos morados o blancos que no se mueven. Guarda una foto de las que quieras revisar.</string>
+    <string name="camera_preview">Imagen de la cámara</string>
+    <string name="take_photo">Guardar una foto</string>
+    <string name="torch">Linterna</string>
+    <string name="tips">Consejos</string>
+    <string name="photo_not_saved">No se pudo guardar la foto. Puede que el teléfono esté lleno.</string>
+    <string name="perm_camera_title">Usar la cámara para buscar lentes</string>
+    <string name="perm_camera_line">Para los buscadores de lentes e infrarrojos. No se graba nada: solo se guardan en este teléfono las fotos que hagas.</string>
+    <string name="camera_problem_title">No se puede abrir la cámara</string>
+    <string name="camera_in_use_line">Puede que otra app la esté usando. Ciérrala e inténtalo de nuevo.</string>
+    <string name="camera_failed_line">Android no dejó que Keyhole usara la cámara esta vez.</string>
+    <string name="try_again">Intentar de nuevo</string>
+    <string name="no_camera_title">Este teléfono no tiene una cámara que Keyhole pueda usar</string>
+    <string name="tips_title">Cómo buscar una lente</string>
+    <string name="tips_line">Marca posibles lentes. Mira de cerca para asegurarte.</string>
+    <string name="tip_dark">Apaga las luces y cierra las cortinas</string>
+    <string name="tip_slow">Muévete despacio, con el teléfono a la altura de los ojos</string>
+    <string name="tip_places">Mira detectores de humo, relojes, cargadores, rejillas, marcos y espejos</string>
+    <string name="tip_glint">Una lente devuelve un punto pequeño y nítido que no se mueve al moverte</string>
+    <string name="tip_infrared">El infrarrojo usa la cámara frontal: muchas cámaras traseras bloquean la luz infrarroja</string>
+    <string name="ir_test_title">¿Este teléfono ve el infrarrojo?</string>
+    <string name="ir_test_line">Apunta un mando de la tele a la pantalla y pulsa cualquier botón.</string>
+    <string name="ir_saw">Vi una luz</string>
+    <string name="ir_saw_line">Este teléfono puede ver luces infrarrojas</string>
+    <string name="ir_not_seen">Ninguna luz</string>
+    <string name="ir_not_seen_line">La cámara de este teléfono bloquea el infrarrojo</string>
+    <string name="ir_blocked_title">Puede que este teléfono no vea el infrarrojo</string>
+    <string name="ir_blocked_text">Su cámara bloquea casi toda la luz infrarroja, así que puede que las luces infrarrojas no se vean. El buscador de lentes sigue funcionando.</string>
+    <string name="test_again">Probar de nuevo</string>
+    <string name="magnet_learning_title">Aprendiendo lo normal de esta habitación</string>
+    <string name="magnet_learning_line">Mantén el teléfono quieto un momento, lejos de otras cosas</string>
+    <string name="magnet_learning_value">%1$d %%</string>
+    <string name="magnet_learning_unit">aprendido</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">sobre lo normal</string>
+    <string name="magnet_jumped_title">Electrónica cerca</string>
+    <string name="magnet_normal_title">Más o menos normal</string>
+    <string name="magnet_now_line">Normal %1$d µT · ahora %2$d µT</string>
+    <string name="last_10_seconds">Últimos 10 segundos</string>
+    <string name="magnet_jumped">Subió</string>
+    <string name="magnet_chart">Lecturas de los últimos 10 segundos, la más reciente %1$d µT sobre lo normal</string>
+    <string name="magnet_note">Pasa despacio la parte superior del teléfono por relojes, cargadores y detectores de humo. Los altavoces, imanes y cables también lo hacen subir, así que una subida significa electrónica dentro, no una cámara.</string>
+    <string name="set_normal_again">Fijar lo normal de nuevo</string>
+    <string name="beep_on_jump">Pitido al subir</string>
+    <string name="no_magnet_title">Este teléfono no tiene sensor magnético</string>
+    <plurals name="spots_count">
+        <item quantity="one">%1$d punto</item>
+        <item quantity="many">%1$d puntos</item>
+        <item quantity="other">%1$d puntos</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="one">%1$d posible lente marcada</item>
+        <item quantity="many">%1$d posibles lentes marcadas</item>
+        <item quantity="other">%1$d posibles lentes marcadas</item>
+    </plurals>
+    <plurals name="photos_saved">
+        <item quantity="one">%1$d foto guardada para el informe</item>
+        <item quantity="many">%1$d fotos guardadas para el informe</item>
+        <item quantity="other">%1$d fotos guardadas para el informe</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">Esta pantalla está en camino.</string>
     <string name="stand_in_line_for">%1$s · esta pantalla está en camino.</string>

@@ -41,6 +41,8 @@ import app.keyhole.privacy.domain.trend
 import app.keyhole.privacy.scan.NearbySession
 import app.keyhole.privacy.scan.SignalReading
 import app.keyhole.privacy.ui.components.Box24
+import app.keyhole.privacy.ui.components.Buzz
+import app.keyhole.privacy.ui.components.rememberHaptics
 import app.keyhole.privacy.ui.reportWrongResult
 import app.keyhole.privacy.ui.components.ButtonPair
 import app.keyhole.privacy.ui.components.CheckIcon
@@ -125,13 +127,16 @@ fun FindItScreen(vm: FindItViewModel, onBack: () -> Unit) {
     LaunchedEffect(gone) { if (gone) onBack() }
     val device = s.device ?: return
     var asking by rememberSaveable { mutableStateOf(false) }
+    val haptics = rememberHaptics()
+    // Clearly stronger: worth a buzz, once each time it turns that way.
+    LaunchedEffect(s.trend) { if (s.trend == Trend.STRONGER) haptics.buzz(Buzz.FOUND) }
     val context = LocalContext.current
-    FindItContent(s, onBack, onNotACamera = { asking = true }, onToggleAdded = vm::toggleAdded)
+    FindItContent(s, onBack, onNotACamera = { asking = true }, onToggleAdded = { haptics.buzz(if (device.added) Buzz.TOGGLE_OFF else Buzz.CONFIRM); vm.toggleAdded() })
     if (asking) {
         NotACameraSheet(
             device.knownAs,
             onDismiss = { asking = false },
-            onMark = { vm.mark(it); asking = false },
+            onMark = { haptics.buzz(Buzz.CONFIRM); vm.mark(it); asking = false },
             onReport = { reportWrongResult(context) },
         )
     }

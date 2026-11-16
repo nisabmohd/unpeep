@@ -35,8 +35,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.Role
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
-import androidx.compose.ui.platform.LocalHapticFeedback
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -157,7 +155,7 @@ data class NavItem(val label: String, @DrawableRes val icon: Int)
 @Composable
 fun KeyholeNavBar(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
-    val haptics = LocalHapticFeedback.current
+    val haptics = rememberHaptics()
     NavigationBar(modifier, containerColor = c.surfaceContainerLow) {
         Spacer(Modifier.width(Space.navBarEnd))
         items.forEachIndexed { i, item ->
@@ -165,7 +163,7 @@ fun KeyholeNavBar(items: List<NavItem>, selected: Int, onSelect: (Int) -> Unit, 
             NavigationBarItem(
                 selected = isSelected,
                 onClick = {
-                    if (!isSelected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                    if (!isSelected) haptics.buzz(Buzz.TICK)
                     onSelect(i)
                 },
                 icon = { Icon(painterResource(item.icon), contentDescription = null, modifier = Modifier.size(Size.icon)) },

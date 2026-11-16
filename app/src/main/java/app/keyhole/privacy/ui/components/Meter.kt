@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.semantics.clearAndSetSemantics
@@ -44,6 +45,31 @@ fun SegmentMeter(level: Int, segments: Int, startLabel: String, endLabel: String
         Row(Modifier.fillMaxWidth()) {
             Text(startLabel, style = KeyholeType.supporting, color = c.onSurfaceVariant, modifier = Modifier.weight(1f))
             Text(endLabel, style = KeyholeType.supporting, color = c.onSurfaceVariant, textAlign = TextAlign.End, modifier = Modifier.weight(1f))
+        }
+    }
+}
+
+/**
+ * The magnet's bars: one per reading, oldest first, as tall as it is above normal (up to [max]). Bars at or past
+ * [jump] are the accent; the rest are faint. [description] is what TalkBack says for the whole chart.
+ */
+@Composable
+fun BarMeter(values: List<Int>, slots: Int, jump: Int, max: Int, description: String, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val shown = values.takeLast(slots)
+    Row(
+        modifier.fillMaxWidth().height(Size.meter).padding(horizontal = Space.card).clearAndSetSemantics { contentDescription = description },
+        horizontalArrangement = Arrangement.spacedBy(Space.barGap),
+        verticalAlignment = Alignment.Bottom,
+    ) {
+        // Empty slots on the left until there are enough readings: the newest is always on the right.
+        repeat(slots - shown.size) { Box(Modifier.weight(1f).height(Size.meterBar).clip(Shapes.pill).background(c.surfaceContainerHighest.copy(alpha = Alpha.track))) }
+        shown.forEach { v ->
+            val share = if (max <= 0) 0f else (v.toFloat() / max).coerceIn(0f, 1f)
+            Box(
+                Modifier.weight(1f).height(Size.meterBar + (Size.meter - Size.meterBar) * share).clip(Shapes.pill)
+                    .background(if (v >= jump) c.primary else c.surfaceContainerHighest),
+            )
         }
     }
 }

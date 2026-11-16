@@ -26,7 +26,9 @@ import app.keyhole.privacy.domain.KnownAs
 import app.keyhole.privacy.domain.Risk
 import app.keyhole.privacy.domain.WifiDevice
 import app.keyhole.privacy.scan.WifiSession
+import app.keyhole.privacy.ui.components.Buzz
 import app.keyhole.privacy.ui.components.ButtonPair
+import app.keyhole.privacy.ui.components.rememberHaptics
 import app.keyhole.privacy.ui.reportWrongResult
 import app.keyhole.privacy.ui.components.CircleTone
 import app.keyhole.privacy.ui.components.DetailScreen
@@ -77,6 +79,7 @@ fun DeviceScreen(vm: DeviceViewModel, onBack: () -> Unit, onFoundIt: () -> Unit,
     LaunchedEffect(gone) { if (gone) onBack() }
     val device = s.device ?: return
     var asking by rememberSaveable { mutableStateOf(false) }
+    val haptics = rememberHaptics()
     val context = LocalContext.current
     val shareText = shareText(device)
     DeviceContent(device, onBack, onShare = { share(context, shareText) }, onNotACamera = { asking = true }, onFoundIt, onFindLens)
@@ -84,7 +87,7 @@ fun DeviceScreen(vm: DeviceViewModel, onBack: () -> Unit, onFoundIt: () -> Unit,
         NotACameraSheet(
             device.knownAs,
             onDismiss = { asking = false },
-            onMark = { vm.mark(it); asking = false },
+            onMark = { haptics.buzz(Buzz.CONFIRM); vm.mark(it); asking = false },
             onReport = { reportWrongResult(context) },
         )
     }

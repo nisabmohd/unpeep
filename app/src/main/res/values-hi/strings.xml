@@ -301,6 +301,73 @@
         <item quantity="other">%1$d से. पहले अपडेट</item>
     </plurals>
 
+    <!-- 08 Lens finder, Infrared and Magnet -->
+    <string name="lens_finder">लेंस खोजक</string>
+    <string name="infrared_finder">इन्फ़्रारेड खोजक</string>
+    <string name="next">अगला</string>
+    <string name="filter_none">कोई फ़िल्टर नहीं</string>
+    <string name="filter_red">लाल</string>
+    <string name="filter_contrast">कंट्रास्ट</string>
+    <string name="look_here">यहाँ देखें</string>
+    <string name="lens_hint">लाइट बंद करें, धीरे चलें। काँच और पेंच भी चमकते हैं। जिस बिंदु को जाँचना हो, उसकी फ़ोटो सेव करें।</string>
+    <string name="infrared_hint">लाइट बंद करें। इन्फ़्रारेड लाइट बैंगनी या सफ़ेद स्थिर बिंदुओं जैसी दिखती हैं। जिसे जाँचना हो, उसकी फ़ोटो सेव करें।</string>
+    <string name="camera_preview">कैमरा की तस्वीर</string>
+    <string name="take_photo">फ़ोटो सेव करें</string>
+    <string name="torch">टॉर्च</string>
+    <string name="tips">सुझाव</string>
+    <string name="photo_not_saved">फ़ोटो सेव नहीं हो सकी। हो सकता है फ़ोन भर गया हो।</string>
+    <string name="perm_camera_title">लेंस ढूँढने के लिए कैमरा इस्तेमाल करें</string>
+    <string name="perm_camera_line">लेंस और इन्फ़्रारेड खोजक के लिए। कुछ भी रिकॉर्ड नहीं होता: सिर्फ़ आपकी ली हुई फ़ोटो इसी फ़ोन पर रहती हैं।</string>
+    <string name="camera_problem_title">कैमरा नहीं खुल रहा</string>
+    <string name="camera_in_use_line">शायद कोई और ऐप इसे इस्तेमाल कर रहा है। उसे बंद करके फिर कोशिश करें।</string>
+    <string name="camera_failed_line">इस बार Android ने Keyhole को कैमरा इस्तेमाल नहीं करने दिया।</string>
+    <string name="try_again">फिर कोशिश करें</string>
+    <string name="no_camera_title">इस फ़ोन में ऐसा कैमरा नहीं जिसे Keyhole इस्तेमाल कर सके</string>
+    <string name="tips_title">लेंस कैसे ढूँढें</string>
+    <string name="tips_line">संभावित लेंस घेरता है। पक्का करने के लिए पास से देखें।</string>
+    <string name="tip_dark">लाइट बंद करें और पर्दे खींच दें</string>
+    <string name="tip_slow">फ़ोन को आँखों की ऊँचाई पर रखकर धीरे चलें</string>
+    <string name="tip_places">स्मोक डिटेक्टर, घड़ियाँ, चार्जर, वेंट, फ़्रेम और शीशे देखें</string>
+    <string name="tip_glint">लेंस एक छोटा, तीखा बिंदु लौटाता है जो आपके हिलने पर भी अपनी जगह रहता है</string>
+    <string name="tip_infrared">इन्फ़्रारेड सामने का कैमरा इस्तेमाल करता है: कई पीछे के कैमरे इन्फ़्रारेड रोकते हैं</string>
+    <string name="ir_test_title">क्या यह फ़ोन इन्फ़्रारेड देख सकता है?</string>
+    <string name="ir_test_line">टीवी रिमोट को स्क्रीन की ओर करके कोई भी बटन दबाएँ।</string>
+    <string name="ir_saw">मुझे रोशनी दिखी</string>
+    <string name="ir_saw_line">यह फ़ोन इन्फ़्रारेड रोशनी देख सकता है</string>
+    <string name="ir_not_seen">कोई रोशनी नहीं</string>
+    <string name="ir_not_seen_line">इस फ़ोन का कैमरा इन्फ़्रारेड रोकता है</string>
+    <string name="ir_blocked_title">यह फ़ोन शायद इन्फ़्रारेड न देख पाए</string>
+    <string name="ir_blocked_text">इसका कैमरा ज़्यादातर इन्फ़्रारेड रोकता है, इसलिए इन्फ़्रारेड लाइट शायद न दिखें। लेंस खोजक फिर भी काम करता है।</string>
+    <string name="test_again">फिर से जाँचें</string>
+    <string name="magnet_learning_title">इस कमरे का सामान्य स्तर सीखा जा रहा है</string>
+    <string name="magnet_learning_line">फ़ोन को एक पल स्थिर रखें, दूसरी चीज़ों से दूर</string>
+    <string name="magnet_learning_value">%1$d%%</string>
+    <string name="magnet_learning_unit">सीखा</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">सामान्य से ऊपर</string>
+    <string name="magnet_jumped_title">आस-पास इलेक्ट्रॉनिक्स</string>
+    <string name="magnet_normal_title">लगभग सामान्य</string>
+    <string name="magnet_now_line">सामान्य %1$d µT · अभी %2$d µT</string>
+    <string name="last_10_seconds">पिछले 10 सेकंड</string>
+    <string name="magnet_jumped">उछला</string>
+    <string name="magnet_chart">पिछले 10 सेकंड की रीडिंग, सबसे नई सामान्य से %1$d µT ऊपर</string>
+    <string name="magnet_note">फ़ोन का ऊपरी हिस्सा घड़ियों, चार्जर और स्मोक डिटेक्टर के साथ धीरे घुमाएँ। स्पीकर, चुंबक और तार भी इसे उछालते हैं, इसलिए उछाल का मतलब अंदर इलेक्ट्रॉनिक्स है, कैमरा नहीं।</string>
+    <string name="set_normal_again">सामान्य फिर से तय करें</string>
+    <string name="beep_on_jump">उछाल पर बीप</string>
+    <string name="no_magnet_title">इस फ़ोन में मैग्नेट सेंसर नहीं है</string>
+    <plurals name="spots_count">
+        <item quantity="one">%1$d बिंदु</item>
+        <item quantity="other">%1$d बिंदु</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="one">%1$d संभावित लेंस घेरा गया</item>
+        <item quantity="other">%1$d संभावित लेंस घेरे गए</item>
+    </plurals>
+    <plurals name="photos_saved">
+        <item quantity="one">रिपोर्ट के लिए %1$d फ़ोटो सेव हुई</item>
+        <item quantity="other">रिपोर्ट के लिए %1$d फ़ोटो सेव हुईं</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">यह स्क्रीन जल्द आ रही है।</string>
     <string name="stand_in_line_for">%1$s · यह स्क्रीन जल्द आ रही है।</string>

@@ -277,6 +277,70 @@
         <item quantity="other">%1$d 秒前に更新</item>
     </plurals>
 
+    <!-- 08 Lens finder, Infrared and Magnet -->
+    <string name="lens_finder">レンズファインダー</string>
+    <string name="infrared_finder">赤外線ファインダー</string>
+    <string name="next">次へ</string>
+    <string name="filter_none">フィルターなし</string>
+    <string name="filter_red">赤</string>
+    <string name="filter_contrast">コントラスト</string>
+    <string name="look_here">ここを確認</string>
+    <string name="lens_hint">照明を消して、ゆっくり動かしてください。ガラスやネジも光ります。確認したい点は写真に保存してください。</string>
+    <string name="infrared_hint">照明を消してください。赤外線は動かない紫や白の点に見えます。確認したいものは写真に保存してください。</string>
+    <string name="camera_preview">カメラの映像</string>
+    <string name="take_photo">写真を保存</string>
+    <string name="torch">ライト</string>
+    <string name="tips">ヒント</string>
+    <string name="photo_not_saved">写真を保存できませんでした。空き容量が不足している可能性があります。</string>
+    <string name="perm_camera_title">カメラでレンズを探す</string>
+    <string name="perm_camera_line">レンズと赤外線のファインダーに使います。録画はしません。撮った写真だけがこの端末に保存されます。</string>
+    <string name="camera_problem_title">カメラを開けません</string>
+    <string name="camera_in_use_line">別のアプリが使用中の可能性があります。そのアプリを閉じてもう一度お試しください。</string>
+    <string name="camera_failed_line">今回は Android がカメラの使用を許可しませんでした。</string>
+    <string name="try_again">もう一度試す</string>
+    <string name="no_camera_title">この端末には Keyhole が使えるカメラがありません</string>
+    <string name="tips_title">レンズの探し方</string>
+    <string name="tips_line">レンズの可能性がある箇所を囲みます。近くでよく確認してください。</string>
+    <string name="tip_dark">照明を消してカーテンを閉める</string>
+    <string name="tip_slow">スマートフォンを目の高さに持ち、ゆっくり動かす</string>
+    <string name="tip_places">煙感知器、時計、充電器、通気口、額縁、鏡を確認する</string>
+    <string name="tip_glint">レンズは小さく鋭い点として光り、動いても位置が変わりません</string>
+    <string name="tip_infrared">赤外線は前面カメラを使います。多くの背面カメラは赤外線を遮ります</string>
+    <string name="ir_test_title">この端末は赤外線を検出できますか？</string>
+    <string name="ir_test_line">テレビのリモコンを画面に向けて、どれかのボタンを押してください。</string>
+    <string name="ir_saw">光が見えた</string>
+    <string name="ir_saw_line">この端末は赤外線を検出できます</string>
+    <string name="ir_not_seen">光は見えない</string>
+    <string name="ir_not_seen_line">この端末のカメラは赤外線を遮ります</string>
+    <string name="ir_blocked_title">この端末は赤外線を検出できない可能性があります</string>
+    <string name="ir_blocked_text">カメラが赤外線の大半を遮るため、赤外線が表示されない場合があります。レンズファインダーは使えます。</string>
+    <string name="test_again">もう一度テスト</string>
+    <string name="magnet_learning_title">この部屋の通常値を測定中</string>
+    <string name="magnet_learning_line">ほかの物から離して、少しの間スマートフォンを動かさないでください</string>
+    <string name="magnet_learning_value">%1$d%%</string>
+    <string name="magnet_learning_unit">測定済み</string>
+    <string name="magnet_above_value">+%1$d µT</string>
+    <string name="magnet_above_line">通常より上</string>
+    <string name="magnet_jumped_title">近くに電子機器</string>
+    <string name="magnet_normal_title">ほぼ通常</string>
+    <string name="magnet_now_line">通常 %1$d µT · 現在 %2$d µT</string>
+    <string name="last_10_seconds">直近 10 秒</string>
+    <string name="magnet_jumped">急上昇</string>
+    <string name="magnet_chart">直近 10 秒の測定値。最新は通常より %1$d µT 上</string>
+    <string name="magnet_note">スマートフォンの上端を、時計、充電器、煙感知器に沿ってゆっくり動かしてください。スピーカー、磁石、配線でも値は上がります。上昇は内部に電子機器があるという意味で、カメラがあるという意味ではありません。</string>
+    <string name="set_normal_again">通常値を再設定</string>
+    <string name="beep_on_jump">急上昇時にビープ音</string>
+    <string name="no_magnet_title">この端末には磁気センサーがありません</string>
+    <plurals name="spots_count">
+        <item quantity="other">%1$d 個</item>
+    </plurals>
+    <plurals name="spots_ringed">
+        <item quantity="other">レンズの可能性がある箇所 %1$d 個を囲みました</item>
+    </plurals>
+    <plurals name="photos_saved">
+        <item quantity="other">レポート用に %1$d 枚保存しました</item>
+    </plurals>
+
     <!-- Screens not built yet -->
     <string name="stand_in_line">この画面は準備中です。</string>
     <string name="stand_in_line_for">%1$s · この画面は準備中です。</string>

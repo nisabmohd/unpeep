@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.TextAutoSize
@@ -32,13 +33,12 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
-import androidx.compose.ui.platform.LocalHapticFeedback
-import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.text.style.TextAlign
@@ -173,12 +173,12 @@ fun Tag(text: String, kind: TagKind, modifier: Modifier = Modifier, icon: Painte
 @Composable
 fun Chip(text: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier) {
     val c = MaterialTheme.colorScheme
-    val haptics = LocalHapticFeedback.current
+    val haptics = rememberHaptics()
     Box(
         modifier
             .heightIn(min = Size.iconButton)
             .selectable(selected, role = Role.RadioButton, indication = null, interactionSource = null) {
-                if (!selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                if (!selected) haptics.buzz(Buzz.TICK)
                 onClick()
             },
         contentAlignment = Alignment.Center,
@@ -213,13 +213,13 @@ private fun Radio(selected: Boolean) {
 @Composable
 fun ChoiceRow(title: String, selected: Boolean, onClick: () -> Unit, modifier: Modifier = Modifier, line: String? = null, leading: (@Composable () -> Unit)? = null) {
     val c = MaterialTheme.colorScheme
-    val haptics = LocalHapticFeedback.current
+    val haptics = rememberHaptics()
     Row(
         modifier
             .fillMaxWidth()
             .background(if (selected) c.surfaceContainer else Color.Transparent)
             .selectable(selected, role = Role.RadioButton) {
-                if (!selected) haptics.performHapticFeedback(HapticFeedbackType.SegmentTick)
+                if (!selected) haptics.buzz(Buzz.TICK)
                 onClick()
             }
             .heightIn(min = if (line == null) Size.rowOneLine else Size.row)
@@ -252,12 +252,52 @@ fun KeyholeSwitch(checked: Boolean, modifier: Modifier = Modifier) {
 /** A row with a switch: the whole row toggles. */
 @Composable
 fun SwitchRow(title: String, checked: Boolean, onToggle: (Boolean) -> Unit, modifier: Modifier = Modifier, shape: androidx.compose.ui.graphics.Shape = Shapes.surface, line: String? = null, leading: (@Composable () -> Unit)? = null) {
-    val haptics = LocalHapticFeedback.current
+    val haptics = rememberHaptics()
     ListRow(
         title, modifier.clip(shape).toggleable(checked, role = Role.Switch) {
-            haptics.performHapticFeedback(if (it) HapticFeedbackType.ToggleOn else HapticFeedbackType.ToggleOff)
+            haptics.buzz(if (it) Buzz.TOGGLE_ON else Buzz.TOGGLE_OFF)
             onToggle(it)
         },
         shape = shape, line = line, leading = leading, trailing = { KeyholeSwitch(checked) }, chevron = false,
     )
+}
+
+/** One choice of a [Segmented] picker: its words and an optional icon. */
+@Immutable
+data class Segment(val label: String, val icon: Painter? = null)
+
+/**
+ * Two or three ways of doing one thing, side by side in one pill (Lens · Infrared): the picked one is a filled pill.
+ * Each is 48 dp tall and reads as a radio button.
+ */
+@Composable
+fun Segmented(segments: List<Segment>, selected: Int, onSelect: (Int) -> Unit, modifier: Modifier = Modifier) {
+    val c = MaterialTheme.colorScheme
+    val haptics = rememberHaptics()
+    Row(
+        modifier.clip(Shapes.pill).background(c.surfaceContainerHigh).padding(Space.small).selectableGroup(),
+        horizontalArrangement = Arrangement.spacedBy(Space.small),
+    ) {
+        segments.forEachIndexed { i, s ->
+            val picked = i == selected
+            Row(
+                Modifier
+                    .heightIn(min = Size.iconButton)
+                    .clip(Shapes.pill)
+                    .background(if (picked) c.onSurface else Color.Transparent)
+                    .selectable(picked, role = Role.RadioButton) {
+                        if (!picked) haptics.buzz(Buzz.TICK)
+                        onSelect(i)
+                    }
+                    .padding(horizontal = Space.heading),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                if (s.icon != null) {
+                    Icon(s.icon, null, tint = if (picked) c.surface else c.onSurface, modifier = Modifier.size(Size.buttonIcon))
+                    Spacer(Modifier.width(Space.inline))
+                }
+                Text(s.label, style = KeyholeType.cardTitle, color = if (picked) c.surface else c.onSurface, maxLines = 1, softWrap = false)
+            }
+        }
+    }
 }

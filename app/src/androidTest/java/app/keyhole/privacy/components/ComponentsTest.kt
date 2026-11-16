@@ -24,6 +24,13 @@ import app.keyhole.privacy.domain.Check
 import app.keyhole.privacy.setKeyholeContent
 import app.keyhole.privacy.text
 import app.keyhole.privacy.ui.components.BackTopBar
+import app.keyhole.privacy.ui.components.BarMeter
+import app.keyhole.privacy.ui.components.Buzz
+import app.keyhole.privacy.ui.components.Segment
+import app.keyhole.privacy.ui.components.Segmented
+import app.keyhole.privacy.ui.components.Shutter
+import app.keyhole.privacy.ui.components.SpotMark
+import app.keyhole.privacy.ui.components.SpotRings
 import app.keyhole.privacy.ui.components.ButtonPair
 import app.keyhole.privacy.ui.components.CheckRow
 import app.keyhole.privacy.ui.components.CheckState
@@ -304,5 +311,94 @@ class ComponentsTest {
         rule.onNodeWithText("Wi-Fi").performClick()
         assertTrue(picked)
         assertEquals(false, on)
+    }
+
+    // --- Week 4: viewfinder, picker, bars, haptics ----------------------------------------------------
+
+    /** Records every buzz instead of buzzing. */
+    private class Recorder : androidx.compose.ui.hapticfeedback.HapticFeedback {
+        val types = mutableListOf<androidx.compose.ui.hapticfeedback.HapticFeedbackType>()
+        override fun performHapticFeedback(hapticFeedbackType: androidx.compose.ui.hapticfeedback.HapticFeedbackType) { types += hapticFeedbackType }
+    }
+
+    private fun withHaptics(recorder: Recorder, content: @androidx.compose.runtime.Composable () -> Unit) = rule.setKeyholeContent {
+        androidx.compose.runtime.CompositionLocalProvider(androidx.compose.ui.platform.LocalHapticFeedback provides recorder, content = content)
+    }
+
+    @Test fun eachMeaningHasItsOwnFeel() {
+        val types = Buzz.entries.map { app.keyhole.privacy.ui.components.Haptics.type(it) }
+        assertEquals("no two meanings feel the same", types.size, types.toSet().size)
+    }
+
+    @Test fun pickingAChipTicksButPickingThePickedOneDoesNot() {
+        val r = Recorder()
+        withHaptics(r) {
+            Column {
+                Chip("Stay", true, {})
+                Chip("Office", false, {})
+            }
+        }
+        rule.onNodeWithText("Stay").performClick()
+        assertTrue(r.types.isEmpty())
+        rule.onNodeWithText("Office").performClick()
+        assertEquals(listOf(app.keyhole.privacy.ui.components.Haptics.type(Buzz.TICK)), r.types)
+    }
+
+    @Test fun aSwitchRowFeelsOnAndOff() {
+        val r = Recorder()
+        var on = false
+        withHaptics(r) { SwitchRow("Beep", on, { on = it }) }
+        rule.onNodeWithText("Beep").performClick()
+        assertEquals(listOf(app.keyhole.privacy.ui.components.Haptics.type(Buzz.TOGGLE_ON)), r.types)
+    }
+
+    @Test fun theSegmentedPickerPicksAndTicks() {
+        val r = Recorder()
+        var picked = 0
+        withHaptics(r) { Segmented(listOf(Segment("Lens"), Segment("Infrared")), picked, { picked = it }) }
+        rule.onNodeWithText("Lens").assertIsSelected().assertHeightIsAtLeast(touch)
+        rule.onNodeWithText("Infrared").performClick()
+        assertEquals(1, picked)
+        assertEquals(listOf(app.keyhole.privacy.ui.components.Haptics.type(Buzz.TICK)), r.types)
+    }
+
+    @Test fun theShutterHasALabelAndDoesNothingWhileTheCameraStarts() {
+        var shots = 0
+        rule.setKeyholeContent {
+            app.keyhole.privacy.ui.theme.ViewfinderTheme {
+                Column {
+                    Shutter(painterResource(R.drawable.ic_camera), "Save a photo", { shots++ })
+                    Shutter(painterResource(R.drawable.ic_camera), "Waiting", { shots += 10 }, enabled = false)
+                }
+            }
+        }
+        rule.onNodeWithContentDescription("Save a photo").assertHeightIsAtLeast(touch).performClick()
+        rule.onNodeWithContentDescription("Waiting").performClick()
+        assertEquals(1, shots)
+    }
+
+    @Test fun spotRingsSayHowManyAndLabelTheFirstAndSkipThoseOffScreen() {
+        rule.setKeyholeContent {
+            app.keyhole.privacy.ui.theme.ViewfinderTheme {
+                SpotRings(listOf(SpotMark(0.3f, 0.4f), SpotMark(0.7f, 0.6f), SpotMark(1.4f, 0.5f)), "Look here", "2 possible lenses ringed")
+            }
+        }
+        rule.onNodeWithContentDescription("2 possible lenses ringed").assertExists()
+    }
+
+    @Test fun noSpotsSayNothing() {
+        rule.setKeyholeContent { app.keyhole.privacy.ui.theme.ViewfinderTheme { SpotRings(emptyList(), "Look here", "none ringed") } }
+        rule.onAllNodesWithContentDescription("none ringed").assertCountEquals(0)
+    }
+
+    @Test fun theBarMeterDrawsEmptyFullAndOverflowing() {
+        rule.setKeyholeContent {
+            Column {
+                BarMeter(emptyList(), 24, 10, 50, "empty")
+                BarMeter(List(40) { it * 3 }, 24, 10, 50, "many")
+                BarMeter(listOf(-5, 0, 200), 24, 10, 0, "odd")
+            }
+        }
+        for (d in listOf("empty", "many", "odd")) rule.onNodeWithContentDescription(d).assertExists()
     }
 }

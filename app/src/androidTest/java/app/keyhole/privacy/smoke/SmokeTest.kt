@@ -148,10 +148,11 @@ class SmokeTest {
         home()
         rule.onNodeWithText(text(R.string.start)).performClick()
         waitFor(text(R.string.skip_step))
-        // Seven steps for a stay: skipping each one ends the sweep back on Home, whatever state each step was in.
+        // Seven steps for a stay: Skip step on the scans, Next on the hands-on checks. Moving on from each ends the
+        // sweep back on Home, whatever state each step was in.
         repeat(7) {
-            rule.waitUntilAtLeastOneExists(hasText(text(R.string.skip_step)), 10_000)
-            rule.onNodeWithText(text(R.string.skip_step)).performClick()
+            val step = waitForAny(text(R.string.skip_step), text(R.string.next), ms = 10_000)
+            rule.onNodeWithText(step).performClick()
             rule.waitForIdle()
         }
         home()
@@ -162,6 +163,55 @@ class SmokeTest {
         rule.onNodeWithText(text(R.string.start)).performClick()
         waitFor(text(R.string.skip_step))
         rule.onNodeWithContentDescription(text(R.string.close)).performClick()
+        home()
+    }
+
+    @Test fun theLensFinderOpensOnItsCameraOrSaysWhatItNeeds() {
+        home()
+        rule.onNodeWithText(text(R.string.check_lens)).performClick()
+        val end = waitForAny(text(R.string.lens_hint), text(R.string.perm_camera_title), text(R.string.no_camera_title), text(R.string.camera_problem_title), ms = 10_000)
+        if (end == text(R.string.lens_hint)) {
+            // Infrared and back: the same screen, the other reading.
+            rule.onNodeWithText(text(R.string.check_infrared)).performClick()
+            waitForAny(text(R.string.infrared_hint), text(R.string.ir_test_title), ms = 10_000)
+        }
+        rule.onNodeWithContentDescription(text(R.string.back)).performClick()
+        home()
+    }
+
+    @Test fun theMagnetLearnsOrSaysThePhoneHasNoSensor() {
+        home()
+        rule.onNodeWithText(text(R.string.check_magnet)).performScrollTo().performClick()
+        val end = waitForAny(text(R.string.magnet_learning_title), text(R.string.magnet_normal_title), text(R.string.magnet_jumped_title), text(R.string.no_magnet_title), ms = 10_000)
+        if (end != text(R.string.no_magnet_title)) {
+            // Learning ends within a few seconds on a phone that holds still.
+            waitForAny(text(R.string.magnet_normal_title), text(R.string.magnet_jumped_title), ms = 20_000)
+            rule.onNodeWithText(text(R.string.set_normal_again)).performClick()
+            waitFor(text(R.string.magnet_learning_title))
+        }
+        back()
+        home()
+    }
+
+    @Test fun aSweepReachesTheLensFinderAndTheMagnetOnTheirOwnScreens() {
+        home()
+        rule.onNodeWithText(text(R.string.start)).performClick()
+        // Skip Wi-Fi, hotspots and Bluetooth: the fourth step opens the lens finder.
+        repeat(3) {
+            rule.waitUntilAtLeastOneExists(hasText(text(R.string.skip_step)), 10_000)
+            rule.onNodeWithText(text(R.string.skip_step)).performClick()
+            rule.waitForIdle()
+        }
+        waitForAny(text(R.string.lens_finder), ms = 10_000)
+        // Next twice: Lens → Infrared (same screen) → Magnet.
+        rule.onNodeWithText(text(R.string.next)).performClick()
+        waitForAny(text(R.string.infrared_finder))
+        rule.onNodeWithText(text(R.string.next)).performClick()
+        waitForAny(text(R.string.magnet_learning_title), text(R.string.magnet_normal_title), text(R.string.magnet_jumped_title), text(R.string.no_magnet_title))
+        // Then the checklist step (not built yet), and Skip ends the sweep.
+        rule.onNodeWithText(text(R.string.next)).performClick()
+        rule.waitUntilAtLeastOneExists(hasText(text(R.string.skip_step)), 10_000)
+        rule.onNodeWithText(text(R.string.skip_step)).performClick()
         home()
     }
 }

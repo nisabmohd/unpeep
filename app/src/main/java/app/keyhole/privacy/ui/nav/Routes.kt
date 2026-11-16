@@ -40,3 +40,9 @@ enum class MoreItem { APPEARANCE, LANGUAGE, SWEEP_STEPS, MARKED_KNOWN, HOW_IT_WO
 
 /** 07 Find it: one hotspot or Bluetooth device of the last scan, by what Android calls it. */
 @Serializable data class FindItRoute(val check: Check, val id: String)
+
+/** 08 Lens finder and Infrared. [sweep]: part of a sweep (then "Next" goes on); [start]: LENS or INFRARED. */
+@Serializable data class LensRoute(val place: Place, val sweep: Boolean, val start: Check)
+
+/** 08 Magnet. [sweep]: part of a sweep (then "Next" goes on). */
+@Serializable data class MagnetRoute(val place: Place, val sweep: Boolean)

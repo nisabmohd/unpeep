@@ -30,16 +30,24 @@ show "Updated Xs ago". Find it uses RSSI.
 before release. Cameras by name only, as a hint.
 
 ## Lens
-Rear camera + torch. Analyzer on the Y plane: small, very bright, round spots that stay bright across frames →
-ring them. Filters: Red (boost R, dim the rest: glint stands out), Contrast. 2× zoom. Shutter saves a photo to app storage.
+Rear camera + torch, Camera2 (`optics/CameraController.kt`, no library). A 4:3 preview up to 1920 and a 320-wide
+YUV stream for analysis; a frame that arrives while the last is read is dropped, so the preview never waits.
+`optics/Glints.kt`: ~160 × 120 samples of the Y plane; a spot is brighter than max(235, mean + 90), small
+(≤ 0.4 % of the frame), round (fill ≥ 0.4, aspect ≤ 2) and ≥ 60 brighter than a ring around it; it is ringed once seen
+in 3 of the last 5 frames (`SpotTracker`). Filters: Red (boost R, dim the rest: glint stands out), Contrast (a paint on
+the preview, not on the frames). 2× zoom (`CONTROL_ZOOM_RATIO`, or a centre crop before Android 11). The screen is held
+upright while open. The shutter saves what the screen shows to app storage (`optics/PhotoStore.kt`).
 
 ## Infrared
-Front camera in the dark (many rear cameras filter IR), raised exposure; IR LEDs show as purple/white dots.
-First use: point a TV remote at the camera and press a button, to learn whether this phone sees IR.
+Front camera in the dark (many rear cameras filter IR; a phone with one camera uses it), exposure raised to its
+maximum; IR LEDs show as purple/white dots: the same finder with softer thresholds (max(180, mean + 70), ring ≥ 50).
+First use: point a TV remote at the camera and press a button, to learn whether this phone sees IR (kept in settings;
+"Test again" in the tips sheet). "No light" shows a note that infrared lights may not show.
 
 ## Magnet
-`TYPE_MAGNETIC_FIELD`, `MagnetMeter`: median of the first 25 readings is "normal"; ≥ 10 µT away = "Jumped"
-("Electronics nearby"). No permission. Never a score, never "camera".
+`TYPE_MAGNETIC_FIELD` at UI rate (`sensors/MagnetSensor.kt`), averaged to one reading per 400 ms (`MagnetSampler`), then
+`MagnetMeter`: median of the first 25 readings is "normal"; ≥ 10 µT away = "Jumped" ("Electronics nearby"); 24 bars ≈
+the last 10 seconds. Listens only while the screen is on top. No permission. Never a score, never "camera".
 
 ## Checklist
 Per place, in `strings.xml`. Each item: Looks fine · Not sure (photo + note) · Skip.
