@@ -1,0 +1,11 @@
+[
+  {"kind": "phone", "words": ["iphone", "ipad", "pixel", "galaxy", "oneplus", "redmi", "xiaomi phone", "realme", "oppo", "vivo", "moto g", "nothing phone"]},
+  {"kind": "computer", "words": ["macbook", "imac", "mac mini", "mac-mini", "thinkpad", "laptop", "desktop-", "chromebook", "ubuntu", "raspberrypi"], "services": ["_smb._tcp", "_afpovertcp._tcp", "_ssh._tcp", "_companion-link._tcp", "_workstation._tcp"]},
+  {"kind": "tv", "words": ["bravia", "chromecast", "roku", "fire tv", "firetv", "fire-tv", "apple tv", "appletv", "android tv", "androidtv", "smart tv", "smarttv", "webos", "tizen", "vizio", "hisense", "tcl tv", "mibox", "mi tv", "shield tv", "[tv]", "lg tv", "samsung tv", "google tv"], "services": ["_googlecast._tcp", "_airplay._tcp", "_androidtvremote2._tcp", "_viziocast._tcp", "_roku._tcp"]},
+  {"kind": "speaker", "words": ["sonos", "echo dot", "echo show", "amazon echo", "google home", "nest mini", "nest audio", "nest hub", "homepod", "bose", "soundbar", "denon", "yamaha", "marantz"], "services": ["_sonos._tcp", "_raop._tcp", "_spotify-connect._tcp", "_amzn-alexa._tcp"]},
+  {"kind": "printer", "words": ["laserjet", "officejet", "deskjet", "epson", "pixma", "ecotank", "printer", "xerox", "kyocera", "ricoh"], "services": ["_ipp._tcp", "_ipps._tcp", "_printer._tcp", "_pdl-datastream._tcp", "_scanner._tcp", "_uscan._tcp"]},
+  {"kind": "router", "words": ["router", "gateway", "access point", "openwrt", "mikrotik", "routeros", "ubiquiti", "unifi", "fritz!box", "fritzbox", "netgear", "tp-link archer", "archer", "deco", "linksys", "asus rt-", "asuswrt", "d-link dir", "dir-", "tenda ac", "jiofiber", "airtel xstream", "huawei hg", "zte", "eero", "orbi", "nokia wifi"]},
+  {"kind": "console", "words": ["playstation", "ps4", "ps5", "xbox", "nintendo", "steamdeck", "steam deck"]},
+  {"kind": "storage", "words": ["synology", "diskstation", "qnap", "my cloud", "mycloud", "truenas"], "services": ["_adisk._tcp", "_nfs._tcp"]},
+  {"kind": "home", "words": ["philips hue", "hue bridge", "smartthings", "homekit", "home assistant", "homeassistant", "thermostat", "ecobee", "smart plug", "shelly", "tasmota", "wled", "ikea", "tradfri", "nanoleaf", "lifx"], "services": ["_hue._tcp", "_home-assistant._tcp", "_matter._tcp", "_shelly._tcp"]}
+]

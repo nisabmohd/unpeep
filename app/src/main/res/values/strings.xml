@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name" translatable="false">Keyhole</string>
+
+    <!-- Chrome -->
+    <string name="back">Back</string>
+    <string name="close">Close</string>
+    <string name="tab_check">Check</string>
+    <string name="tab_reports">Reports</string>
+    <string name="tab_more">More</string>
+    <string name="two_parts">%1$s · %2$s</string>
+
+    <!-- The seven checks (short: they must fit 62 dp) -->
+    <string name="check_wifi">Wi-Fi</string>
+    <string name="check_hotspots">Hotspots</string>
+    <string name="check_bluetooth">Bluetooth</string>
+    <string name="check_lens">Lens</string>
+    <string name="check_infrared">Infrared</string>
+    <string name="check_magnet">Magnet</string>
+    <string name="check_checklist">Checklist</string>
+    <string name="check_state_done">done</string>
+    <string name="check_state_current">now</string>
+    <string name="check_state_skipped">not run</string>
+    <string name="run_check">Run %1$s</string>
+
+    <!-- Places -->
+    <string name="place_stay">Stay</string>
+    <string name="place_trial_room">Trial room</string>
+    <string name="place_washroom">Washroom</string>
+    <string name="place_office">Office</string>
+    <string name="place_car">Car</string>
+
+    <!-- 02 Home -->
+    <string name="start">Start</string>
+    <string name="check_this_room">Check this room</string>
+    <string name="home_line">%1$s · %2$s</string>
+    <plurals name="checks_for_stay">
+        <item quantity="one">%1$d check for a stay</item>
+        <item quantity="other">%1$d checks for a stay</item>
+    </plurals>
+    <plurals name="checks_for_trial_room">
+        <item quantity="one">%1$d check for a trial room</item>
+        <item quantity="other">%1$d checks for a trial room</item>
+    </plurals>
+    <plurals name="checks_for_washroom">
+        <item quantity="one">%1$d check for a washroom</item>
+        <item quantity="other">%1$d checks for a washroom</item>
+    </plurals>
+    <plurals name="checks_for_office">
+        <item quantity="one">%1$d check for an office</item>
+        <item quantity="other">%1$d checks for an office</item>
+    </plurals>
+    <plurals name="checks_for_car">
+        <item quantity="one">%1$d check for a car</item>
+        <item quantity="other">%1$d checks for a car</item>
+    </plurals>
+    <plurals name="about_minutes">
+        <item quantity="one">about %1$d minute</item>
+        <item quantity="other">about %1$d minutes</item>
+    </plurals>
+    <string name="or_run_one_check">Or run one check</string>
+
+    <!-- 12 Reports -->
+    <string name="reports_empty_title">No reports yet</string>
+    <string name="reports_empty_line">Check a room and its report is kept here, on this phone only.</string>
+
+    <!-- 13 More -->
+    <string name="appearance">Appearance</string>
+    <string name="language">Language</string>
+    <string name="system_default">System default</string>
+    <string name="help_numbers">Help numbers</string>
+    <string name="sweep_steps">Sweep steps</string>
+    <string name="sweep_steps_line">Pick and reorder</string>
+    <plurals name="steps_on">
+        <item quantity="one">%1$d on</item>
+        <item quantity="other">%1$d on</item>
+    </plurals>
+    <string name="section_checks">Checks</string>
+    <string name="section_app">App</string>
+    <string name="marked_as_known">Marked as known</string>
+    <string name="marked_known_none">Nothing marked yet</string>
+    <plurals name="marked_known_count">
+        <item quantity="one">%1$d device you said isn\'t a camera</item>
+        <item quantity="other">%1$d devices you said aren\'t cameras</item>
+    </plurals>
+    <string name="how_keyhole_works">How Keyhole works</string>
+    <string name="how_keyhole_works_line">What each check looks for</string>
+    <string name="what_keyhole_cant_find">What Keyhole can\'t find</string>
+    <string name="what_keyhole_cant_find_line">And how to check by hand</string>
+    <string name="if_you_find_a_camera">If you find a camera</string>
+    <string name="if_you_find_a_camera_line">What to do, step by step</string>
+    <string name="privacy">Privacy</string>
+    <string name="privacy_line">Nothing leaves your phone</string>
+    <string name="about">About</string>
+    <string name="about_line">Version, source code, licences</string>
+    <string name="licences">Licences</string>
+
+    <!-- 14 Appearance -->
+    <string name="theme_system">System</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="colour_wallpaper">Wallpaper colours</string>
+    <string name="colour_accent">Dark blue</string>
+    <string name="font_lexend" translatable="false">Lexend</string>
+    <string name="font_outfit" translatable="false">Outfit</string>
+    <string name="font_atkinson" translatable="false">Atkinson</string>
+    <string name="font_space_grotesk" translatable="false">Space Grotesk</string>
+
+    <!-- Screens not built yet -->
+    <string name="stand_in_line">This screen is on its way.</string>
+    <string name="stand_in_line_for">%1$s · this screen is on its way.</string>
+</resources>

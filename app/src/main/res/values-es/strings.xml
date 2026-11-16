@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chrome -->
+    <string name="back">Atrás</string>
+    <string name="close">Cerrar</string>
+    <string name="tab_check">Revisar</string>
+    <string name="tab_reports">Informes</string>
+    <string name="tab_more">Más</string>
+    <string name="two_parts">%1$s · %2$s</string>
+
+    <!-- The seven checks (short: they must fit 62 dp) -->
+    <string name="check_wifi">Wi-Fi</string>
+    <string name="check_hotspots">Redes</string>
+    <string name="check_bluetooth">Bluetooth</string>
+    <string name="check_lens">Lente</string>
+    <string name="check_infrared">Infrarrojo</string>
+    <string name="check_magnet">Imán</string>
+    <string name="check_checklist">Lista</string>
+    <string name="check_state_done">hecho</string>
+    <string name="check_state_current">ahora</string>
+    <string name="check_state_skipped">sin hacer</string>
+    <string name="run_check">Iniciar %1$s</string>
+
+    <!-- Places -->
+    <string name="place_stay">Alojamiento</string>
+    <string name="place_trial_room">Probador</string>
+    <string name="place_washroom">Baño</string>
+    <string name="place_office">Oficina</string>
+    <string name="place_car">Coche</string>
+
+    <!-- 02 Home -->
+    <string name="start">Iniciar</string>
+    <string name="check_this_room">Revisar esta habitación</string>
+    <string name="home_line">%1$s · %2$s</string>
+    <plurals name="checks_for_stay">
+        <item quantity="one">%1$d revisión para un alojamiento</item>
+        <item quantity="other">%1$d revisiones para un alojamiento</item>
+    </plurals>
+    <plurals name="checks_for_trial_room">
+        <item quantity="one">%1$d revisión para un probador</item>
+        <item quantity="other">%1$d revisiones para un probador</item>
+    </plurals>
+    <plurals name="checks_for_washroom">
+        <item quantity="one">%1$d revisión para un baño</item>
+        <item quantity="other">%1$d revisiones para un baño</item>
+    </plurals>
+    <plurals name="checks_for_office">
+        <item quantity="one">%1$d revisión para una oficina</item>
+        <item quantity="other">%1$d revisiones para una oficina</item>
+    </plurals>
+    <plurals name="checks_for_car">
+        <item quantity="one">%1$d revisión para un coche</item>
+        <item quantity="other">%1$d revisiones para un coche</item>
+    </plurals>
+    <plurals name="about_minutes">
+        <item quantity="one">unos %1$d minuto</item>
+        <item quantity="other">unos %1$d minutos</item>
+    </plurals>
+    <string name="or_run_one_check">O haz una sola revisión</string>
+
+    <!-- 12 Reports -->
+    <string name="reports_empty_title">Aún no hay informes</string>
+    <string name="reports_empty_line">Revisa una habitación y su informe se guarda aquí, solo en este teléfono.</string>
+
+    <!-- 13 More -->
+    <string name="appearance">Apariencia</string>
+    <string name="language">Idioma</string>
+    <string name="system_default">Predeterminado del sistema</string>
+    <string name="help_numbers">Números de ayuda</string>
+    <string name="sweep_steps">Pasos de la revisión</string>
+    <string name="sweep_steps_line">Elegir y ordenar</string>
+    <plurals name="steps_on">
+        <item quantity="one">%1$d activo</item>
+        <item quantity="other">%1$d activos</item>
+    </plurals>
+    <string name="section_checks">Revisiones</string>
+    <string name="section_app">App</string>
+    <string name="marked_as_known">Marcados como conocidos</string>
+    <string name="marked_known_none">Nada marcado todavía</string>
+    <plurals name="marked_known_count">
+        <item quantity="one">%1$d dispositivo que dijiste que no es una cámara</item>
+        <item quantity="other">%1$d dispositivos que dijiste que no son cámaras</item>
+    </plurals>
+    <string name="how_keyhole_works">Cómo funciona Keyhole</string>
+    <string name="how_keyhole_works_line">Qué busca cada revisión</string>
+    <string name="what_keyhole_cant_find">Lo que Keyhole no puede encontrar</string>
+    <string name="what_keyhole_cant_find_line">Y cómo revisarlo a mano</string>
+    <string name="if_you_find_a_camera">Si encuentras una cámara</string>
+    <string name="if_you_find_a_camera_line">Qué hacer, paso a paso</string>
+    <string name="privacy">Privacidad</string>
+    <string name="privacy_line">Nada sale de tu teléfono</string>
+    <string name="about">Acerca de</string>
+    <string name="about_line">Versión, código fuente, licencias</string>
+    <string name="licences">Licencias</string>
+
+    <!-- 14 Appearance -->
+    <string name="theme_system">Sistema</string>
+    <string name="theme_light">Claro</string>
+    <string name="theme_dark">Oscuro</string>
+    <string name="colour_wallpaper">Colores del fondo</string>
+    <string name="colour_accent">Azul oscuro</string>
+
+    <!-- Screens not built yet -->
+    <string name="stand_in_line">Esta pantalla está en camino.</string>
+    <string name="stand_in_line_for">%1$s · esta pantalla está en camino.</string>
+</resources>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- The page colour behind the first frame (Color.kt background, light). -->
+    <color name="page">#F9FAFC</color>
+    <!-- Brand: launcher background (docs/TOKENS.md). -->
+    <color name="ic_launcher_background">#173782</color>
+</resources>

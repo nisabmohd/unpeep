@@ -1,0 +1,19 @@
+{
+  "trackers": [
+    {"name": "AirTag or Find My tag", "company": 76, "type": 18},
+    {"name": "Tile", "services": ["FEED", "FEEC"]},
+    {"name": "Samsung SmartTag", "services": ["FD5A"]},
+    {"name": "Chipolo", "services": ["FE33", "FE65"]},
+    {"name": "Find Hub tag", "services": ["FEAA"]},
+    {"name": "Pebblebee", "services": ["FA25"]}
+  ],
+  "cameras": [
+    {"maker": "Lookcam", "words": ["lookcam", "hdwificam", "minicam"]},
+    {"maker": "V380", "words": ["v380"]},
+    {"maker": "Xiongmai", "words": ["ipc-", "ipc_", "icsee", "xmeye"]},
+    {"maker": "Yoosee", "words": ["yoosee", "gwipc"]},
+    {"maker": "TP-Link Tapo", "words": ["tapo_cam", "tapo c"]},
+    {"maker": "Hikvision", "words": ["ezviz", "hikvision"]},
+    {"maker": "Network camera", "words": ["ipcam", "ip camera", "wificam", "wifi cam", "spycam", "camhi"]}
+  ]
+}

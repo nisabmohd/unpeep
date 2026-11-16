@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Lint settings. Everything else is left at its default: fix the warning, don't hide it here. -->
+<lint>
+    <!-- Icons come from tools/solar_icon.py; release builds shrink away the ones the app doesn't use. -->
+    <issue id="UnusedResources">
+        <ignore regexp="R\.drawable\.ic_" />
+    </issue>
+    <!-- The adaptive launcher icon stays in mipmap-anydpi-v26 (AAPT needs the -v26 even with minSdk 26). -->
+    <issue id="ObsoleteSdkInt">
+        <ignore path="src/main/res/mipmap-anydpi-v26" />
+    </issue>
+</lint>

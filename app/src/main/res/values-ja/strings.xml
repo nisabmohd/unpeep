@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chrome -->
+    <string name="back">戻る</string>
+    <string name="close">閉じる</string>
+    <string name="tab_check">チェック</string>
+    <string name="tab_reports">レポート</string>
+    <string name="tab_more">その他</string>
+    <string name="two_parts">%1$s · %2$s</string>
+
+    <!-- The seven checks (short: they must fit 62 dp) -->
+    <string name="check_wifi">Wi-Fi</string>
+    <string name="check_hotspots">スポット</string>
+    <string name="check_bluetooth">Bluetooth</string>
+    <string name="check_lens">レンズ</string>
+    <string name="check_infrared">赤外線</string>
+    <string name="check_magnet">磁気</string>
+    <string name="check_checklist">リスト</string>
+    <string name="check_state_done">完了</string>
+    <string name="check_state_current">実行中</string>
+    <string name="check_state_skipped">未実行</string>
+    <string name="run_check">%1$sを実行</string>
+
+    <!-- Places -->
+    <string name="place_stay">宿泊先</string>
+    <string name="place_trial_room">試着室</string>
+    <string name="place_washroom">トイレ</string>
+    <string name="place_office">オフィス</string>
+    <string name="place_car">車</string>
+
+    <!-- 02 Home -->
+    <string name="start">開始</string>
+    <string name="check_this_room">この部屋をチェック</string>
+    <string name="home_line">%1$s · %2$s</string>
+    <plurals name="checks_for_stay">
+        <item quantity="other">宿泊先向けのチェック %1$d 件</item>
+    </plurals>
+    <plurals name="checks_for_trial_room">
+        <item quantity="other">試着室向けのチェック %1$d 件</item>
+    </plurals>
+    <plurals name="checks_for_washroom">
+        <item quantity="other">トイレ向けのチェック %1$d 件</item>
+    </plurals>
+    <plurals name="checks_for_office">
+        <item quantity="other">オフィス向けのチェック %1$d 件</item>
+    </plurals>
+    <plurals name="checks_for_car">
+        <item quantity="other">車向けのチェック %1$d 件</item>
+    </plurals>
+    <plurals name="about_minutes">
+        <item quantity="other">約 %1$d 分</item>
+    </plurals>
+    <string name="or_run_one_check">またはチェックを 1 つ実行</string>
+
+    <!-- 12 Reports -->
+    <string name="reports_empty_title">レポートはまだありません</string>
+    <string name="reports_empty_line">部屋をチェックすると、レポートはこのスマートフォンにだけ保存されます。</string>
+
+    <!-- 13 More -->
+    <string name="appearance">外観</string>
+    <string name="language">言語</string>
+    <string name="system_default">システムの既定</string>
+    <string name="help_numbers">相談先の番号</string>
+    <string name="sweep_steps">チェックの手順</string>
+    <string name="sweep_steps_line">選択と並べ替え</string>
+    <plurals name="steps_on">
+        <item quantity="other">%1$d 件オン</item>
+    </plurals>
+    <string name="section_checks">チェック</string>
+    <string name="section_app">アプリ</string>
+    <string name="marked_as_known">既知としてマーク済み</string>
+    <string name="marked_known_none">まだ何もマークされていません</string>
+    <plurals name="marked_known_count">
+        <item quantity="other">カメラではないとマークしたデバイス %1$d 台</item>
+    </plurals>
+    <string name="how_keyhole_works">Keyhole のしくみ</string>
+    <string name="how_keyhole_works_line">各チェックが探すもの</string>
+    <string name="what_keyhole_cant_find">Keyhole が見つけられないもの</string>
+    <string name="what_keyhole_cant_find_line">手で確かめる方法</string>
+    <string name="if_you_find_a_camera">カメラを見つけたら</string>
+    <string name="if_you_find_a_camera_line">すべきことを順番に</string>
+    <string name="privacy">プライバシー</string>
+    <string name="privacy_line">データは端末の外に出ません</string>
+    <string name="about">このアプリについて</string>
+    <string name="about_line">バージョン、ソースコード、ライセンス</string>
+    <string name="licences">ライセンス</string>
+
+    <!-- 14 Appearance -->
+    <string name="theme_system">システム</string>
+    <string name="theme_light">ライト</string>
+    <string name="theme_dark">ダーク</string>
+    <string name="colour_wallpaper">壁紙の色</string>
+    <string name="colour_accent">ダークブルー</string>
+
+    <!-- Screens not built yet -->
+    <string name="stand_in_line">この画面は準備中です。</string>
+    <string name="stand_in_line_for">%1$s · この画面は準備中です。</string>
+</resources>

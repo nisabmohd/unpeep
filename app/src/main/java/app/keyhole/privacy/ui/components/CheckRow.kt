@@ -1,0 +1,122 @@
+package app.keyhole.privacy.ui.components
+
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.horizontalScroll
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import app.keyhole.privacy.R
+import app.keyhole.privacy.domain.Check
+import app.keyhole.privacy.ui.hue
+import app.keyhole.privacy.ui.icon
+import app.keyhole.privacy.ui.label
+import app.keyhole.privacy.ui.theme.KeyholeType
+import app.keyhole.privacy.ui.theme.Shapes
+import app.keyhole.privacy.ui.theme.Size
+import app.keyhole.privacy.ui.theme.Space
+import app.keyhole.privacy.ui.theme.checkColors
+import app.keyhole.privacy.ui.theme.shortSpec
+
+/*
+ * The seven checks, always the same icons in the same order: Home (with labels; tap to run one), the sweep and
+ * the report (no labels; a ✓ on finished ones, a ring on the current one, an outline on the ones left out).
+ */
+
+enum class CheckState { PLAIN, DONE, CURRENT, SKIPPED }
+
+/** One check: its hue circle and Solar icon. The hue is on the circle only. */
+@Composable
+fun CheckIcon(check: Check, modifier: Modifier = Modifier, state: CheckState = CheckState.PLAIN) {
+    val c = MaterialTheme.colorScheme
+    val colors = checkColors(check.hue)
+    val ring by animateFloatAsState(if (state == CheckState.CURRENT) 1f else 0f, shortSpec(), label = "checkRing")
+    Box(modifier.size(Size.checkSlot), contentAlignment = Alignment.Center) {
+        // The current step: a primary ring a little outside the circle, fading in.
+        Box(Modifier.size(Size.checkRing).graphicsLayer { alpha = ring }.border(Size.ring, c.primary, Shapes.pill))
+        Box(
+            Modifier.size(Size.iconCircle).clip(Shapes.pill)
+                .then(if (state == CheckState.SKIPPED) Modifier.border(Size.outline, c.outline, Shapes.pill) else Modifier.background(colors.container)),
+            contentAlignment = Alignment.Center,
+        ) {
+            Icon(painterResource(check.icon), null, tint = if (state == CheckState.SKIPPED) c.onSurfaceVariant else colors.onContainer, modifier = Modifier.size(Size.iconInCircle))
+        }
+        Box(Modifier.size(Size.iconCircle), contentAlignment = Alignment.BottomEnd) {
+            AnimatedVisibility(state == CheckState.DONE, enter = scaleIn(shortSpec()), exit = scaleOut(shortSpec())) {
+                Box(Modifier.size(Size.badge).border(Size.ring, c.surfaceContainerLow, Shapes.pill).padding(Size.outline).clip(Shapes.pill).background(c.primary), contentAlignment = Alignment.Center) {
+                    Icon(painterResource(R.drawable.ic_check), null, tint = c.onPrimary, modifier = Modifier.size(Size.badgeIcon))
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun stateWord(state: CheckState): String? = when (state) {
+    CheckState.PLAIN -> null
+    CheckState.DONE -> stringResource(R.string.check_state_done)
+    CheckState.CURRENT -> stringResource(R.string.check_state_current)
+    CheckState.SKIPPED -> stringResource(R.string.check_state_skipped)
+}
+
+/**
+ * The row of checks. With [onRun]: Home's "run one check" (labels under the icons, each 62 dp wide, scrolls
+ * sideways so labels never squeeze). Without: the sweep's and the report's progress row (no labels).
+ */
+@Composable
+fun CheckRow(checks: List<Check>, modifier: Modifier = Modifier, state: (Check) -> CheckState = { CheckState.PLAIN }, onRun: ((Check) -> Unit)? = null) {
+    val c = MaterialTheme.colorScheme
+    Row(
+        modifier.fillMaxWidth().horizontalScroll(rememberScrollState()).padding(horizontal = if (onRun != null) Space.inline else Space.card),
+        horizontalArrangement = if (onRun != null) Arrangement.Start else Arrangement.SpaceBetween,
+    ) {
+        checks.forEach { check ->
+            val name = stringResource(check.label)
+            if (onRun != null) {
+                Column(
+                    Modifier.widthIn(min = Size.checkSlot).clip(Shapes.surface).clickable(role = Role.Button, onClickLabel = stringResource(R.string.run_check, name)) { onRun(check) }.padding(bottom = Space.small),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    CheckIcon(check, Modifier.height(Size.iconButton))
+                    Spacer(Modifier.height(Space.small))
+                    Text(name, style = KeyholeType.caption, color = c.onSurfaceVariant, maxLines = 1, overflow = TextOverflow.Ellipsis, textAlign = TextAlign.Center, modifier = Modifier.width(Size.checkSlot))
+                }
+            } else {
+                val s = state(check)
+                val word = stateWord(s)
+                CheckIcon(check, Modifier.clearAndSetSemantics { contentDescription = if (word == null) name else "$name, $word" }, s)
+            }
+        }
+    }
+}

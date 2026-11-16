@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Splash: the page colour, then straight into Compose (no second splash). -->
+    <style name="Theme.Keyhole" parent="android:Theme.Material.Light.NoActionBar">
+        <item name="android:windowBackground">@color/page</item>
+        <!-- Transparent bars for edge-to-edge on Android 8–14 (ui/EdgeToEdge.kt). -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+</resources>

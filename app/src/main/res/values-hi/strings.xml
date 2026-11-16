@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chrome -->
+    <string name="back">वापस</string>
+    <string name="close">बंद करें</string>
+    <string name="tab_check">जाँच</string>
+    <string name="tab_reports">रिपोर्ट</string>
+    <string name="tab_more">और</string>
+    <string name="two_parts">%1$s · %2$s</string>
+
+    <!-- The seven checks (short: they must fit 62 dp) -->
+    <string name="check_wifi">वाई-फ़ाई</string>
+    <string name="check_hotspots">हॉटस्पॉट</string>
+    <string name="check_bluetooth">ब्लूटूथ</string>
+    <string name="check_lens">लेंस</string>
+    <string name="check_infrared">इन्फ़्रारेड</string>
+    <string name="check_magnet">चुंबक</string>
+    <string name="check_checklist">चेकलिस्ट</string>
+    <string name="check_state_done">पूरा</string>
+    <string name="check_state_current">अभी</string>
+    <string name="check_state_skipped">नहीं चला</string>
+    <string name="run_check">%1$s चलाएँ</string>
+
+    <!-- Places -->
+    <string name="place_stay">ठहरने की जगह</string>
+    <string name="place_trial_room">ट्रायल रूम</string>
+    <string name="place_washroom">वॉशरूम</string>
+    <string name="place_office">ऑफ़िस</string>
+    <string name="place_car">गाड़ी</string>
+
+    <!-- 02 Home -->
+    <string name="start">शुरू करें</string>
+    <string name="check_this_room">इस कमरे की जाँच करें</string>
+    <string name="home_line">%1$s · %2$s</string>
+    <plurals name="checks_for_stay">
+        <item quantity="one">ठहरने की जगह के लिए %1$d जाँच</item>
+        <item quantity="other">ठहरने की जगह के लिए %1$d जाँचें</item>
+    </plurals>
+    <plurals name="checks_for_trial_room">
+        <item quantity="one">ट्रायल रूम के लिए %1$d जाँच</item>
+        <item quantity="other">ट्रायल रूम के लिए %1$d जाँचें</item>
+    </plurals>
+    <plurals name="checks_for_washroom">
+        <item quantity="one">वॉशरूम के लिए %1$d जाँच</item>
+        <item quantity="other">वॉशरूम के लिए %1$d जाँचें</item>
+    </plurals>
+    <plurals name="checks_for_office">
+        <item quantity="one">ऑफ़िस के लिए %1$d जाँच</item>
+        <item quantity="other">ऑफ़िस के लिए %1$d जाँचें</item>
+    </plurals>
+    <plurals name="checks_for_car">
+        <item quantity="one">गाड़ी के लिए %1$d जाँच</item>
+        <item quantity="other">गाड़ी के लिए %1$d जाँचें</item>
+    </plurals>
+    <plurals name="about_minutes">
+        <item quantity="one">लगभग %1$d मिनट</item>
+        <item quantity="other">लगभग %1$d मिनट</item>
+    </plurals>
+    <string name="or_run_one_check">या कोई एक जाँच चलाएँ</string>
+
+    <!-- 12 Reports -->
+    <string name="reports_empty_title">अभी कोई रिपोर्ट नहीं</string>
+    <string name="reports_empty_line">किसी कमरे की जाँच करें, उसकी रिपोर्ट यहीं रहेगी, सिर्फ़ इस फ़ोन पर।</string>
+
+    <!-- 13 More -->
+    <string name="appearance">रूप-रंग</string>
+    <string name="language">भाषा</string>
+    <string name="system_default">सिस्टम डिफ़ॉल्ट</string>
+    <string name="help_numbers">मदद के नंबर</string>
+    <string name="sweep_steps">जाँच के चरण</string>
+    <string name="sweep_steps_line">चुनें और क्रम बदलें</string>
+    <plurals name="steps_on">
+        <item quantity="one">%1$d चालू</item>
+        <item quantity="other">%1$d चालू</item>
+    </plurals>
+    <string name="section_checks">जाँचें</string>
+    <string name="section_app">ऐप</string>
+    <string name="marked_as_known">जाने-पहचाने के रूप में चिह्नित</string>
+    <string name="marked_known_none">अभी कुछ चिह्नित नहीं</string>
+    <plurals name="marked_known_count">
+        <item quantity="one">%1$d डिवाइस जिसे आपने कैमरा नहीं बताया</item>
+        <item quantity="other">%1$d डिवाइस जिन्हें आपने कैमरा नहीं बताया</item>
+    </plurals>
+    <string name="how_keyhole_works">Keyhole कैसे काम करता है</string>
+    <string name="how_keyhole_works_line">हर जाँच क्या ढूँढती है</string>
+    <string name="what_keyhole_cant_find">Keyhole क्या नहीं ढूँढ सकता</string>
+    <string name="what_keyhole_cant_find_line">और हाथ से कैसे जाँचें</string>
+    <string name="if_you_find_a_camera">अगर आपको कैमरा मिले</string>
+    <string name="if_you_find_a_camera_line">क्या करें, एक-एक कदम</string>
+    <string name="privacy">निजता</string>
+    <string name="privacy_line">आपके फ़ोन से कुछ बाहर नहीं जाता</string>
+    <string name="about">ऐप के बारे में</string>
+    <string name="about_line">वर्शन, सोर्स कोड, लाइसेंस</string>
+    <string name="licences">लाइसेंस</string>
+
+    <!-- 14 Appearance -->
+    <string name="theme_system">सिस्टम</string>
+    <string name="theme_light">हल्का</string>
+    <string name="theme_dark">गहरा</string>
+    <string name="colour_wallpaper">वॉलपेपर के रंग</string>
+    <string name="colour_accent">गहरा नीला</string>
+
+    <!-- Screens not built yet -->
+    <string name="stand_in_line">यह स्क्रीन जल्द आ रही है।</string>
+    <string name="stand_in_line_for">%1$s · यह स्क्रीन जल्द आ रही है।</string>
+</resources>

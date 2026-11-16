@@ -1,0 +1,16 @@
+[
+  {"port": 554, "kind": "rtsp"},
+  {"port": 8554, "kind": "rtsp"},
+  {"port": 80, "kind": "web"},
+  {"port": 8080, "kind": "web"},
+  {"port": 8000, "kind": "web"},
+  {"port": 443, "kind": "web"},
+  {"port": 37777, "kind": "camera"},
+  {"port": 34567, "kind": "camera"},
+  {"port": 9527, "kind": "camera"},
+  {"port": 8899, "kind": "onvif"},
+  {"port": 2020, "kind": "onvif"},
+  {"port": 1935, "kind": "other"},
+  {"port": 6668, "kind": "other"},
+  {"port": 5000, "kind": "other"}
+]

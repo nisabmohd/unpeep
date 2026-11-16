@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Chrome -->
+    <string name="back">Retour</string>
+    <string name="close">Fermer</string>
+    <string name="tab_check">Vérifier</string>
+    <string name="tab_reports">Rapports</string>
+    <string name="tab_more">Plus</string>
+    <string name="two_parts">%1$s · %2$s</string>
+
+    <!-- The seven checks (short: they must fit 62 dp) -->
+    <string name="check_wifi">Wi-Fi</string>
+    <string name="check_hotspots">Réseaux</string>
+    <string name="check_bluetooth">Bluetooth</string>
+    <string name="check_lens">Objectif</string>
+    <string name="check_infrared">Infrarouge</string>
+    <string name="check_magnet">Aimant</string>
+    <string name="check_checklist">Liste</string>
+    <string name="check_state_done">terminé</string>
+    <string name="check_state_current">en cours</string>
+    <string name="check_state_skipped">non lancé</string>
+    <string name="run_check">Lancer %1$s</string>
+
+    <!-- Places -->
+    <string name="place_stay">Séjour</string>
+    <string name="place_trial_room">Cabine</string>
+    <string name="place_washroom">Toilettes</string>
+    <string name="place_office">Bureau</string>
+    <string name="place_car">Voiture</string>
+
+    <!-- 02 Home -->
+    <string name="start">Démarrer</string>
+    <string name="check_this_room">Vérifier cette pièce</string>
+    <string name="home_line">%1$s · %2$s</string>
+    <plurals name="checks_for_stay">
+        <item quantity="one">%1$d vérification pour un séjour</item>
+        <item quantity="other">%1$d vérifications pour un séjour</item>
+    </plurals>
+    <plurals name="checks_for_trial_room">
+        <item quantity="one">%1$d vérification pour une cabine</item>
+        <item quantity="other">%1$d vérifications pour une cabine</item>
+    </plurals>
+    <plurals name="checks_for_washroom">
+        <item quantity="one">%1$d vérification pour des toilettes</item>
+        <item quantity="other">%1$d vérifications pour des toilettes</item>
+    </plurals>
+    <plurals name="checks_for_office">
+        <item quantity="one">%1$d vérification pour un bureau</item>
+        <item quantity="other">%1$d vérifications pour un bureau</item>
+    </plurals>
+    <plurals name="checks_for_car">
+        <item quantity="one">%1$d vérification pour une voiture</item>
+        <item quantity="other">%1$d vérifications pour une voiture</item>
+    </plurals>
+    <plurals name="about_minutes">
+        <item quantity="one">environ %1$d minute</item>
+        <item quantity="other">environ %1$d minutes</item>
+    </plurals>
+    <string name="or_run_one_check">Ou lancer une seule vérification</string>
+
+    <!-- 12 Reports -->
+    <string name="reports_empty_title">Pas encore de rapport</string>
+    <string name="reports_empty_line">Vérifiez une pièce et son rapport reste ici, sur ce téléphone uniquement.</string>
+
+    <!-- 13 More -->
+    <string name="appearance">Apparence</string>
+    <string name="language">Langue</string>
+    <string name="system_default">Par défaut du système</string>
+    <string name="help_numbers">Numéros d\'aide</string>
+    <string name="sweep_steps">Étapes de la vérification</string>
+    <string name="sweep_steps_line">Choisir et ordonner</string>
+    <plurals name="steps_on">
+        <item quantity="one">%1$d active</item>
+        <item quantity="other">%1$d actives</item>
+    </plurals>
+    <string name="section_checks">Vérifications</string>
+    <string name="section_app">Appli</string>
+    <string name="marked_as_known">Marqués comme connus</string>
+    <string name="marked_known_none">Rien de marqué pour l\'instant</string>
+    <plurals name="marked_known_count">
+        <item quantity="one">%1$d appareil qui, selon vous, n\'est pas une caméra</item>
+        <item quantity="other">%1$d appareils qui, selon vous, ne sont pas des caméras</item>
+    </plurals>
+    <string name="how_keyhole_works">Comment fonctionne Keyhole</string>
+    <string name="how_keyhole_works_line">Ce que cherche chaque vérification</string>
+    <string name="what_keyhole_cant_find">Ce que Keyhole ne peut pas trouver</string>
+    <string name="what_keyhole_cant_find_line">Et comment vérifier à la main</string>
+    <string name="if_you_find_a_camera">Si vous trouvez une caméra</string>
+    <string name="if_you_find_a_camera_line">Que faire, étape par étape</string>
+    <string name="privacy">Confidentialité</string>
+    <string name="privacy_line">Rien ne quitte votre téléphone</string>
+    <string name="about">À propos</string>
+    <string name="about_line">Version, code source, licences</string>
+    <string name="licences">Licences</string>
+
+    <!-- 14 Appearance -->
+    <string name="theme_system">Système</string>
+    <string name="theme_light">Clair</string>
+    <string name="theme_dark">Sombre</string>
+    <string name="colour_wallpaper">Couleurs du fond d\'écran</string>
+    <string name="colour_accent">Bleu foncé</string>
+
+    <!-- Screens not built yet -->
+    <string name="stand_in_line">Cet écran arrive bientôt.</string>
+    <string name="stand_in_line_for">%1$s · cet écran arrive bientôt.</string>
+</resources>
